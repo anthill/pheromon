@@ -71,9 +71,9 @@ app.use(compression());
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
-app.use("/leaflet.css", express.static(path.join(__dirname, '../../node_modules/leaflet/dist/leaflet.css')));
+app.use("/leaflet.css", express.static(path.join(__dirname, '../node_modules/leaflet/dist/leaflet.css')));
 
-app.use("/dygraph-combined.js", express.static(path.join(__dirname, '../../node_modules/dygraphs/dygraph-combined.js')));
+app.use("/dygraph-combined.js", express.static(path.join(__dirname, '../node_modules/dygraphs/dygraph-combined.js')));
 app.use("/Dashboard", express.static(path.join(__dirname, '../clients/Dashboard')));
 app.use("/_common", express.static(path.join(__dirname, '../clients/_common')));
 

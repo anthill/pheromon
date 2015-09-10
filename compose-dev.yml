@@ -1,6 +1,5 @@
 dashboard:
    build: .
-   dockerfile: core/Dockerfile
    command: npm run start-dashboard-dev
    links:
       - db
@@ -13,10 +12,9 @@ dashboard:
       - POSTGRES_PASSWORD=elements
       - NODE_ENV=development
    volumes:
-      - ./core:/pheromon/core
+      - ./:/pheromon/
 endpoint:
    build: .
-   dockerfile: core/Dockerfile
    command: npm run start-endpoint-dev
    links:
       - db
@@ -28,10 +26,9 @@ endpoint:
       - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:
-      - ./core:/pheromon/core
+      - ./:/pheromon/
 admin:
    build: .
-   dockerfile: core/Dockerfile
    command: npm run start-admin-dev
    links:
       - db
@@ -46,7 +43,7 @@ admin:
       - PGPASSWORD=elements
       - NODE_ENV=development
    volumes:
-      - ./core:/pheromon/core
+      - ./:/pheromon/
 db:
    image: postgres:9.4
    environment:
