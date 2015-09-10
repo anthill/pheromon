@@ -17,6 +17,6 @@ console.error(errorReport);
  * Wait for the stdout buffer to drain.
  * See https://github.com/eslint/eslint/issues/317
  */
-process.on("exit", function() {
+process.on("exit", function(exitCode) {
     process.exit(exitCode);
 });
