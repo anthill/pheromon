@@ -34,7 +34,7 @@ It's the web server which provide an administration interface for sensors. Admin
 
 Here's a schema showing the server architecture, with technologies and port used for communication.
 
-![Image Alt](https://docs.google.com/a/ants.builders/drawings/d/11Lo_nfxXwXgdULOm_AK2A0_dp0pDNQIAllBRFUpYLJ8/edit?usp=sharing)
+![Image Alt](https://docs.google.com/drawings/d/11Lo_nfxXwXgdULOm_AK2A0_dp0pDNQIAllBRFUpYLJ8/pub?w=960&h=720)
 
 
 
