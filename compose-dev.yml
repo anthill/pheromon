@@ -1,6 +1,6 @@
 dashboard:
    build: .
-   command: npm run start-dashboard-dev
+   command: nodemon server/dashboard.js
    links:
       - db
       - endpoint
@@ -15,7 +15,7 @@ dashboard:
       - ./:/pheromon/
 endpoint:
    build: .
-   command: npm run start-endpoint-dev
+   command: nodemon server/endpoint.js
    links:
       - db
    ports:
@@ -29,7 +29,7 @@ endpoint:
       - ./:/pheromon/
 admin:
    build: .
-   command: npm run start-admin-dev
+   command: nodemon server/admin.js
    links:
       - db
       - endpoint
