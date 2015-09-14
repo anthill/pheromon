@@ -1,48 +1,21 @@
 # Pheromon
 
-Pheromon is a open innovation project for measuring affluence with open hardware sensors. This has been developped initially for the 6element waste optimisation project. **[Learn more](http://ants.builders/pages/6element.html)**
+**Pheromon is a open innovation project to deploy, administrate and harvest data from a swarm of sensors**. It has been developped in the scope of project 6element dedicated to waste optimisation **[Learn more](http://ants.builders/pages/6element.html)**).
 
+![Image Alt](https://docs.google.com/drawings/d/1a-9oJr7eGid59iTj12dici8-Qb83j9Y7QbTz34jCo_M/pub?w=960&h=720)
 
-The Pheromon server's goal is to receive data from distant sensors, to store it and to provide interfaces for data visualisation and sensor-administration.
+Pheromon communicates with sensors over TCP using MQTT protocol. The MQTT broker dispatches the messages depending on the publish/subscribe status of various clients on various subjects. For example, a meteorological sensor will publish on the topics `rain` and `temperature` while a sensor measuring peoples fluxes will pusblish on `wifidevices` and `bluetoothdevices`. Meanwhile, the admin interface can publish on the `command` topic and sensors subscribed will respond on `status`.
+
+All the messages are persisted in a database that can be queried by a API able to answer queries like "give me all mesaurements of sensor X since Y".
 
 *You can find the source code for sensors in [6brain](https://github.com/anthill/6brain)*
 
-In order to do so, the server is composed of 4 docker containers communicating with each other.
 
-### The database.
+## Quick start :
 
-This is the memory of the server. It stores every places informations, what sensors are attached to them, but also measurements and status from theses sensors.
+* Install [docker](https://docs.docker.com/) and [docker-compose](http://docs.docker.com/compose/install/) and check docker daemon (or boot2docker) is running.
 
-### The reception server (or TCP endpoint).
-
-Its role is to act as a door between internal containers and distant sensors.
-
-It receives data from sensors, stores it into the database, and then send it to the appropriate web-server (admin or map).
-
-It can also receive some commands to send to a sensor from the admin server.
-
-### The Map server.
-
-It's the web server wich handle the measurement visualisation through a map.
-
-### The Admin server.
-
-It's the web server which provide an administration interface for sensors. Admins can add/delete places, add/delete sensors, send commands, see sensors status...
-
-
-### In short :
-
-Here's a schema showing the server architecture, with technologies and port used for communication.
-
-![Image Alt](https://docs.google.com/drawings/d/11Lo_nfxXwXgdULOm_AK2A0_dp0pDNQIAllBRFUpYLJ8/pub?w=960&h=720)
-
-
-
-## Getting started :
-
-* Install [docker](https://docs.docker.com/) and [docker-compose](http://docs.docker.com/compose/install/)
-
-* Make sure to have the port 5100 opened.
+* Make sure to have the port 5100 opened on your server.
 
 * clone the repository :
 
@@ -60,32 +33,40 @@ cd pheromon
     "secret": ...
 }
 ```
+(secret is the key needed to access admin commands, mapbox tockens and id are for the map backgound of the dashboard.)
 
-* Install dependencies locally (this is mainly to enable automated lint functionality)
+* Install dependencies locally (this is mainly to enable gulp and automated lint functionality)
 
 ````
-cd core
 npm install
 ````
 
-* build the docker containers : 
+* Build container
 
 ```
-docker-compose -f rebuild-db.yml build
-docker-compose -f compose-prod.yml build
+docker-compose -f compose-init.yml build
+docker-compose -f compose-dev.yml build
 ```
 
-* Build the database : `docker-compose -f rebuild-db.yml up`
+* Prepare the db : 
 
-	*When it says you that the database has been reseted, you can stop it.*
+```
+npm run init-db
+```
+    *When it says you that the database has been reseted, you can stop it.*
 
-* Start the server : `docker-compose -f compose-prod.yml up -d`
+
+* Launch the containers and the 
+
+```
+npm run dev
+```
 
 
 ## Contribute :
 
-* Clone the repository
+* Clone the repository.
 
-* Create a new branch to work in
+* Create a new branch to work in.
 
-* Make a pull request explaining why and what you changed
+* Make a pull request explaining why and what you changed.
