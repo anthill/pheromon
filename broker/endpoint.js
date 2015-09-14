@@ -11,7 +11,7 @@
 var EventEmitter = require('events').EventEmitter;
 require('es6-shim');
 var net = require('net');
-var makeTcpReceiver = require('./makeTcpReceiver');
+var makeTcpReceiver = require('../tools/makeTcpReceiver');
 var database = require('../database');
 var utils = require('./utils.js');
 // var simulateSensorStatusArrivalTCP = require('./simulateSensorStatusArrivalTCP');
@@ -147,7 +147,7 @@ tcpServerToAdminApp.on('connection', function(tcpSocketAdminApp) {
 
         }
     });
-    debug('connection on the internal socket')
+    debug('connection on the internal socket');
 });
 
 // function getLastItem(array) {

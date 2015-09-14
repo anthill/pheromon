@@ -15,11 +15,15 @@ var readyInterval = setInterval(function(){
             console.log("Server up and running");
             clearInterval(readyInterval);
 
-            var casperChild = spawn('casperjs', ['test'].concat(['src/Admin/']));
+            // var casperChild = spawn('casperjs', ['test'].concat(['src/Admin/']));
 
-            casperChild.stdout.on('data', function (data) {
-                console.log(data.toString().slice(0, -1));
-            });
+            // casperChild.stdout.on('data', function (data) {
+            //     console.log(data.toString().slice(0, -1));
+            // });
+
+
+
+            simulateSensorStatusArrivalTCP()
         }
     });
 
