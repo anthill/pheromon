@@ -1,7 +1,6 @@
 pheromon:
    build: .
-   dockerfile: core/Dockerfile
-   command: npm run init-db
+   command: node tools/init-db
    links:
       - db
    environment:
@@ -10,7 +9,7 @@ pheromon:
       - POSTGRES_PASSWORD=elements
       # - BACKUP=backups/save.txt.gz
    volumes:
-      - ./core:/pheromon/core
+      - ./:/pheromon/
       - /data/6element:/pheromon/data
       - /data/6element/backups:/pheromon/data/backups
 

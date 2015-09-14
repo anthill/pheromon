@@ -1,7 +1,6 @@
 dashboard:
    build: .
-   dockerfile: core/Dockerfile
-   command: npm run start-dashboard-prod
+   command: nodemon server/dashboard.js
    links:
       - db
       - endpoint
@@ -14,13 +13,12 @@ dashboard:
       - POSTGRES_PASSWORD=elements
       - NODE_ENV=production
    volumes:
-      - ./core:/pheromon/core
+      - ./:/pheromon/
       - /data/6element:/pheromon/data
    restart: always
 endpoint:
    build: .
-   dockerfile: core/Dockerfile
-   command: npm run start-endpoint-dev
+   command: nodemon server/endpoint.js
    links:
       - db
    ports:
@@ -31,12 +29,11 @@ endpoint:
       - NODE_ENV=production
       - POSTGRES_PASSWORD=elements
    volumes:
-      - ./core:/pheromon/core
+      - ./:/pheromon/
    restart: always
 admin:
    build: .
-   dockerfile: core/Dockerfile
-   command: npm run start-admin-dev
+   command: nodemon server/admin.js
    links:
       - db
       - endpoint
@@ -51,7 +48,7 @@ admin:
       - PGPASSWORD=elements
       - NODE_ENV=production
    volumes:
-      - ./core:/pheromon/core
+      - ./:/pheromon/
    restart: always
 db:
    image: postgres:9.4

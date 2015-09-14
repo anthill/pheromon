@@ -1,10 +1,10 @@
 FROM ants/nodejs:v1
 MAINTAINER Alexandre Vallette <alexandre.vallette@ants.builders>
 
-RUN npm install gulp -g
-
 RUN mkdir /pheromon
 WORKDIR /pheromon
+
+RUN npm install nodemon -g
 
 # install pgdump and related
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
