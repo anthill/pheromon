@@ -10,7 +10,7 @@ var http = require('http');
 var compression = require('compression');
 var bodyParser = require('body-parser');
 var net = require('net');
-var makeTcpReceiver = require('./makeTcpReceiver');
+var makeTcpReceiver = require('../tools/makeTcpReceiver');
 var spawn = require('child_process').spawn;
 var tcpSocketEndpoint;
 
@@ -19,22 +19,8 @@ var database = require('../database');
 var schedule = require('node-schedule');
 var zlib = require('zlib');
 
-var PORT = 4001;
-var DEBUG = process.env.NODE_ENV === "development";
-var secret = require("../PRIVATE.json").secret;
-
-var endpointConfig =
-    {
-        host: process.env.ENDPOINT_PORT_5100_TCP_ADDR ? process.env.ENDPOINT_PORT_5100_TCP_ADDR : "127.0.0.1",
-        port: process.env.INTERNAL_PORT ? process.env.INTERNAL_PORT : 55555
-    };
-
-var debug = function() {
-    if (DEBUG) {
-        [].unshift.call(arguments, "[DEBUG Pheromon] ");
-        console.log.apply(console, arguments);
-    }
-}
+var PORT = 4000;
+var DEBUG = process.env.NODE_ENV === "development" ? true : false;
 
 var server = new http.Server(app);
 
@@ -49,7 +35,20 @@ io.on('connection', function(socket) {
             tcpSocketEndpoint.write(JSON.stringify(cmd) + "\n");
         }
     })
-})
+});
+
+var endpointConfig =
+    {
+        host: process.env.BROKER_PORT_5100_TCP_ADDR ? process.env.BROKER_PORT_5100_TCP_ADDR : "127.0.0.1",
+        port: process.env.INTERNAL_PORT ? process.env.INTERNAL_PORT : 55555
+    };
+
+var debug = function() {
+    if (DEBUG) {
+        [].unshift.call(arguments, "[DEBUG Pheromon] ");
+        console.log.apply(console, arguments);
+    }
+}
 
 // listening to the reception server
 
@@ -96,25 +95,81 @@ schedule.scheduleJob('0 3 * * *', function(){
     })
 });
 
-// Admin API
+
+
 app.use(compression());
+app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
-app.use("/leaflet.css", express.static(path.join(__dirname, '../../node_modules/leaflet/dist/leaflet.css')));
-app.use("/Admin", express.static(path.join(__dirname, '../clients/Admin')));
-app.use("/_common", express.static(path.join(__dirname, '../clients/_common')));
+app.use("/leaflet.css", express.static(path.join(__dirname, '../node_modules/leaflet/dist/leaflet.css')));
+
+app.use("/dygraph-combined.js", express.static(path.join(__dirname, '../node_modules/dygraphs/dygraph-combined.js')));
+
+app.use("/Admin", express.static(path.join(__dirname, './clients/Admin')));
+app.use("/Dashboard", express.static(path.join(__dirname, './clients/Dashboard')));
+app.use("/_common", express.static(path.join(__dirname, './clients/_common')));
+
 
 app.get('/', function(req, res){
-    if(req.query.s === secret || DEBUG)
-        res.sendFile(path.join(__dirname, '../clients/Admin/index.html'));
-    else
-        res.status(403).sendFile(path.join(__dirname, '../clients/Admin/403.html'));
+    res.sendFile(path.join(__dirname, './clients/Dashboard/index.html'));
+});
+
+app.get('/Admin', function(req, res){
+    res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
 });
 
 
 app.get('/Admin-browserify-bundle.js', function(req, res){
-    res.sendFile(path.join(__dirname, '../clients/Admin-browserify-bundle.js'));
+    res.sendFile(path.join(__dirname, './clients/Admin-browserify-bundle.js'));
 });
+
+app.get('/Dashboard-browserify-bundle.js', function(req, res){
+    res.sendFile(path.join(__dirname, './clients/Dashboard-browserify-bundle.js'));
+});
+
+
+app.get('/live-affluence', function(req, res){
+    database.complexQueries.currentPlaceAffluences()
+    .then(function(data){
+        res.send(data);
+    })
+    .catch(function(error){
+        console.log("error in /live-affluence: ", error);
+    });
+    
+});
+
+app.get('/place/:id', function(req, res){
+    var id = Number(req.params.id);
+    
+    database.complexQueries.getPlaceMeasurements(id)
+    .then(function(data){
+        res.send(data);
+    })
+    .catch(function(error){
+        console.log("error in /recycling-center/'+req.params.id: ", error);
+    });
+});
+
+app.get('/sensors', function(req, res){
+    database.Sensors.getAllSensors()
+    .then(function(data){
+        // debug('All sensors', data);
+        res.send(data);
+    })
+    .catch(function(error){
+        console.log("error in /sensors: ", error);
+    });
+});
+
+
+app.get('/', function(req, res){
+    if(req.query.s === secret || DEBUG)
+        res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
+    else
+        res.status(403).sendFile(path.join(__dirname, './clients/Admin/403.html'));
+});
+
 
 app.get('/live-affluence', function(req, res){
     database.complexQueries.currentPlaceAffluences()
@@ -244,9 +299,7 @@ app.post('/createSensor', function(req, res){
 server.listen(PORT, function () {
     console.log('Server running on', [
         'http://localhost:',
-        PORT,
-        '/?s=',
-        secret
+        PORT
     ].join(''));
 });
 

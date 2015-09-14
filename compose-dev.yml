@@ -1,21 +1,23 @@
-dashboard:
-   build: .
-   command: nodemon server/dashboard.js
+api:
+   build: ./
+   command: nodemon api/api.js
    links:
       - db
-      - endpoint
+      - broker
    ports:
       - "4000:4000"
    environment:
       - VIRTUAL_PORT=4000
       - INTERNAL_PORT=55555
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
+      - PGPASSWORD=elements
       - NODE_ENV=development
    volumes:
-      - ./:/pheromon/
-endpoint:
+      - ./:/pheromon
+broker:
    build: .
-   command: nodemon server/endpoint.js
+   command: nodemon broker/endpoint.js
    links:
       - db
    ports:
@@ -26,24 +28,7 @@ endpoint:
       - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:
-      - ./:/pheromon/
-admin:
-   build: .
-   command: nodemon server/admin.js
-   links:
-      - db
-      - endpoint
-   ports:
-      - "4001:4001"
-   environment:
-      - VIRTUAL_PORT=4001
-      - INTERNAL_PORT=55555
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=elements
-      - PGPASSWORD=elements
-      - NODE_ENV=development
-   volumes:
-      - ./:/pheromon/
+      - ./:/pheromon
 db:
    image: postgres:9.4
    environment:

@@ -67,7 +67,7 @@ function generateDefinitions() {
                         console.log('no backup file');
                         generateDefinitions()
                             .then(function(){
-                                console.log("Dropped and created the tables.")
+                                console.log("Dropped and created the tables.");
                             })
                             .catch(function(err){
                                 console.error("Couldn't write the schema", err);

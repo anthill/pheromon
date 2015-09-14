@@ -55,6 +55,6 @@ tests:
    - endpoint
    - admin
    - dashboard
-  command: node ./src/index.js
+  command: node ./index.js
   volumes:
-   - ./tests:/tests/src
+   - ./tests:/tests/
