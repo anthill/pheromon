@@ -12,7 +12,6 @@ var databaseClientP = require('../database/management/databaseClientP');
 
 var dropAllTables = require('../database/management/dropAllTables.js');
 var createTables = require('../database/management/createTables.js');
-var hardCodedSensors = require("./hardCodedSensors.js");
 
 
 var conString = [
@@ -68,8 +67,7 @@ function generateDefinitions() {
                         console.log('no backup file');
                         generateDefinitions()
                             .then(function(){
-                                console.log("Dropped and created the tables.")
-                                hardCodedSensors();
+                                console.log("Dropped and created the tables.");
                             })
                             .catch(function(err){
                                 console.error("Couldn't write the schema", err);
