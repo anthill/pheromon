@@ -12,7 +12,7 @@ var databaseClientP = require('../database/management/databaseClientP');
 
 var dropAllTables = require('../database/management/dropAllTables.js');
 var createTables = require('../database/management/createTables.js');
-var hardCodedSensors = require("../server/hardCodedSensors.js");
+var hardCodedSensors = require("./hardCodedSensors.js");
 
 
 var conString = [
