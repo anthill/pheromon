@@ -41,6 +41,13 @@ cd pheromon
 npm install
 ````
 
+* Build container
+
+```
+docker-compose -f compose-init.yml build
+docker-compose -f compose-dev.yml build
+```
+
 * Prepare the db : 
 
 ```
