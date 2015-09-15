@@ -49,8 +49,8 @@ var tcpServerForSensors = net.createServer(function(tcpSocketSensor) {
         // register the sim id corresponding to the socket
         var match = message.match(/init\s(\d+)\s(.+)/)
         if (match) {
-            var passwd = match[2];
-            if (passwd === PRIVATE.password){
+            var token = match[2];
+            if (token === PRIVATE.token){
                 sim = match[1];
                 sim2socket[sim] = tcpSocketSensor;
                 console.log(tcpSocketSensor.remoteAddress + " is now known as " + sim);
@@ -90,7 +90,7 @@ var tcpServerForSensors = net.createServer(function(tcpSocketSensor) {
                     console.log("[ERROR] Couldn't get sensor's config in DB :", err);
                 })
             } else {
-                console.log("Wrong password for authenticating the sensor.");
+                console.log("Wrong token for authenticating the sensor.");
             }
         }
 

@@ -128,47 +128,12 @@ app.get('/Dashboard-browserify-bundle.js', function(req, res){
 });
 
 
-app.get('/live-affluence', function(req, res){
-    database.complexQueries.currentPlaceAffluences()
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /live-affluence: ", error);
-    });
-    
-});
-
-app.get('/place/:id', function(req, res){
-    var id = Number(req.params.id);
-    
-    database.complexQueries.getPlaceMeasurements(id)
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /recycling-center/'+req.params.id: ", error);
-    });
-});
-
-app.get('/sensors', function(req, res){
-    database.Sensors.getAllSensors()
-    .then(function(data){
-        // debug('All sensors', data);
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /sensors: ", error);
-    });
-});
-
-
-app.get('/', function(req, res){
-    if(req.query.s === secret || DEBUG)
-        res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
-    else
-        res.status(403).sendFile(path.join(__dirname, './clients/Admin/403.html'));
-});
+// app.get('/', function(req, res){
+//     if(req.query.s === secret || DEBUG)
+//         res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
+//     else
+//         res.status(403).sendFile(path.join(__dirname, './clients/Admin/403.html'));
+// });
 
 
 app.get('/live-affluence', function(req, res){
@@ -182,9 +147,9 @@ app.get('/live-affluence', function(req, res){
     
 });
 
-
 app.get('/place/:id', function(req, res){
     var id = Number(req.params.id);
+    console.log('requesting place id', id);
     
     database.complexQueries.getPlaceMeasurements(id)
     .then(function(data){
@@ -203,6 +168,17 @@ app.get('/allPlacesInfos', function(req, res){
     })
     .catch(function(error){
         console.log("error in /allPlacesInfos: ", error);
+    });
+});
+
+app.get('/allPlaces', function(req, res){
+    database.Places.getAllPlaces()
+    .then(function(data){
+        // debug('All sensors', data);
+        res.send(data);
+    })
+    .catch(function(error){
+        console.log("error in /sensors: ", error);
     });
 });
 
@@ -283,11 +259,25 @@ app.post('/removeSensor', function(req, res){
     });
 });
 
+app.post('/removeAllSensors', function(req, res){    
+    console.log('removing all sensors');
+
+    database.Sensors.deleteAll()
+    .then(function(data){
+        res.send(data);
+    })
+    .catch(function(error){
+        res.status(500).send('Couldn\'t delete all Sensors from database');
+        console.log("error in /deleteAllSensors/", error);
+    });
+});
+
 app.post('/createSensor', function(req, res){    
     console.log('creating sensor', req.body);
 
     database.Sensors.create(req.body)
     .then(function(data){
+        debug('Sensor created', data);
         res.send(data);
     })
     .catch(function(error){

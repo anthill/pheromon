@@ -31,10 +31,10 @@ cd pheromon
     "mapbox_token": ...,
     "map_id": ...,
     "secret": ...,
-    "password": ...
+    "token": ...
 }
 ```
-(`secrect` is the key needed to access admin commands, mapbox tockens and id are for the map background of the dashboard and `password` is the key to authentify sensors)
+(`secret` is the key needed to access admin commands, mapbox tockens and id are for the map background of the dashboard and `token` is the key to authentify sensors)
 
 * Install dependencies locally (this is mainly to enable gulp and automated lint functionality)
 
@@ -45,7 +45,7 @@ npm install
 * Build container
 
 ```
-docker-compose -f compose-init.yml build
+docker-compose -f compose-init-db.yml build
 docker-compose -f compose-dev.yml build
 ```
 

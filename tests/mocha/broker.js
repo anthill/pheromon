@@ -4,9 +4,9 @@ require('es6-shim');
 
 var net = require('net');
 var expect = require('chai').expect;
-var makeTcpReceiver = require('../tools/makeTcpReceiver');
-var boot2dockerIp = require('../tools/boot2dockerIp.js');
-var PRIVATE = require('../PRIVATE.json');
+var makeTcpReceiver = require('../../tools/makeTcpReceiver');
+var boot2dockerIp = require('../../tools/boot2dockerIp.js');
+var PRIVATE = require('../../PRIVATE.json');
 
 
 describe('initilisation of sensor', function() {
@@ -38,7 +38,7 @@ describe('initilisation of sensor', function() {
 	});
 
 
-	it('broker should register unknown sensor if password ok', function (done) {
+	it('broker should register unknown sensor if token ok', function (done) {
 
 		tcpSocketSensorReceiver.on('message', function(message) {
 
@@ -53,11 +53,11 @@ describe('initilisation of sensor', function() {
     		expect(Date.parse(argsplit[4])).to.be.a("number");
     		done();
     	});
-		sensorSocket.write("init 123456677999 " + PRIVATE.password + "\n");
+		sensorSocket.write("init 123456677999 " + PRIVATE.token + "\n");
 	});
 
 
-	it('broker should not register sensor if password not ok', function () {
+	it('broker should not register sensor if token not ok', function () {
 
 	});
 
