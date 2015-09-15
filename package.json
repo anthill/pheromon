@@ -45,6 +45,7 @@
     "moment": "^2.10.3",
     "node-schedule": "^0.2.9",
     "pg": "^4.3.0",
+    "pokemon-names": "^1.0.0",
     "quipu": "^0.1.0",
     "react": "^0.13.3",
     "request": "^2.58.0",

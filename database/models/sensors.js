@@ -12,7 +12,7 @@ module.exports = {
             
             var query = sensors
                 .insert(data)
-                .returning('id')
+                .returning('*')
                 .toQuery();
 
             //console.log('sensors create query', query);
@@ -101,6 +101,7 @@ module.exports = {
             var query = sensors
                 .delete()
                 .where(sensors.id.equals(id))
+                .returning('*')
                 .toQuery();
 
             return new Promise(function (resolve, reject) {

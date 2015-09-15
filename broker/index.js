@@ -12,10 +12,12 @@
 require('es6-shim');
 var net = require('net');
 var EventEmitter = require('events').EventEmitter;
+var pokemon = require("pokemon-names");
 var makeTcpReceiver = require('../tools/makeTcpReceiver');
 var database = require('../database');
 var utils = require('./utils.js');
 var PRIVATE = require('../PRIVATE.json');
+var CONF = require('../CONF.json');
 // var simulateSensorStatusArrivalTCP = require('./simulateSensorStatusArrivalTCP');
 
 var sim2socket = {};
@@ -56,29 +58,33 @@ var tcpServerForSensors = net.createServer(function(tcpSocketSensor) {
                 // check sensor is registered
                 database.Sensors.findBySIMid(sim)
                 .then(function(sensors) {
-                    var sensor;
                     // if sensor was never registered, create it
                     if(sensors.length === 0) {
                         console.log("Creating the sensor")
-                        database.Sensors.create({
-                            'name': sim,
-                            'sim': sim
+                        return database.Sensors.create({
+                            'name': pokemon.random(),
+                            'sim': sim,
+                            'data_period': CONF.data_period,
+                            'start_time': CONF.start_time,
+                            'stop_time': CONF.stop_time
                         })
                         .then(function(createdSensor){
-                            sensor = createdSensor;
+                            return createdSensor;
                         })
                         .catch(function(err) {
                             console.log("[ERROR] Couldn't create sensor :", err);
                         })
                     }
                     else { 
-                        sensor = sensors[0]
+                        return sensors[0];
                     }
+                    
+                })
+                .then(function(sensor){
                     console.log('sending config');
                     var date = new Date();
                     // Send config to the sensor
                     sendCommand(tcpSocketSensor, 'init '+ [sensor.data_period, sensor.start_time, sensor.stop_time, date.toISOString()].join(" "));
-                    
                 })
                 .catch(function(err) {
                     console.log("[ERROR] Couldn't get sensor's config in DB :", err);

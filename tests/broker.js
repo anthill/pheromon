@@ -9,7 +9,9 @@ var boot2dockerIp = require('../tools/boot2dockerIp.js');
 var PRIVATE = require('../PRIVATE.json');
 
 
-describe('init', function() {
+describe('initilisation of sensor', function() {
+
+	this.timeout(9000);
 
 	var sensorSocket;
 	var tcpSocketSensorReceiver;
