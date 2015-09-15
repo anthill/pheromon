@@ -165,12 +165,12 @@ tcpServerToAdminApp.on('connection', function(tcpSocketAdminApp) {
         var data = JSON.parse(message);
         if (data.type === 'cmd') {
 
-            data.to.forEach(function(antPhone){
-                if (sim2socket[antPhone]){
-                    sendCommand(sim2socket[antPhone], data.command);
+            data.to.forEach(function(antSim){
+                if (sim2socket[antSim]){
+                    sendCommand(sim2socket[antSim], data.command);
                 }
                 else
-                    console.log('sim2socket[antPhone] undefined !')
+                    console.log('sim2socket[antSim] undefined !')
             });
 
         }

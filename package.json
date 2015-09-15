@@ -7,7 +7,7 @@
     "init-db": "node_modules/gulp/bin/gulp.js init-db",
     "dev": "node_modules/gulp/bin/gulp.js dev",
     "lint": "eslint ./",
-    "test": "node_modules/.bin/mocha tests/broker.js",
+    "test": "mocha tests/broker.js",
     "validate": "npm ls"
   },
   "repository": {
