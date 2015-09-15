@@ -20,7 +20,7 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0].id);
+                    else resolve(result.rows[0]);
                 });
             });
         })
@@ -28,26 +28,26 @@ module.exports = {
             console.log('ERROR in create', err);
         });  
     },
-    findByPhoneNumber: function(phoneNumber) {
+    findBySIMid: function(sim) {
         return databaseP.then(function (db) {
             
             var query = sensors
                 .select("*")
                 .from(sensors)
-                .where(sensors.phone_number.equals(phoneNumber))
+                .where(sensors.sim.equals(sim))
                 .toQuery();
 
-            //console.log('sensors findByPhoneNumber query', query);
+            //console.log('sensors findBySIMid query', query);
 
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0]);
+                    else resolve(result.rows);
                 });
             });
         })
         .catch(function(err){
-            console.log('ERROR in findByPhoneNumber', err);
+            console.log('ERROR in findBySIMid', err);
         });          
     },
     
@@ -60,7 +60,7 @@ module.exports = {
                 .returning("*")
                 .toQuery();
 
-            //console.log('sensors findByPhoneNumber query', query);
+            //console.log('sensors findBySIMid query', query);
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);

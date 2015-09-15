@@ -45,7 +45,7 @@ exports.sensors = sql.define({
 		{ name: 'id' },
 		{ name: 'name' },
 		{ name: 'installed_at' },
-		{ name: 'phone_number' },
+		{ name: 'sim' },
 		{ name: 'quipu_status' },
 		{ name: 'sense_status' },
 		{ name: 'latest_input' },
