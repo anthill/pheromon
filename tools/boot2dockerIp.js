@@ -6,7 +6,8 @@ var exec = require("child_process").exec;
 module.exports = function(){
 	return new Promise(function(resolve, reject) {
 		exec("boot2docker ip", function(error, ip){
-			if (error) reject("localhost");
+			if (error)
+				reject("localhost");
 			else {
 				resolve(ip.trim());
 			}
