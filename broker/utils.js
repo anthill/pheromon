@@ -8,7 +8,7 @@ require('es6-shim');
 function getDataType(data) {
 	if (data.toString().match(/^net(NODATA|GPRS|EDGE|3G|H\/H+)$/))
 		return 'network'
-	else if (data.toString().match("phoneNumber=*"))
+	else if (data.toString().match("init *"))
 		return 'request'
 	else if (data.toString().slice(0, 1) === '0')
 		return 'message'
@@ -20,29 +20,29 @@ function getDataType(data) {
 		return 'other'
 }
 
-function printMsg(msg, phoneNumber) {
+function printMsg(msg, sim) {
 	return new Promise(function(resolve) {
 		decode(msg)
 		.then(function(decoded) {
 			var type = getDataType(msg);
 			switch (type) {
 				case 'network':
-					console.log('['+phoneNumber+']'+"[NETWORK]>" + decoded.toString());
+					console.log('['+sim+']'+"[NETWORK]>" + decoded.toString());
 					break;
 				case 'request':
-					console.log('['+phoneNumber+']'+"[REQUEST]>" + decoded.toString());
+					console.log('['+sim+']'+"[REQUEST]>" + decoded.toString());
 					break;
 				case 'message':
-					console.log('['+phoneNumber+']'+"[MESSAGE]>" + decoded.toString());
+					console.log('['+sim+']'+"[MESSAGE]>" + decoded.toString());
 					break;
 				case 'data':
-					console.log('['+phoneNumber+']'+"[DATA]   >" + decoded.toString());
+					console.log('['+sim+']'+"[DATA]   >" + decoded.toString());
 					break;
 				case 'status':
-					console.log('['+phoneNumber+']'+"[STATUS] >" + decoded.toString());
+					console.log('['+sim+']'+"[STATUS] >" + decoded.toString());
 					break;
 				default:
-					console.log('['+phoneNumber+']'+"[OTHER]  >" + decoded.toString());
+					console.log('['+sim+']'+"[OTHER]  >" + decoded.toString());
 					break;
 			}
 
@@ -82,7 +82,7 @@ function decode(message) {
 				break;
 				
 			default :
-				resolve(message); // not a message, data or status (can be a network, phoneNumber, etc...)
+				resolve(message); // not a message, data or status (can be a network, sim, etc...)
 				break;
 		}
 

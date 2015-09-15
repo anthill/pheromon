@@ -18,7 +18,7 @@ dashboard:
    restart: always
 endpoint:
    build: .
-   command: nodemon server/endpoint.js
+   command: nodemon server/index.js
    links:
       - db
    ports:

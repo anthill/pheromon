@@ -8,15 +8,19 @@
 **      -data reception, decoding, saving and forwarding to app/admin server
 */
 
-var EventEmitter = require('events').EventEmitter;
+
 require('es6-shim');
 var net = require('net');
+var EventEmitter = require('events').EventEmitter;
+var pokemon = require("pokemon-names");
 var makeTcpReceiver = require('../tools/makeTcpReceiver');
 var database = require('../database');
 var utils = require('./utils.js');
+var PRIVATE = require('../PRIVATE.json');
+var CONF = require('../CONF.json');
 // var simulateSensorStatusArrivalTCP = require('./simulateSensorStatusArrivalTCP');
 
-var phoneNumber2socket = {};
+var sim2socket = {};
 var monitorPort = 5100;
 var eventEmitter = new EventEmitter();
 
@@ -29,12 +33,12 @@ var debug = function() {
     }
 }
 
-
+// ############### Sensors communication ######################
 
 var tcpServerForSensors = net.createServer(function(tcpSocketSensor) {
 
     console.log("New socket to sensor.");
-    var phoneNumber;
+    var sim;
 
     var tcpSocketSensorReceiver = makeTcpReceiver(tcpSocketSensor, "\n");
     
@@ -42,44 +46,74 @@ var tcpServerForSensors = net.createServer(function(tcpSocketSensor) {
 
         console.log("received tcp data: ", message);
 
-        // register the phonenumber corresponding to the socket
-        if (message.match("phoneNumber=*")) {
-            phoneNumber = message.substr(12);
-            phoneNumber2socket[phoneNumber] = tcpSocketSensor;
-            console.log(tcpSocketSensor.remoteAddress + " is now known as " + phoneNumber);
-            
-            // Send config to the sensor
-            database.Sensors.findByPhoneNumber(phoneNumber)
-            .then(function(sensor) {
-                console.log('sending config');
-                var date = new Date();
-                sendCommand(tcpSocketSensor, 'init '+ [sensor.data_period, sensor.start_time, sensor.stop_time, date.toISOString()].join(" "));
-            })
-            .catch(function(err) {
-                console.log("[ERROR] Couldn't get sensor's config in DB :", err);
-            })
+        // register the sim id corresponding to the socket
+        var match = message.match(/init\s(\d+)\s(.+)/)
+        if (match) {
+            var passwd = match[2];
+            if (passwd === PRIVATE.password){
+                sim = match[1];
+                sim2socket[sim] = tcpSocketSensor;
+                console.log(tcpSocketSensor.remoteAddress + " is now known as " + sim);
+                
+                // check sensor is registered
+                database.Sensors.findBySIMid(sim)
+                .then(function(sensors) {
+                    // if sensor was never registered, create it
+                    if(sensors.length === 0) {
+                        console.log("Creating the sensor")
+                        return database.Sensors.create({
+                            'name': pokemon.random(),
+                            'sim': sim,
+                            'data_period': CONF.data_period,
+                            'start_time': CONF.start_time,
+                            'stop_time': CONF.stop_time
+                        })
+                        .then(function(createdSensor){
+                            return createdSensor;
+                        })
+                        .catch(function(err) {
+                            console.log("[ERROR] Couldn't create sensor :", err);
+                        })
+                    }
+                    else { 
+                        return sensors[0];
+                    }
+                    
+                })
+                .then(function(sensor){
+                    console.log('sending config');
+                    var date = new Date();
+                    // Send config to the sensor
+                    sendCommand(tcpSocketSensor, 'init '+ [sensor.data_period, sensor.start_time, sensor.stop_time, date.toISOString()].join(" "));
+                })
+                .catch(function(err) {
+                    console.log("[ERROR] Couldn't get sensor's config in DB :", err);
+                })
+            } else {
+                console.log("Wrong password for authenticating the sensor.");
+            }
         }
 
         // handle data
-        else if (phoneNumber) {
-            handleData(message, phoneNumber2socket[phoneNumber], phoneNumber);
+        else if (sim) {
+            handleData(message, sim2socket[sim], sim);
         }
 
     });
 
     tcpSocketSensor.on('close', function() {
         console.log("connection closed");
-        if (phoneNumber) {
-            debug("Removing from phoneNumber2socket");
-            delete phoneNumber2socket[phoneNumber];
+        if (sim) {
+            debug("Removing from sim2socket");
+            delete sim2socket[sim];
         }
     });
 
     tcpSocketSensor.on('error', function(err) {
         console.log("[ERROR] " + (err ? err.code : "???") + " : " + (err ? err : "unknown"));
-        if (phoneNumber) {
-            debug("Removing from phoneNumber2socket");
-            delete phoneNumber2socket[phoneNumber];
+        if (sim) {
+            debug("Removing from sim2socket");
+            delete sim2socket[sim];
         }
     });
 
@@ -108,7 +142,7 @@ tcpServerForSensors.listen(monitorPort);
 
 
 
-// Send datas to app and admin servers
+// ############### API communication ######################
 
 var tcpServerToAdminApp = net.createServer(function(tcpSocketAdminApp) {
 
@@ -137,12 +171,12 @@ tcpServerToAdminApp.on('connection', function(tcpSocketAdminApp) {
         var data = JSON.parse(message);
         if (data.type === 'cmd') {
 
-            data.to.forEach(function(antPhone){
-                if (phoneNumber2socket[antPhone]){
-                    sendCommand(phoneNumber2socket[antPhone], data.command);
+            data.to.forEach(function(antSim){
+                if (sim2socket[antSim]){
+                    sendCommand(sim2socket[antSim], data.command);
                 }
                 else
-                    console.log('phoneNumber2socket[antPhone] undefined !')
+                    console.log('sim2socket[antSim] undefined !')
             });
 
         }
@@ -163,7 +197,7 @@ tcpServerToAdminApp.on('connection', function(tcpSocketAdminApp) {
 
 // function getClientName(client) {
 
-//  return (client === undefined ? undefined : client.phoneNumber);
+//  return (client === undefined ? undefined : client.sim);
 // }
 
 // function detectDeadClient(client) { // TCP heartbeat
@@ -182,11 +216,11 @@ function sendCommand(socket, cmd) {
 }
 
 // decode, print, stock, and send data
-function handleData(dat, socket, phoneNumber) {
+function handleData(dat, socket, sim) {
 
-    var sensorP = database.Sensors.findByPhoneNumber(phoneNumber);
+    var sensorP = database.Sensors.findBySIMid(sim);
 
-    var messageP = utils.printMsg(dat, phoneNumber);
+    var messageP = utils.printMsg(dat, sim);
 
     Promise.all([sensorP, messageP])
     .then(function(values) {

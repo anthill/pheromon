@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS sensors (
     name        VARCHAR(100) NOT NULL,
     -- type         some_enum -- affluence/bin-level
     installed_at  integer REFERENCES places (id) DEFAULT NULL,
-    phone_number  text UNIQUE NOT NULL,
+    sim  text UNIQUE NOT NULL,
     quipu_status  quipu_status DEFAULT NULL, 
     sense_status  sense_status DEFAULT NULL,
     latest_input  text DEFAULT NULL,

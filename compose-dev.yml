@@ -17,7 +17,7 @@ api:
       - ./:/pheromon
 broker:
    build: .
-   command: nodemon broker/endpoint.js
+   command: nodemon broker/index.js
    links:
       - db
    ports:

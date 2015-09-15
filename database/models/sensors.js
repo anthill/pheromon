@@ -12,32 +12,10 @@ module.exports = {
             
             var query = sensors
                 .insert(data)
-                .returning('id')
+                .returning('*')
                 .toQuery();
 
             //console.log('sensors create query', query);
-
-            return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
-                    if (err) reject(err);
-                    else resolve(result.rows[0].id);
-                });
-            });
-        })
-        .catch(function(err){
-            console.log('ERROR in create', err);
-        });  
-    },
-    findByPhoneNumber: function(phoneNumber) {
-        return databaseP.then(function (db) {
-            
-            var query = sensors
-                .select("*")
-                .from(sensors)
-                .where(sensors.phone_number.equals(phoneNumber))
-                .toQuery();
-
-            //console.log('sensors findByPhoneNumber query', query);
 
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
@@ -47,7 +25,29 @@ module.exports = {
             });
         })
         .catch(function(err){
-            console.log('ERROR in findByPhoneNumber', err);
+            console.log('ERROR in create', err);
+        });  
+    },
+    findBySIMid: function(sim) {
+        return databaseP.then(function (db) {
+            
+            var query = sensors
+                .select("*")
+                .from(sensors)
+                .where(sensors.sim.equals(sim))
+                .toQuery();
+
+            //console.log('sensors findBySIMid query', query);
+
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+                    else resolve(result.rows);
+                });
+            });
+        })
+        .catch(function(err){
+            console.log('ERROR in findBySIMid', err);
         });          
     },
     
@@ -60,7 +60,7 @@ module.exports = {
                 .returning("*")
                 .toQuery();
 
-            //console.log('sensors findByPhoneNumber query', query);
+            //console.log('sensors findBySIMid query', query);
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
@@ -101,6 +101,7 @@ module.exports = {
             var query = sensors
                 .delete()
                 .where(sensors.id.equals(id))
+                .returning('*')
                 .toQuery();
 
             return new Promise(function (resolve, reject) {
