@@ -9,7 +9,7 @@ var cli = new CLIEngine();
 
 console.log('is ignored', cli.isPathIgnored("node_modules/**"));
 
-var report = cli.executeOnFiles(["./tools"]);
+var report = cli.executeOnFiles(["./"]);
 
 var formatter = cli.getFormatter();
 
