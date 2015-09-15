@@ -48,6 +48,27 @@ module.exports = {
         });        
     },
 
+    getAllPlaces: function() {
+        return databaseP.then(function (db) {
+            
+            var query = places
+                .select("*")
+                .from(places)
+                .toQuery();
+
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+
+                    else resolve(result.rows);
+                });
+            });
+        })
+        .catch(function(err){
+            console.log('ERROR in getAllPlaces', err);
+        });        
+    },
+
     delete: function(id) {
         return databaseP.then(function (db) {
             

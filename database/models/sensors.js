@@ -12,7 +12,7 @@ module.exports = {
             
             var query = sensors
                 .insert(data)
-                .returning('id')
+                .returning('*')
                 .toQuery();
 
             //console.log('sensors create query', query);
@@ -20,7 +20,8 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0].id);
+                    else 
+                        resolve(result.rows[0]);
                 });
             });
         })
@@ -101,6 +102,7 @@ module.exports = {
             var query = sensors
                 .delete()
                 .where(sensors.id.equals(id))
+                .returning('*')
                 .toQuery();
 
             return new Promise(function (resolve, reject) {
@@ -112,6 +114,25 @@ module.exports = {
         })
         .catch(function(err){
             console.log('ERROR in delete sensors', err);
+        });        
+    },
+
+    deleteAll: function() {
+        return databaseP.then(function (db) {
+            
+            var query = sensors
+                .delete()
+                .toQuery();
+
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+                    else resolve(result.rows[0]);
+                });
+            });
+        })
+        .catch(function(err){
+            console.log('ERROR in deleteAll sensors', err);
         });        
     }
 
