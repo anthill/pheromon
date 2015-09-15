@@ -30,10 +30,11 @@ cd pheromon
 {
     "mapbox_token": ...,
     "map_id": ...,
-    "secret": ...
+    "secret": ...,
+    "token": ...
 }
 ```
-(secret is the key needed to access admin commands, mapbox tockens and id are for the map backgound of the dashboard.)
+(`secret` is the key needed to access admin commands, mapbox tockens and id are for the map background of the dashboard and `token` is the key to authentify sensors)
 
 * Install dependencies locally (this is mainly to enable gulp and automated lint functionality)
 
@@ -61,6 +62,14 @@ npm run init-db
 ```
 npm run dev
 ```
+
+## Initialization sequence 
+
+We don't want sensors to have a manually hard-coded id (for deployment's simplicity) so we use SIM id (queried with AT command):
+
+- [sensor] query SIM id and sends [init id passw] on `command`
+- [broker] associate SIM id to a tcp Socket and sends [init period, start_time, stop_time, date] on `command`
+- 
 
 
 ## Contribute :

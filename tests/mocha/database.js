@@ -5,12 +5,12 @@ var request = require('request');
 
 var assert = assert = require('chai').assert;
 
-var dropAllTables = require('../database/management/dropAllTables.js');
-var createTables = require('../database/management/createTables.js');
+var dropAllTables = require('../../database/management/dropAllTables.js');
+var createTables = require('../../database/management/createTables.js');
 
 var sensor = {
     name: 'Sensor1',
-    phone_number: 290
+    sim: 290
 };
 
 var sensorRemoval = {
@@ -53,7 +53,7 @@ describe('Verify correct Database handling', function() {
                     sensorRemoval.id = created.id;
 
                     assert.strictEqual('Sensor1', created.name);
-                    assert.strictEqual(290, parseInt(created.phone_number));
+                    assert.strictEqual(290, parseInt(created.sim));
 
                     done();
                 }
@@ -77,7 +77,7 @@ describe('Verify correct Database handling', function() {
                     var deleted = JSON.parse(body);
 
                     assert.strictEqual('Sensor1', deleted.name);
-                    assert.strictEqual(290, parseInt(deleted.phone_number));
+                    assert.strictEqual(290, parseInt(deleted.sim));
 
                     done();
                 }
