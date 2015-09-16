@@ -4,6 +4,7 @@ require("es6-shim");
 var request = require('request');
 
 var assert = assert = require('chai').assert;
+var expect = require('chai').expect;
 
 var dropAllTables = require('../../database/management/dropAllTables.js');
 var createTables = require('../../database/management/createTables.js');
@@ -35,7 +36,7 @@ describe('Verify correct Database handling', function() {
         });     
     });
 
-    after('Clearing the db', function(ready){
+    it('removeAllSensors', function(done){
         request.post({
             url: 'http://' + host + ':4000/removeAllSensors',
             headers: {
@@ -43,13 +44,37 @@ describe('Verify correct Database handling', function() {
             }
         }, function(err, result, body){
             if (!err) {
-                ready();
+                done();
+            }
+            var sensors = JSON.parse(body);
+            console.log(body)
+            expect(sensors.length).to.equal(0);
+        });
+    });
+
+    it("allSensors after removeAllSensors", function (done) {
+
+        request.get({
+            url: 'http://' + host + ':4000/allSensors',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }, function(error, response, body){
+
+            if (error)
+                console.log('error', error);
+            else{
+                var sensors = JSON.parse(body);
+
+                expect(sensors.length).to.equal(0);
+                done();
             }
         });
     });
 
     describe('Sensors', function () {
-        it("Creating", function (done) {
+
+        it("createSensor", function (done) {
             this.timeout(10000);
 
             request.post({
