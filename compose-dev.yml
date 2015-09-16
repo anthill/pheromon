@@ -8,7 +8,6 @@ api:
       - "4000:4000"
    environment:
       - VIRTUAL_PORT=4000
-      - INTERNAL_PORT=55555
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
@@ -24,7 +23,6 @@ broker:
       - "5100:5100"
    environment:
       - VIRTUAL_PORT=5100
-      - INTERNAL_PORT=55555
       - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:
@@ -33,3 +31,5 @@ db:
    image: postgres:9.4
    environment:
       - POSTGRES_PASSWORD=elements
+   volumes:
+      - ./data:/var/lib/postgresql

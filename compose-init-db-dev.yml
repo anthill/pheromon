@@ -1,0 +1,20 @@
+pheromon:
+   build: .
+   command: node tools/init-db
+   links:
+      - db
+   environment:
+      - POSTGRES_USER=postgres
+      - PGPASSWORD=elements
+      - POSTGRES_PASSWORD=elements
+   volumes:
+      - ./:/pheromon/
+
+db:
+   image: postgres:9.4
+   environment:
+      - POSTGRES_USER=postgres
+      - PGPASSWORD=elements # don't change the name of the variable for pg_dump
+      - POSTGRES_PASSWORD=elements
+   volumes:
+      - ./data:/var/lib/postgresql

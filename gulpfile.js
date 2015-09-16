@@ -88,7 +88,7 @@ gulp.task('watch', ['watch-dashboard', 'watch-admin']);
 
 gulp.task('dev', ['start-containers-dev', 'watch']);
 gulp.task('init-db', function(){
-    spawn('docker-compose', ['-f', 'compose-init-db.yml', 'up'], {stdio: 'inherit'});
+    spawn('docker-compose', ['-f', 'compose-init-db-dev.yml', 'up'], {stdio: 'inherit'});
 });
 
 gulp.task('prod', function(){
