@@ -6,7 +6,7 @@ var conString = "postgres://postgres:" + process.env.POSTGRES_PASSWORD + "@" + p
 		
 module.exports = function(){
     return new Promise(function(resolve, reject){
-		console.log('conString', conString);
+		// console.log('conString', conString);
 		var client = new pg.Client(conString);
         client.connect(function(err) {
             if(err) reject(err); else resolve(client);
