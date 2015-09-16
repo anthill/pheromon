@@ -4,6 +4,7 @@ require('es6-shim');
 
 var net = require('net');
 var expect = require('chai').expect;
+var assert = require('chai').assert;
 var request = require('request');
 
 var makeTcpReceiver = require('../../tools/makeTcpReceiver');
@@ -19,16 +20,28 @@ describe('Sensor initialization', function() {
 	var sensorSocket;
 	var tcpSocketSensorReceiver;
 
-	// get host ip
+	// get host ip and clean db
 	before(function(ready){
 		boot2dockerIp()
 		.then(function(h){
 			host = h;
-			ready();
 		})
 		.catch(function(error){
 			console.log("Error determining the host");
-		});		
+		})
+		.then(function(){
+
+	        request.post({
+	            url: 'http://' + host + ':4000/removeAllSensors',
+	            headers: {
+	                'Content-Type': 'application/json'
+	            }
+	        }, function(err, result, body){
+	            if (!err) {
+	                ready();
+	            }
+	        });
+	    })
 	});
 
 	// simulate sensor
@@ -45,6 +58,8 @@ describe('Sensor initialization', function() {
 	});
 
 	it('broker should register unknown sensor if token ok', function (done) {
+
+		// check if sensor properly persisted in db
 		tcpSocketSensorReceiver.on('message', function(message) {
 
     		request.get({
@@ -61,13 +76,14 @@ describe('Sensor initialization', function() {
 	            }
 	        });
     	});
+
+    	// send sensor 
 		sensorSocket.write("init 123456677999 " + PRIVATE.token + "\n");	
 	});
 
 	it('broker should send config parameters to sensor if token ok', function (done) {
 		tcpSocketSensorReceiver.on('message', function(message) {
 
-    		console.log("received tcp data: ", message);
     		var args = message.slice(4);
     		var argsplit = args.split(" ");
     		expect(argsplit[0]).to.equal("init");
@@ -81,8 +97,17 @@ describe('Sensor initialization', function() {
 		sensorSocket.write("init 123456677999 " + PRIVATE.token + "\n");
 	});
 
-	it('broker should not register sensor if token not ok', function () {
-		//TBD
+	it('broker should not register sensor if token not ok', function (done) {
+		tcpSocketSensorReceiver.on('message', function(message) {
+    		assert(false);
+    		done();
+    	});
+    	// if no response from server after 500 ms, consider ignored
+    	setTimeout(function(){
+    		assert(true);
+    		done();
+    	}, 500)
+		sensorSocket.write("init 123456677999 " + "dummyCode" + "\n");
 	});
 });
 

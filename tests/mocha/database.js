@@ -44,7 +44,6 @@ describe('Verify correct Database handling', function() {
         }, function(err, result, body){
             if (!err) {
                 ready();
-                console.log('Sensors cleared');
             }
         });
     });
