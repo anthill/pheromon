@@ -10,7 +10,6 @@ pheromon:
       # - BACKUP=backups/save.txt.gz
    volumes:
       - ./:/pheromon/
-      - /data/6element:/pheromon/data
       - /data/6element/backups:/pheromon/data/backups
 
 db:

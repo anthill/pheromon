@@ -13,7 +13,7 @@ module.exports = {
         return sendReq('GET', '/allPlacesInfos');
     },
     getAllSensors: function(){
-        return sendReq('GET', '/allSensors');
+        return sendReq('GET', '/getAllSensors');
     },
     updatePlace: function(data){
         return sendReq('POST', '/updatePlace', data);
