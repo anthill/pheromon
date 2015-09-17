@@ -3,10 +3,13 @@
 require('es6-shim');
 
 var net = require('net');
-var expect = require('chai').expect;
-var assert = require('chai').assert;
+var chai = require('chai');
+
+var expect = chai.expect;
+var assert = chai.assert;
 throw "Use only one of expect or assert, not both for the sake of consistency. I (David) have a preference for assert, but won't fight too hard over it.";
-throw "Use chai-as-promised";
+
+chai.use(require('chai-as-promised'));
 
 var request = require('request');
 
