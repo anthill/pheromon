@@ -9,7 +9,7 @@ var request = require('request');
 
 var makeTcpReceiver = require('../../tools/makeTcpReceiver');
 var boot2dockerIp = require('../../tools/boot2dockerIp.js');
-var PRIVATE = require('../../PRIVATE.json');
+var PRIVATE = require('./PRIVATE.json');
 
 var host;
 
