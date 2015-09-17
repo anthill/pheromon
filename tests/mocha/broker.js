@@ -70,6 +70,7 @@ describe('Sensor initialization', function() {
 	            url: 'http://' + host + ':4000/allSensors'
 	        }, function(err, result, body){
 	            if (!err) {
+                    
 	            	var sensor = JSON.parse(body)[0];
 
 	            	expect(sensor.sim).to.equal("123456677999"); 
@@ -91,10 +92,11 @@ describe('Sensor initialization', function() {
     		var args = message.slice(4);
     		var argsplit = args.split(" ");
     		expect(argsplit[0]).to.equal("init");
-    		expect(isNaN(argsplit[1])).to.equal(false);
-    		expect(isNaN(argsplit[2])).to.equal(false);
-    		expect(isNaN(argsplit[3])).to.equal(false);
+    		expect(Number.isNaN(Number(argsplit[1]))).to.equal(false);
+    		expect(Number.isNaN(Number(argsplit[2]))).to.equal(false);
+    		expect(Number.isNaN(Number(argsplit[3]))).to.equal(false);
     		// check for proper datetime
+            throw 'what? Should this be a date or a number?'
     		expect(Date.parse(argsplit[4])).to.be.a("number");
     		done();
     	});
