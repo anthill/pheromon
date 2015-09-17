@@ -12,6 +12,7 @@
 require('es6-shim');
 var net = require('net');
 var EventEmitter = require('events').EventEmitter;
+var mosca = require('mosca');
 var pokemon = require("pokemon-names");
 var makeTcpReceiver = require('../tools/makeTcpReceiver');
 var database = require('../database');
@@ -32,6 +33,40 @@ var debug = function() {
         console.log.apply(console, arguments);
     }
 }
+
+// mqtt server
+
+var pubsubsettings = {
+  type: 'redis',
+  redis: require('redis'),
+  db: 12,
+  port: process.env.REDIS_PORT_6379_TCP_PORT,
+  return_buffers: true, // to handle binary payloads
+  host: process.env.REDIS_PORT_6379_TCP_ADDR
+};
+
+var moscaSettings = {
+  port: 1883,
+  backend: pubsubsettings
+};
+
+var server = new mosca.Server(moscaSettings);
+server.on('ready', function(){ console.log('Mosca server is up and running') });
+
+// fired when a message is published
+server.on('published', function(packet, client) {
+    console.log('Published', packet);
+    console.log('Client', client);
+});
+// fired when a client connects
+server.on('clientConnected', function(client) {
+    console.log('Client Connected:', client.id);
+});
+
+// fired when a client disconnects
+server.on('clientDisconnected', function(client) {
+    console.log('Client Disconnected:', client.id);
+});
 
 // ############### Sensors communication ######################
 

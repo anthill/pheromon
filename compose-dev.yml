@@ -19,6 +19,7 @@ broker:
    command: nodemon --watch broker broker/index.js
    links:
       - db
+      - redis
    ports:
       - "5100:5100"
    environment:
@@ -33,3 +34,5 @@ db:
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./data:/var/lib/postgresql
+redis:
+   image: redis:3
