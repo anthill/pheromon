@@ -12,7 +12,7 @@ module.exports = {
             
             var query = places
                 .insert(data)
-                .returning('id')
+                .returning('*')
                 .toQuery();
 
             //console.log('places create query', query);
@@ -20,10 +20,13 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0].id);
+                    else resolve(result.rows[0]);
                 });
             });
         })
+        .catch(function(err){
+            console.log('ERROR in create', err);
+        });
     },
 
     update: function(id, delta) {
@@ -48,7 +51,29 @@ module.exports = {
         });        
     },
 
-    getAllPlaces: function() {
+    get: function(id){
+        return databaseP.then(function (db) {
+            
+            var query = places
+                .select("*")
+                .where(places.id.equals(id))
+                .from(places)
+                .toQuery();
+
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+
+                    else resolve(result.rows[0]);
+                });
+            });
+        })
+        .catch(function(err){
+            console.log('ERROR in getPlace', err);
+        }); 
+    },
+
+    getAll: function() {
         return databaseP.then(function (db) {
             
             var query = places
@@ -75,6 +100,7 @@ module.exports = {
             var query = places
                 .delete()
                 .where(places.id.equals(id))
+                .returning('*')
                 .toQuery();
 
             return new Promise(function (resolve, reject) {
@@ -86,6 +112,26 @@ module.exports = {
         })
         .catch(function(err){
             console.log('ERROR in delete places', err);
+        });        
+    },
+
+    deleteAll: function() {
+        return databaseP.then(function (db) {
+            
+            var query = places
+                .delete()
+                .returning('*')
+                .toQuery();
+
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+                    else resolve(result.rows);
+                });
+            });
+        })
+        .catch(function(err){
+            console.log('ERROR in deleteAll places', err);
         });        
     }
 };

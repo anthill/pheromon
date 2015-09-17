@@ -20,36 +20,13 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else
-                        resolve(result.rows[0]);
+                    else resolve(result.rows[0]);
                 });
             });
         })
         .catch(function(err){
             console.log('ERROR in create', err);
         });  
-    },
-    findBySIMid: function(sim) {
-        return databaseP.then(function (db) {
-            
-            var query = sensors
-                .select("*")
-                .from(sensors)
-                .where(sensors.sim.equals(sim))
-                .toQuery();
-
-            //console.log('sensors findBySIMid query', query);
-
-            return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
-                    if (err) reject(err);
-                    else resolve(result.rows);
-                });
-            });
-        })
-        .catch(function(err){
-            console.log('ERROR in findBySIMid', err);
-        });          
     },
     
     update: function(id, delta) {
@@ -71,7 +48,6 @@ module.exports = {
         })
         .catch(function(err){
             console.log('ERROR in update', err);
-            throw err;
         });        
     },
 
@@ -157,7 +133,29 @@ module.exports = {
         .catch(function(err){
             console.log('ERROR in deleteAll sensors', err);
         });        
-    }
+    },
 
+    findBySIMid: function(sim) {
+        return databaseP.then(function (db) {
+            
+            var query = sensors
+                .select("*")
+                .from(sensors)
+                .where(sensors.sim.equals(sim))
+                .toQuery();
+
+            //console.log('sensors findBySIMid query', query);
+
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+                    else resolve(result.rows);
+                });
+            });
+        })
+        .catch(function(err){
+            console.log('ERROR in findBySIMid', err);
+        });          
+    }
 
 };

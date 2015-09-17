@@ -7,10 +7,8 @@ pheromon:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements
       - POSTGRES_PASSWORD=elements
-      # - BACKUP=backups/save.txt.gz
    volumes:
       - ./:/pheromon/
-      - /data/6element/backups:/pheromon/data/backups
 
 db:
    image: postgres:9.4
@@ -18,3 +16,5 @@ db:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
+   volumes:
+      - ./data:/var/lib/postgresql

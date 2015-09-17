@@ -47,7 +47,10 @@ function printMsg(msg, sim) {
 			}
 
 			resolve({decoded: decoded.toString(), type: type});
-		})
+		})    
+		.catch(function(err){
+	        	console.log('Error in printMsg ', err);
+	    });
 	});
 }
 

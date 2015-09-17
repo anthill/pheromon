@@ -22,8 +22,8 @@ var topLevelStore = {
     onChangePlace: updatePlaceInDb,
     onChangeSensor: updateSensorInDb,
     onCreatePlace: createPlaceInDb,
-    onRemovePlace: removePlaceFromDb,
-    onRemoveSensor: removeSensorFromDb,
+    onRemovePlace: deletePlaceFromDb,
+    onRemoveSensor: deleteSensorFromDb,
     onCreateSensor: createSensorInDb,
     sendCommand: sendCommand
 };
@@ -110,7 +110,7 @@ function createPlaceInDb(data) {
     });
 }
 
-function removePlaceFromDb(data) {
+function deletePlaceFromDb(data) {
 
     // Queries to uninstall ants from place
     var queryP = updateSensorInDb(data.ants);
@@ -118,33 +118,33 @@ function removePlaceFromDb(data) {
     queryP
     .then(function() {
         console.log("Ants uninstall successfull");
-        return serverAPI.removePlace({
+        return serverAPI.deletePlace({
             id: data.placeId
         });
     })
     .then(function() {
-        console.log('Place removed successfully');
+        console.log('Place deleted successfully');
         refreshView();
     })
     .catch(function(err){
-        console.log('Place didn\'t remove correctly', err);
+        console.log('Place didn\'t delete correctly', err);
         refreshView();
     });
 }
 
-function removeSensorFromDb(data) {
+function deleteSensorFromDb(data) {
 
     console.log('deleteSensor data', data);
 
-    serverAPI.removeSensor({
+    serverAPI.deleteSensor({
         id: data.sensorId
     })
     .then(function() {
-        console.log('Sensor removed successfully');
+        console.log('Sensor deleted successfully');
         refreshView();
     })
     .catch(function(err){
-        console.log('Sensor didn\'t remove correctly', err);
+        console.log('Sensor didn\'t delete correctly', err);
         refreshView();
     });
 }
