@@ -25,7 +25,7 @@ var source = require("vinyl-source-stream");
 
 function bundleShare(b, name) {
     b.bundle()
-        .pipe(source( join('.', 'clients', name+'-browserify-bundle.js') ) )
+        .pipe(source( join('.', 'api', 'clients', name+'-browserify-bundle.js') ) )
         .pipe(gulp.dest('.'))
         .on('error', function (err) {
             console.error('bundleShare error', err.message);

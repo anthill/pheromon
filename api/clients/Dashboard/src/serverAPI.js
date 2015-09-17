@@ -10,6 +10,6 @@ module.exports = {
         return sendReq('GET', '/place/' + id);
     },
     getAllSensors: function(){
-        return sendReq('GET', '/getAllSensors');
+        return sendReq('GET', '/sensor/getAll');
     }
 };

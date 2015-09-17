@@ -65,7 +65,7 @@ describe('Verify correct Database handling', function() {
                 api.createPlace(place)
                 .then(function(created){
 
-                    // assert.strictEqual('Place1', created.name);
+                    assert.strictEqual('Place1', created.name);
                     expect(44.840450 - parseFloat(created.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(created.lon)).to.be.below(0.0001);
                     done();
