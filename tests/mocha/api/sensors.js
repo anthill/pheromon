@@ -32,25 +32,29 @@ describe('Verify correct Database handling', function() {
 
         // it feels weird to have this before having it tested ...
         before('clearing Sensor table', function(ready){
-            console.log('clearing sensors');
-            api.removeAllSensors()
+            api.deleteAllSensors()
             .then(function(){
                 ready();
+            })
+            .catch(function(error){
+                console.log("clearing Sensor table :", error);
             });
         });
 
         // after each test, clear the table
         afterEach('clearing Sensor Table', function(ready){
-            console.log('clearing sensors');
-            api.removeAllSensors()
+            api.deleteAllSensors()
             .then(function(){
                 ready();
+            })
+            .catch(function(error){
+                console.log("clearing Sensor Table :", error);
             });
         });
 
         describe('Creation', function(){
 
-            it("/createSensor", function (done) {
+            it("/sensor/create", function (done) {
                 this.timeout(3000);
 
                 var sensor = {
@@ -59,8 +63,7 @@ describe('Verify correct Database handling', function() {
                 };
 
                 api.createSensor(sensor)
-                .then(function(result){
-                    var created = result;
+                .then(function(created){
 
                     assert.strictEqual('Sensor1', created.name);
                     assert.strictEqual(290, parseInt(created.sim));
@@ -68,7 +71,7 @@ describe('Verify correct Database handling', function() {
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in createSensor', err);
+                    console.log('err in /sensor/create', err);
                 });
 
             });
@@ -91,11 +94,11 @@ describe('Verify correct Database handling', function() {
                     ready();
                 })  
                 .catch(function(err){
-                    console.log('err in updateSensor before interface', err);
+                    console.log('err in update before sensor update', err);
                 });
             });
 
-            it("/updateSensor", function (done) {
+            it("/sensor/update", function (done) {
                 this.timeout(3000);
 
                 var delta = {
@@ -140,26 +143,26 @@ describe('Verify correct Database handling', function() {
                     ready();
                 })  
                 .catch(function(err){
-                    console.log('err in SensorDeletion before interface', err);
+                    console.log('err in sensor creation before delete sensor', err);
                 });
             });
 
-            it("/removeSensor", function (done) {
+            it("/sensor/delete", function (done) {
                 this.timeout(3000);
 
-                var removeData = {
+                var deleteData = {
                     id: id
                 };
 
-                api.removeSensor(removeData.id)
-                .then(function(removed){
-                    assert.strictEqual('Sensor1', removed.name);
-                    assert.strictEqual(290, parseInt(removed.sim));
+                api.deleteSensor(deleteData.id)
+                .then(function(deleted){
+                    assert.strictEqual('Sensor1', deleted.name);
+                    assert.strictEqual(290, parseInt(deleted.sim));
 
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in removeSensor', err);
+                    console.log('err in /sensor/delete', err);
                 });
 
             });
@@ -186,22 +189,22 @@ describe('Verify correct Database handling', function() {
                     ready();
                 })
                 .catch(function(err){
-                    console.log('err in removeAllSensors before interface', err);
+                    console.log('err in create sensors before delete all sensors', err);
                 });
                 
             });
 
-            it("/removeAllSensors", function (done) {
+            it("/sensor/deleteAll", function (done) {
                 this.timeout(3000);
 
-                api.removeAllSensors()
-                .then(function(removeds){
-                    assert.strictEqual(3, removeds.length);
+                api.deleteAllSensors()
+                .then(function(deleted){
+                    assert.strictEqual(3, deleted.length);
 
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in removeAllSensors', err);
+                    console.log('err in /sensor/deleteAll', err);
                 });
 
             });
@@ -225,12 +228,12 @@ describe('Verify correct Database handling', function() {
                     ready();
                 })
                 .catch(function(err){
-                    console.log('err in SensorDeleteAll before interface', err);
+                    console.log('err in createSensor before get sensor', err);
                 });
                 
             });
 
-            it("/getSensor", function (done) {
+            it("/sensor/get", function (done) {
                 this.timeout(3000);
 
                 api.getSensor(id)
@@ -241,7 +244,7 @@ describe('Verify correct Database handling', function() {
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in getSensor', err);
+                    console.log('err in sensor get', err);
                 });
 
             });
@@ -268,12 +271,12 @@ describe('Verify correct Database handling', function() {
                     ready();
                 })
                 .catch(function(err){
-                    console.log('err in getAllSensors before interface', err);
+                    console.log('err in create sensor before getAll sensors', err);
                 });
                 
             });
 
-            it("/getAllSensors", function (done) {
+            it("/sensor/getAll", function (done) {
                 this.timeout(3000);
 
                 api.getAllSensors()
@@ -283,7 +286,7 @@ describe('Verify correct Database handling', function() {
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in getAllSensors', err);
+                    console.log('err in /sensor/getAll', err);
                 });
 
             });

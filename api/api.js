@@ -130,7 +130,7 @@ app.get('/Dashboard-browserify-bundle.js', function(req, res){
 });
 
 
-routes(app);
+routes(app, debug);
 
 server.listen(PORT, function () {
     console.log('Server running on', [

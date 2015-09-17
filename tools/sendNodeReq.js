@@ -17,10 +17,9 @@ module.exports = function (method, url, data){
                 request.get({
                     url: url
                 }, function(error, response, body){
-                    if (!error && response.statusCode === 200)
+                    if (!error)
                         resolve(JSON.parse(body));
-                        
-                    else
+                    else 
                         reject(new Error('HTTP error ', error));
                 });
                 break;
@@ -31,12 +30,9 @@ module.exports = function (method, url, data){
                     headers: headers,
                     body: data
                 }, function(error, response, body){
-                    if (!error && response.statusCode === 200){
+                    if (!error)
                         resolve(JSON.parse(body));
-                    }
-                        
-                        
-                    else
+                    else 
                         reject(new Error('HTTP error ', error));
                 });
                 break;

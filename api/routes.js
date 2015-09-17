@@ -2,7 +2,9 @@
 
 var database = require('../database');
 
-module.exports = function(app){
+
+
+module.exports = function(app, debug){
 
 	// --------------> sensor
 	app.post('/sensor/create', function(req, res){    
@@ -61,7 +63,7 @@ module.exports = function(app){
 
 	app.post('/sensor/delete/:id', function(req, res){    
 	    var id = Number(req.params.id);
-	    console.log('removing sensor id', id);
+	    console.log('deleting sensor id', id);
 
 	    database.Sensors.delete(id)
 	    .then(function(data){
@@ -74,7 +76,7 @@ module.exports = function(app){
 	});
 
 	app.post('/sensor/deleteAll', function(req, res){    
-	    console.log('removing all sensors');
+	    console.log('deleting all sensors');
 
 	    database.Sensors.deleteAll()
 	    .then(function(data){
@@ -143,7 +145,7 @@ module.exports = function(app){
 
 	app.post('/place/delete/:id', function(req, res){    
 	    var id = Number(req.params.id);
-	    console.log('removing place id', id);
+	    console.log('deleting place id', id);
 
 	    database.Places.delete(id)
 	    .then(function(data){
@@ -156,7 +158,7 @@ module.exports = function(app){
 	});
 
 	app.post('/place/deleteAll', function(req, res){    
-	    console.log('removing all sensors');
+	    console.log('deleting all sensors');
 
 	    database.Places.deleteAll()
 	    .then(function(data){
