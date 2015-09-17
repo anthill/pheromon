@@ -5,6 +5,7 @@ require('es6-shim');
 var net = require('net');
 var expect = require('chai').expect;
 var assert = require('chai').assert;
+
 var request = require('request');
 
 var makeTcpReceiver = require('../../tools/makeTcpReceiver');
@@ -23,25 +24,26 @@ describe('Sensor initialization', function() {
 	// get host ip and clean db
 	before(function(ready){
 		boot2dockerIp()
-		.then(function(h){
-			host = h;
-		})
-		.catch(function(error){
-			console.log("Error determining the host");
-		})
-		.then(function(){
+            .then(function(h){
+                host = h;
+            })
+            .catch(function(error){
+                console.error("Error determining the host");
+                throw error; // forward the error
+            })
+            .then(function(){
 
-	        request.post({
-	            url: 'http://' + host + ':4000/removeAllSensors',
-	            headers: {
-	                'Content-Type': 'application/json'
-	            }
-	        }, function(err, result, body){
-	            if (!err) {
-	                ready();
-	            }
-	        });
-	    })
+                request.post({
+                    url: 'http://' + host + ':4000/removeAllSensors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }, function(err, result, body){
+                    if (!err) {
+                        ready();
+                    }
+                });
+            })
 	});
 
 	// simulate sensor
