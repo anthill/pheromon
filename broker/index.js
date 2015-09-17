@@ -322,7 +322,8 @@ function handleData(dat, socket, sim) {
                 Promise.all(msgDatas.map(function(msgData){
                     var messageContent = {
                         'sensor_id': data.sensor.id,
-                        'signal_strengths': msgData.signal_strengths,
+                        'type': 'wifi', // hardcoded for now
+                        'measurements': msgData.signal_strengths,
                         'measurement_date': msgData.date
                     };
                     var socketMessage = Object.assign({}, messageContent);

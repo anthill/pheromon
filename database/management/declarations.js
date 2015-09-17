@@ -8,7 +8,8 @@ exports.affluence_sensor_measurements = sql.define({
 		{ name: 'updated_at' },
 		{ name: 'id' },
 		{ name: 'sensor_id' },
-		{ name: 'signal_strengths' },
+		{ name: 'type' },
+		{ name: 'measurements' },
 		{ name: 'measurement_date' }
 	]
 });
@@ -45,6 +46,7 @@ exports.sensors = sql.define({
 		{ name: 'id' },
 		{ name: 'name' },
 		{ name: 'installed_at' },
+		{ name: 'project' },
 		{ name: 'sim' },
 		{ name: 'quipu_status' },
 		{ name: 'sense_status' },
