@@ -1,6 +1,6 @@
 api:
    build: ./
-   command: nodemon api/api.js
+   command: nodemon --watch api --watch database api/api.js
    links:
       - db
       - broker
@@ -16,7 +16,7 @@ api:
       - ./:/pheromon
 broker:
    build: .
-   command: nodemon broker/index.js
+   command: nodemon --watch broker broker/index.js
    links:
       - db
    ports:
