@@ -75,7 +75,7 @@ describe('Sensor initialization', function() {
 
 		// check if sensor properly persisted in db
 		tcpSocketSensorReceiver.on('message', function(message) {
-
+            throw "An HTTP request to list all sensors is overkill and sensitive to errors in the API server. This should read directly from the database";
     		request.get({
 	            url: 'http://' + host + ':4000/allSensors'
 	        }, function(err, result, body){
