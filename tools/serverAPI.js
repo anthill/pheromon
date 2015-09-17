@@ -5,24 +5,43 @@ var sendReq = require('../tools/sendReq.js');
 module.exports = {
 
     createSensor: function(data){
-        return sendReq('POST', '/createSensor', data);
+        return sendReq('POST', '/sensor/create', data);
     },
     updateSensor: function(data){
-        return sendReq('POST', '/updateSensor', data);
+        return sendReq('POST', '/sensor/update', data);
     },
-    removeSensor: function(id){
-        return sendReq('POST', '/removeSensor/' + id);
+    deleteSensor: function(id){
+        return sendReq('POST', '/sensor/delete' + id);
     },
-    removeAllSensors: function(){
-        return sendReq('POST', '/removeAllSensors');
+    deleteAllSensors: function(){
+        return sendReq('POST', '/sensor/deleteAll');
     },
     getSensor: function(id){
-        return sendReq('POST', '/getSensor/' + id);
+        return sendReq('POST', '/sensor/get' + id);
     },
     getAllSensors: function(){
-        return sendReq('POST', '/getAllSensors');
+        return sendReq('POST', '/sensor/getAll');
     }
 
+
+    createPlace: function(data){
+        return sendReq('POST', '/place/create', data);
+    },
+    updatePlace: function(data){
+        return sendReq('POST', '/place/update', data);
+    },
+    deletePlace: function(id){
+        return sendReq('POST', '/place/delete' + id);
+    },
+    deleteAllPlaces: function(){
+        return sendReq('POST', '/place/deleteAll');
+    },
+    getPlace: function(id){
+        return sendReq('POST', '/place/get' + id);
+    },
+    getAllPlaces: function(){
+        return sendReq('POST', '/place/getAll');
+    }
 
 /*
     getLiveAffluence: function(){
@@ -36,16 +55,6 @@ module.exports = {
     },
     getAllSensors: function(){
         return sendReq('GET', '/allSensors');
-    },
-    updatePlace: function(data){
-        return sendReq('POST', '/updatePlace', data);
-    },
-    
-    createPlace: function(data){
-        return sendReq('POST', '/createPlace', data);
-    },
-    removePlace: function(data){
-        return sendReq('POST', '/removePlace', data);
-    }  
+    }
 */  
 };

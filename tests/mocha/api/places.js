@@ -28,50 +28,50 @@ describe('Verify correct Database handling', function() {
         });     
     });
 
-    describe('Sensor Table ', function () {
+    describe('Place Table ', function () {
 
-        // it feels weird to have this before having it tested ...
-        before('clearing Sensor table', function(ready){
-            api.deleteAllSensors()
+        before('clearing Place table', function(ready){
+            api.deleteAllPlaces()
             .then(function(){
                 ready();
             })
             .catch(function(error){
-                console.log("clearing Sensor table :", error);
+                console.log("clearing Place table :", error);
             });
         });
 
         // after each test, clear the table
-        afterEach('clearing Sensor Table', function(ready){
-            api.deleteAllSensors()
+        afterEach('clearing Place Table', function(ready){
+            api.deleteAllPlaces()
             .then(function(){
                 ready();
             })
             .catch(function(error){
-                console.log("clearing Sensor Table :", error);
+                console.log("clearing Place Table :", error);
             });
         });
 
         describe('Creation', function(){
 
-            it("/sensor/create", function (done) {
+            it("/place/create", function (done) {
                 this.timeout(3000);
 
-                var sensor = {
-                    name: 'Sensor1',
-                    sim: 290
+                var place = {
+                    name: 'Place1',
+                    lat: 44.840450,
+                    lon: -0.570468
                 };
 
-                api.createSensor(sensor)
+                api.createPlace(place)
                 .then(function(created){
 
-                    assert.strictEqual('Sensor1', created.name);
-                    assert.strictEqual(290, parseInt(created.sim));
-
+                    assert.strictEqual('Place1', created.name);
+                    expect(44.840450 - parseFloat(created.lat)).to.be.below(0.0001);
+                    expect(-0.570468 - parseFloat(created.lon)).to.be.below(0.0001);
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in /sensor/create', err);
+                    console.log('err in createPlace', err);
                 });
 
             });
@@ -80,30 +80,32 @@ describe('Verify correct Database handling', function() {
         describe('Update', function(){
             var id;
 
-            before('Creating sensor to be updated', function(ready){
+            before('Creating place to be updated', function(ready){
                 this.timeout(3000);
 
-                var sensor = {
-                    name: 'Sensor1',
-                    sim: 290
+                var place = {
+                    name: 'Place1',
+                    lat: 44.840450,
+                    lon: -0.570468
                 };
 
-                api.createSensor(sensor)
+                api.createPlace(place)
                 .then(function(result){
                     id = result.id;
                     ready();
                 })  
                 .catch(function(err){
-                    console.log('err in update before sensor update', err);
+                    console.log('err in createPlace before place update', err);
                 });
             });
 
-            it("/sensor/update", function (done) {
+            it("/update/place", function (done) {
                 this.timeout(3000);
 
                 var delta = {
-                    name: 'Pikachu',
-                    sim: 300
+                    name: 'Place2',
+                    lat: 44.940450,
+                    lon: -0.500468
                 };
 
                 var updateData = {
@@ -111,15 +113,16 @@ describe('Verify correct Database handling', function() {
                     delta: delta
                 };
 
-                api.updateSensor(updateData)
+                api.updatePlace(updateData)
                 .then(function(updated){
-                    assert.strictEqual('Pikachu', updated.name);
-                    assert.strictEqual(300, parseInt(updated.sim));
+                    assert.strictEqual('Place2', updated.name);
+                    expect(44.940450 - parseFloat(updated.lat)).to.be.below(0.0001);
+                    expect(-0.500468 - parseFloat(updated.lon)).to.be.below(0.0001);
 
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in updateSensor', err);
+                    console.log('err in updatePlace', err);
                 });
 
             });
@@ -129,59 +132,61 @@ describe('Verify correct Database handling', function() {
         describe('Deletion', function(){
             var id;
 
-            before('Creating sensor to be deleted', function(ready){
+            before('Creating place to be deleted', function(ready){
                 this.timeout(3000);
 
-                var sensor = {
-                    name: 'Sensor1',
-                    sim: 290
+                var place = {
+                    name: 'Place1',
+                    lat: 44.840450,
+                    lon: -0.570468
                 };
 
-                api.createSensor(sensor)
+                api.createPlace(place)
                 .then(function(result){
                     id = result.id;
                     ready();
                 })  
                 .catch(function(err){
-                    console.log('err in sensor creation before delete sensor', err);
+                    console.log('err in place creation before deletion', err);
                 });
             });
 
-            it("/sensor/delete", function (done) {
+            it("/place/delete", function (done) {
                 this.timeout(3000);
 
                 var deleteData = {
                     id: id
                 };
 
-                api.deleteSensor(deleteData.id)
+                api.deletePlace(deleteData.id)
                 .then(function(deleted){
-                    assert.strictEqual('Sensor1', deleted.name);
-                    assert.strictEqual(290, parseInt(deleted.sim));
-
+                    assert.strictEqual('Place1', deleted.name);
+                    expect(44.840450 - parseFloat(deleted.lat)).to.be.below(0.0001);
+                    expect(-0.570468 - parseFloat(deleted.lon)).to.be.below(0.0001);
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in /sensor/delete', err);
+                    console.log('err in delete place', err);
                 });
 
             });
 
         });
 
-        describe('Delete All Sensors', function(){
+        describe('Delete All Places', function(){
 
-            before('Creating sensors to be deleted', function(ready){
+            before('Creating places to be deleted', function(ready){
                 this.timeout(3000);
 
                 var creationPs = [0, 1, 2].map(function(item){
 
-                    var sensor = {
-                        name: 'Sensor' + item,
-                        sim: item * 10
+                    var place = {
+                        name: 'Place' + item,
+                        lat: Math.random(),
+                        lon: Math.random()
                     };
 
-                    return api.createSensor(sensor);
+                    return api.createPlace(place);
                 });
 
                 Promise.all(creationPs)
@@ -189,81 +194,84 @@ describe('Verify correct Database handling', function() {
                     ready();
                 })
                 .catch(function(err){
-                    console.log('err in create sensors before delete all sensors', err);
+                    console.log('err in createPlace place before delete all', err);
                 });
                 
             });
 
-            it("/sensor/deleteAll", function (done) {
+            it("/place/deleteAll", function (done) {
                 this.timeout(3000);
 
-                api.deleteAllSensors()
+                api.deleteAllPlaces()
                 .then(function(deleted){
                     assert.strictEqual(3, deleted.length);
 
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in /sensor/deleteAll', err);
+                    console.log('err in deleteAllPlaces', err);
                 });
 
             });
 
         });
 
-        describe('Get Sensor', function(){
+        describe('Get Place', function(){
             var id;
 
-            before('Creating sensor', function(ready){
+            before('Creating place', function(ready){
                 this.timeout(3000);
 
-                var sensor = {
-                    name: 'Sensor1',
-                    sim: 290
+                var place = {
+                    name: 'Place1',
+                    lat: 44.840450,
+                    lon: -0.570468
                 };
 
-                api.createSensor(sensor)
+                api.createPlace(place)
                 .then(function(result){
                     id = result.id;
                     ready();
                 })
                 .catch(function(err){
-                    console.log('err in createSensor before get sensor', err);
+                    console.log('err in createPlace before get', err);
                 });
                 
             });
 
-            it("/sensor/get", function (done) {
+            it("/place/get", function (done) {
                 this.timeout(3000);
 
-                api.getSensor(id)
+                api.getPlace(id)
                 .then(function(fetched){
-                    assert.strictEqual('Sensor1', fetched.name);
-                    assert.strictEqual(290, parseInt(fetched.sim));
+                    assert.strictEqual('Place1', fetched.name);
+                    expect(44.840450 - parseFloat(fetched.lat)).to.be.below(0.0001);
+                    expect(-0.570468 - parseFloat(fetched.lon)).to.be.below(0.0001);
 
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in sensor get', err);
+                    console.log('err in getPlace', err);
                 });
 
             });
 
         });
 
-        describe('Get All Sensors', function(){
+        describe('Get All Places', function(){
 
-            before('Creating sensors', function(ready){
+            before('Creating places', function(ready){
                 this.timeout(3000);
 
                 var creationPs = [0, 1, 2, 3].map(function(item){
 
-                    var sensor = {
-                        name: 'Sensor' + item,
-                        sim: item * 10
+                    var place = {
+                        name: 'Place' + item,
+                        lat: Math.random(),
+                        lon: Math.random()
                     };
 
-                    return api.createSensor(sensor);
+                    return api.createPlace(place);
                 });
 
                 Promise.all(creationPs)
@@ -271,22 +279,22 @@ describe('Verify correct Database handling', function() {
                     ready();
                 })
                 .catch(function(err){
-                    console.log('err in create sensor before getAll sensors', err);
+                    console.log('err in createPlace before get all palces', err);
                 });
                 
             });
 
-            it("/sensor/getAll", function (done) {
+            it("/place/getAll", function (done) {
                 this.timeout(3000);
 
-                api.getAllSensors()
+                api.getAllPlaces()
                 .then(function(fetcheds){
                     assert.strictEqual(4, fetcheds.length);
 
                     done();
                 })  
                 .catch(function(err){
-                    console.log('err in /sensor/getAll', err);
+                    console.log('err in getAllPlaces', err);
                 });
 
             });

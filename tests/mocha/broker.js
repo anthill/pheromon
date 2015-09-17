@@ -63,7 +63,7 @@ describe('Sensor initialization', function() {
 		tcpSocketSensorReceiver.on('message', function(message) {
 
     		request.get({
-	            url: 'http://' + host + ':4000/getAllSensors'
+	            url: 'http://' + host + ':4000/sensor/getAll'
 	        }, function(err, result, body){
 	            if (!err) {
 	            	var sensor = JSON.parse(body)[0];

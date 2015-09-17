@@ -1,6 +1,6 @@
 api:
    build: ./
-   command: nodemon api/api.js
+   command: nodemon --watch api --watch database api/api.js
    links:
       - db
       - broker
@@ -8,7 +8,6 @@ api:
       - "4000:4000"
    environment:
       - VIRTUAL_PORT=4000
-      - INTERNAL_PORT=55555
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
@@ -17,14 +16,13 @@ api:
       - ./:/pheromon
 broker:
    build: .
-   command: nodemon broker/index.js
+   command: nodemon --watch broker broker/index.js
    links:
       - db
    ports:
       - "5100:5100"
    environment:
       - VIRTUAL_PORT=5100
-      - INTERNAL_PORT=55555
       - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:
@@ -33,3 +31,5 @@ db:
    image: postgres:9.4
    environment:
       - POSTGRES_PASSWORD=elements
+   volumes:
+      - ./data:/var/lib/postgresql

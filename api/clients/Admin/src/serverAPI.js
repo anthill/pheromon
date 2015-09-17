@@ -13,24 +13,24 @@ module.exports = {
         return sendReq('GET', '/allPlacesInfos');
     },
     getAllSensors: function(){
-        return sendReq('GET', '/getAllSensors');
+        return sendReq('GET', '/sensor/getAll');
     },
     updatePlace: function(data){
-        return sendReq('POST', '/updatePlace', data);
+        return sendReq('POST', '/place/update', data);
     },
     updateSensor: function(data){
-        return sendReq('POST', '/updateSensor', data);
+        return sendReq('POST', '/sensor/update', data);
     },
     createPlace: function(data){
-        return sendReq('POST', '/createPlace', data);
+        return sendReq('POST', '/place/create', data);
     },
-    removePlace: function(data){
-        return sendReq('POST', '/removePlace', data);
+    deletePlace: function(data){
+        return sendReq('POST', '/place/delete', data);
     },
-    removeSensor: function(data){
-        return sendReq('POST', '/removeSensor', data);
+    deleteSensor: function(data){
+        return sendReq('POST', '/sensor/delete', data);
     },
     createSensor: function(data){
-        return sendReq('POST', '/createSensor', data);
+        return sendReq('POST', '/sensor/create', data);
     }
 };
