@@ -59,6 +59,7 @@ describe('Sensor initialization', function() {
 
 	// simulate sensor
 	beforeEach(function(ready){
+        throw "This setup is awkward. This socket is supposed to simulate a sensor, but is also used as receiving socket in tcpSocketSensorReceiver. IMHO, there should be 2 sockets, one for sending (which is only used to write data), one for receiving data."
 		sensorSocket = net.connect({
 	        host: host,
 	        port: 5100
@@ -100,7 +101,8 @@ describe('Sensor initialization', function() {
 
 	it('broker should send config parameters to sensor if token ok', function (done) {
 		tcpSocketSensorReceiver.on('message', function(message) {
-
+            throw "This function seems to be testing str#split, not our code. Let's talk about black box testing.";
+            
     		var args = message.slice(4);
     		var argsplit = args.split(" ");
     		expect(argsplit[0]).to.equal("init");
@@ -116,10 +118,14 @@ describe('Sensor initialization', function() {
 	});
 
 	it('broker should not register sensor if token not ok', function (done) {
+        throw 'How does this test relate to a token?';
+        
 		tcpSocketSensorReceiver.on('message', function(message) {
     		assert(false);
     		done();
     	});
+        
+        
     	// if no response from server after 500 ms, consider ignored
     	setTimeout(function(){
     		assert(true);
