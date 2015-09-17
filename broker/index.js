@@ -292,26 +292,23 @@ function handleData(dat, socket, sim) {
                         case 'changestarttime' :
                             if (msgStatus.info.result === 'KO') {
                                 reject('KO');
-                                return 'KO';
                             }
                             database.Sensors.update(data.sensor.id, {start_time: parseInt(msgStatus.info.result)})
-                            .then(resolve());
+                            .then(resolve);
                             break;
                         case 'changestoptime' :
                             if (msgStatus.info.result === 'KO') {
                                 reject('KO');
-                                return 'KO';
                             }
                             database.Sensors.update(data.sensor.id, {stop_time: parseInt(msgStatus.info.result)})
-                            .then(resolve());
+                            .then(resolve);
                             break;
                         case 'changeperiod' :
                             if (msgStatus.info.result === 'KO') {
                                 reject('KO');
-                                return 'KO';
                             }
                             database.Sensors.update(data.sensor.id, {data_period: parseInt(msgStatus.info.result)})
-                            .then(resolve());
+                            .then(resolve);
                             break;
                         default:
                             reject(null)
@@ -357,7 +354,8 @@ function handleData(dat, socket, sim) {
                 Promise.all(msgDatas.map(function(msgData){
                     var messageContent = {
                         'sensor_id': data.sensor.id,
-                        'signal_strengths': msgData.signal_strengths,
+                        'type': 'wifi', // hardcoded for now
+                        'measurements': msgData.signal_strengths,
                         'measurement_date': msgData.date
                     };
                     var socketMessage = Object.assign({}, messageContent);

@@ -68,10 +68,10 @@ socket.on('data', function (results) {
 
     results.forEach(function(result){
         // GET DATA
-        var id = result.measurement.installed_at;
+        var id = result.entry.installed_at;
 
-        var value = result.measurement.signal_strengths.length;
-        var date = result.measurement.measurement_date;
+        var value = result.entry.measurements.length;
+        var date = result.entry.measurement_date;
 
         // console.log('results', value);
         
