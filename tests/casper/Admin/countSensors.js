@@ -9,6 +9,7 @@ casper.test.begin('Count tests', 1, function suite(test) {
     casper.waitForSelector('.ant',
     	function success () { // once a recyclingCenter has been rendered
 	    	console.log("Counting ants");
+            throw "12 or 13?"
 	    	test.assertElementCount('.ant', 13, "there are 12 ants with both place and sensor initially");
 	        // test.done();
     	},
