@@ -257,26 +257,23 @@ function handleData(dat, socket, sim) {
                         case 'changestarttime' :
                             if (msgStatus.info.result === 'KO') {
                                 reject('KO');
-                                return 'KO';
                             }
                             database.Sensors.update(data.sensor.id, {start_time: parseInt(msgStatus.info.result)})
-                            .then(resolve());
+                            .then(resolve);
                             break;
                         case 'changestoptime' :
                             if (msgStatus.info.result === 'KO') {
                                 reject('KO');
-                                return 'KO';
                             }
                             database.Sensors.update(data.sensor.id, {stop_time: parseInt(msgStatus.info.result)})
-                            .then(resolve());
+                            .then(resolve);
                             break;
                         case 'changeperiod' :
                             if (msgStatus.info.result === 'KO') {
                                 reject('KO');
-                                return 'KO';
                             }
                             database.Sensors.update(data.sensor.id, {data_period: parseInt(msgStatus.info.result)})
-                            .then(resolve());
+                            .then(resolve);
                             break;
                         default:
                             reject(null)

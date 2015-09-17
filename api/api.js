@@ -113,13 +113,12 @@ app.use("/_common", express.static(path.join(__dirname, './clients/_common')));
 
 
 app.get('/', function(req, res){
-    res.sendFile(path.join(__dirname, './clients/Dashboard/index.html'));
+    res.redirect('/Dashboard');
 });
 
-app.get('/Admin', function(req, res){
+app.get('/Admin', function(req, res){ // maybe not necessary
     res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
 });
-
 
 app.get('/Admin-browserify-bundle.js', function(req, res){
     res.sendFile(path.join(__dirname, './clients/Admin-browserify-bundle.js'));

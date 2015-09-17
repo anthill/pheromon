@@ -7,22 +7,21 @@ require('es6-shim');
 
 function getDataType(data) {
 	if (data.toString().match(/^net(NODATA|GPRS|EDGE|3G|H\/H+)$/))
-		return 'network'
+		return 'network';
 	else if (data.toString().match("init *"))
-		return 'request'
+		return 'request';
 	else if (data.toString().slice(0, 1) === '0')
-		return 'message'
+		return 'message';
 	else if (data.toString().slice(0, 1) === '1')
-		return 'data'
+		return 'data';
 	else if (data.toString().slice(0, 1) === '2')
-		return 'status'
+		return 'status';
 	else
-		return 'other'
+		return 'other';
 }
 
 function printMsg(msg, sim) {
-	return new Promise(function(resolve) {
-		decode(msg)
+	return decode(msg)
 		.then(function(decoded) {
 			var type = getDataType(msg);
 			switch (type) {
@@ -46,10 +45,11 @@ function printMsg(msg, sim) {
 					break;
 			}
 
-			resolve({decoded: decoded.toString(), type: type});
+			return {decoded: decoded.toString(), type: type};
 		})    
 		.catch(function(err){
-	        	console.log('Error in printMsg ', err);
+	        console.log('Error in printMsg ', err);
+	        throw err;
 	    });
 	});
 }
@@ -57,40 +57,37 @@ function printMsg(msg, sim) {
 // Decode any message received by SMS or TCP
 function decode(message) {
 
-	return new Promise(function(resolve){
+	switch (message[0]) {
+		case '0': // message : not encoded
+			return Promise.resolve(message.slice(1));
+			break;
 
-		switch (message[0]) {
-			case '0': // message : not encoded
-				resolve(message.slice(1));
-				break;
+		case '1': // data : 6sense_encoded
+			return sixSenseDecoder(message.slice(1).toString())
+				.then(function(decodedMessage){
+					return(JSON.stringify(decodedMessage));
+				})
+				.catch(function(err){
+					console.log("error in case 1 ", err);
+					throw err;
+				})
+			break;
 
-			case '1': // data : 6sense_encoded
-				sixSenseDecoder(message.slice(1).toString())
-					.then(function(decodedMessage){
-						resolve(JSON.stringify(decodedMessage));
-					})
-					.catch(function(err){
-						console.log("error in case 1 ", err);
-					})
-				break;
-
-			case '2': // status : generic_encoded
-				genericCodec.decode(message.slice(1).toString())
-					.then(function(decodedMessage){
-						resolve(JSON.stringify(decodedMessage));
-					})
-					.catch(function(err){
-						console.log("error in case 2 ", err);
-					})
-				break;
-				
-			default :
-				resolve(message); // not a message, data or status (can be a network, sim, etc...)
-				break;
-		}
-
-	})
-	
+		case '2': // status : generic_encoded
+			return genericCodec.decode(message.slice(1).toString())
+				.then(function(decodedMessage){
+					return(JSON.stringify(decodedMessage));
+				})
+				.catch(function(err){
+					console.log("error in case 2 ", err);
+					throw err;
+				})
+			break;
+			
+		default :
+			return Promise.resolve(message); // not a message, data or status (can be a network, sim, etc...)
+			break;
+	}
 }
 
 module.exports = {printMsg: printMsg, decode: decode, getDataType: getDataType};
