@@ -53,7 +53,7 @@ describe('Verify correct Database handling', function() {
         describe('Creation', function(){
 
             it("/place/create", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var place = {
                     name: 'Place1',
@@ -64,7 +64,7 @@ describe('Verify correct Database handling', function() {
                 api.createPlace(place)
                 .then(function(created){
 
-                    expect(created.name).to.be.strictEqual('Place1');
+                    expect(created.name).to.deep.equal('Place1');
                     expect(44.840450 - parseFloat(created.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(created.lon)).to.be.below(0.0001);
                     done();
@@ -80,7 +80,7 @@ describe('Verify correct Database handling', function() {
             var id;
 
             before('Creating place to be updated', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var place = {
                     name: 'Place1',
@@ -99,7 +99,7 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/update/place", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var delta = {
                     name: 'Place2',
@@ -114,7 +114,7 @@ describe('Verify correct Database handling', function() {
 
                 api.updatePlace(updateData)
                 .then(function(updated){
-                    expect(updated.name).to.be.strictEqual('Place2');
+                    expect(updated.name).to.deep.equal('Place2');
                     expect(44.940450 - parseFloat(updated.lat)).to.be.below(0.0001);
                     expect(-0.500468 - parseFloat(updated.lon)).to.be.below(0.0001);
 
@@ -132,7 +132,7 @@ describe('Verify correct Database handling', function() {
             var id;
 
             before('Creating place to be deleted', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var place = {
                     name: 'Place1',
@@ -151,7 +151,7 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/place/delete", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var deleteData = {
                     id: id
@@ -159,7 +159,7 @@ describe('Verify correct Database handling', function() {
 
                 api.deletePlace(deleteData.id)
                 .then(function(deleted){
-                    expect(deleted.name).to.be.strictEqual('Place1');
+                    expect(deleted.name).to.deep.equal('Place1');
                     expect(44.840450 - parseFloat(deleted.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(deleted.lon)).to.be.below(0.0001);
                     done();
@@ -175,7 +175,7 @@ describe('Verify correct Database handling', function() {
         describe('Delete All Places', function(){
 
             before('Creating places to be deleted', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var creationPs = [0, 1, 2].map(function(item){
 
@@ -199,11 +199,11 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/place/deleteAll", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 api.deleteAllPlaces()
                 .then(function(deleted){
-                    expect(deleted.length).to.be.strictEqual(3);
+                    expect(deleted.length).to.deep.equal(3);
 
                     done();
                 })  
@@ -219,7 +219,7 @@ describe('Verify correct Database handling', function() {
             var id;
 
             before('Creating place', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var place = {
                     name: 'Place1',
@@ -239,11 +239,11 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/place/get", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 api.getPlace(id)
                 .then(function(fetched){
-                    expect(fetched.name).to.be.strictEqual('Place1');
+                    expect(fetched.name).to.deep.equal('Place1');
                     expect(44.840450 - parseFloat(fetched.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(fetched.lon)).to.be.below(0.0001);
 
@@ -260,7 +260,7 @@ describe('Verify correct Database handling', function() {
         describe('Get All Places', function(){
 
             before('Creating places', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var creationPs = [0, 1, 2, 3].map(function(item){
 
@@ -284,11 +284,11 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/place/getAll", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 api.getAllPlaces()
                 .then(function(fetcheds){
-                    expect(fetcheds.length).to.be.strictEqual(4);
+                    expect(fetcheds.length).to.deep.equal(4);
 
                     done();
                 })  
