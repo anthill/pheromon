@@ -4,23 +4,25 @@ require('es6-shim');
 require('better-log').install();
 
 var path = require('path');
+var fs = require('fs');
+var net = require('net');
+var spawn = require('child_process').spawn;
+var zlib = require('zlib');
+
 var express = require('express');
 var app = express();
 var http = require('http');
 var compression = require('compression');
 var bodyParser = require('body-parser');
-var net = require('net');
-var makeTcpReceiver = require('../tools/makeTcpReceiver');
-var spawn = require('child_process').spawn;
-var tcpSocketEndpoint;
-
-var fs = require('fs');
-var database = require('../database');
 var schedule = require('node-schedule');
-var zlib = require('zlib');
+
+var makeTcpReceiver = require('../tools/makeTcpReceiver');
+var routes = require('./routes.js');
+
 
 var PORT = 4000;
 var DEBUG = process.env.NODE_ENV === "development" ? true : false;
+var tcpSocketEndpoint;
 
 var server = new http.Server(app);
 
@@ -128,177 +130,7 @@ app.get('/Dashboard-browserify-bundle.js', function(req, res){
 });
 
 
-// app.get('/', function(req, res){
-//     if(req.query.s === secret || DEBUG)
-//         res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
-//     else
-//         res.status(403).sendFile(path.join(__dirname, './clients/Admin/403.html'));
-// });
-
-
-app.get('/live-affluence', function(req, res){
-    database.complexQueries.currentPlaceAffluences()
-        .then(function(data){
-            res.send(data);
-        })
-        .catch(function(error){
-            console.log("error in /live-affluence: ", error);
-        });
-    
-});
-
-app.get('/place/:id', function(req, res){
-    var id = Number(req.params.id);
-    console.log('requesting place id', id);
-    
-    database.complexQueries.getPlaceMeasurements(id)
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /place/'+req.params.id: ", error);
-    });
-});
-
-app.get('/allPlacesInfos', function(req, res){
-    database.complexQueries.getAllPlacesInfos()
-    .then(function(data){
-        // debug('All places infos', data);
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /allPlacesInfos: ", error);
-    });
-});
-
-app.get('/allPlaces', function(req, res){
-    database.Places.getAllPlaces()
-    .then(function(data){
-        // debug('All sensors', data);
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /sensors: ", error);
-    });
-});
-
-app.post('/updatePlace', function(req, res){
-    var id = Number(req.body.id);
-
-    database.Places.update(id, req.body.delta)
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        res.status(500).send('Couldn\'t update Places database');
-        console.log("error in /updatePlace/'+req.params.id: ", error);
-    });
-});
-
-app.post('/createPlace', function(req, res){    
-    console.log('creating place', req.body);
-
-    database.Places.create(req.body)
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        res.status(500).send('Couldn\'t create Place in database');
-        console.log("error in /createPlace/'+req.params.id: ", error);
-    });
-});
-
-app.post('/removePlace', function(req, res){    
-    console.log('remove place', req.body.id);
-
-    database.Places.delete(req.body.id)
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        res.status(500).send('Couldn\'t delete Place from database');
-        console.log("error in /deletePlace/'+req.params.id: ", error);
-    });
-});
-
-app.post('/createSensor', function(req, res){    
-    console.log('creating sensor', req.body);
-
-    database.Sensors.create(req.body)
-    .then(function(data){
-        debug('Sensor created', data);
-        res.send(data);
-    })
-    .catch(function(error){
-        res.status(500).send('Couldn\'t create Sensor in database');
-        console.log("error in /createSensor/'+req.params.id: ", error);
-    });
-});
-
-app.post('/updateSensor', function(req, res){
-    var id = Number(req.body.id);
-
-    database.Sensors.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        res.status(500).send('Couldn\'t update Sensors database');
-        console.log("error in /updateSensors/'+req.params.id: ", error);
-    });
-});
-
-app.post('/removeSensor/:id', function(req, res){    
-    var id = Number(req.params.id);
-    console.log('removing sensor id', id);
-
-    database.Sensors.delete(id)
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        res.status(500).send('Couldn\'t delete Sensor from database');
-        console.log("error in /deleteSensor/'+req.params.id: ", error);
-    });
-});
-
-app.post('/removeAllSensors', function(req, res){    
-    console.log('removing all sensors');
-
-    database.Sensors.deleteAll()
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        res.status(500).send('Couldn\'t delete all Sensors from database');
-        console.log("error in /deleteAllSensors/", error);
-    });
-});
-
-app.get('/getSensor/:id', function(req, res){
-    var id = Number(req.params.id);
-    console.log('requesting sensor id', id);
-
-    database.Sensors.get(id)
-    .then(function(data){
-        // debug('All sensors', data);
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /sensors: ", error);
-    });
-});
-
-app.get('/getAllSensors', function(req, res){
-    database.Sensors.getAll()
-    .then(function(data){
-        // debug('All sensors', data);
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /sensors: ", error);
-    });
-});
+routes(app);
 
 server.listen(PORT, function () {
     console.log('Server running on', [
