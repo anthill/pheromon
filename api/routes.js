@@ -92,7 +92,7 @@ module.exports = function(app, debug){
 	app.post('/place/create', function(req, res){    
 	    console.log('creating place', req.body);
 
-	    database.Sensors.create(req.body)
+	    database.Places.create(req.body)
 	    .then(function(data){
 	        debug('Place created', data);
 	        res.status(201).send(data);

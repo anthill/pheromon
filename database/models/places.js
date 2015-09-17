@@ -12,7 +12,7 @@ module.exports = {
             
             var query = places
                 .insert(data)
-                .returning('id')
+                .returning('*')
                 .toQuery();
 
             //console.log('places create query', query);
