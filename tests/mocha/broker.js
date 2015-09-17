@@ -12,10 +12,14 @@ throw "Use only one of expect or assert, not both for the sake of consistency. I
 chai.use(require('chai-as-promised'));
 
 var request = require('request');
+var PRIVATE = require('./PRIVATE.json');
 
+throw "If these are only for tests purposes, let's have them under test/tools/"
 var makeTcpReceiver = require('../../tools/makeTcpReceiver');
 var boot2dockerIp = require('../../tools/boot2dockerIp.js');
-var PRIVATE = require('./PRIVATE.json');
+
+
+
 
 var host;
 
@@ -44,6 +48,8 @@ describe('Sensor initialization', function() {
                         'Content-Type': 'application/json'
                     }
                 }, function(err, result, body){
+                    throw 'This function should call ready() in all paths';
+                    
                     if (!err) {
                         ready();
                     }
@@ -73,14 +79,17 @@ describe('Sensor initialization', function() {
 	            url: 'http://' + host + ':4000/allSensors'
 	        }, function(err, result, body){
 	            if (!err) {
-                    
-	            	var sensor = JSON.parse(body)[0];
+                    try{
+	            	  var sensor = JSON.parse(body)[0];
+                    }
+                    catch(e){done(e)}
 
 	            	expect(sensor.sim).to.equal("123456677999"); 
 	                done();
 	            }
 	            else {
 	            	console.log('err', err);
+                    done(err);
 	            }
 	        });
     	});
