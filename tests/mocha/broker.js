@@ -7,14 +7,12 @@ var chai = require('chai');
 
 var expect = chai.expect;
 var assert = chai.assert;
-throw "Use only one of expect or assert, not both for the sake of consistency. I (David) have a preference for assert, but won't fight too hard over it.";
 
-chai.use(require('chai-as-promised'));
+// chai.use(require('chai-as-promised'));
 
 var request = require('request');
 var PRIVATE = require('./PRIVATE.json');
 
-throw "If these are only for tests purposes, let's have them under test/tools/"
 var makeTcpReceiver = require('../../tools/makeTcpReceiver');
 var boot2dockerIp = require('../../tools/boot2dockerIp.js');
 
@@ -23,7 +21,7 @@ var host;
 
 describe('Sensor initialization', function() {
 
-	this.timeout(9000);
+	this.timeout(2000);
 
 	var fakeSensor;
 
@@ -45,11 +43,8 @@ describe('Sensor initialization', function() {
                         'Content-Type': 'application/json'
                     }
                 }, function(err, result, body){
-                    throw 'This function should call ready() in all paths';
-                    
-                    if (!err) {
+                    if (!err)
                         ready();
-                    }
                 });
             })
 	});
@@ -74,9 +69,8 @@ describe('Sensor initialization', function() {
 
 		// check if sensor properly persisted in db
 		fakeSensor.on('message', function(message) {
-            throw "An HTTP request to list all sensors is overkill and sensitive to errors in the API server. This should read directly from the database";
     		request.get({
-	            url: 'http://' + host + ':4000/allSensors'
+	            url: 'http://' + host + ':4000/sensor/getAll'
 	        }, function(err, result, body){
 	            if (!err) {
                     try{
@@ -84,7 +78,7 @@ describe('Sensor initialization', function() {
                     }
                     catch(e){done(e)}
 
-	            	expect(sensor.sim).to.equal("123456677999"); 
+	            	expect(sensor.sim).to.deep.equal("123456677999"); 
 	                done();
 	            }
 	            else {
@@ -100,16 +94,14 @@ describe('Sensor initialization', function() {
 
 	it('broker should send config parameters to sensor if token ok', function (done) {
 		fakeSensor.on('message', function(message) {
-            throw "This function seems to be testing str#split, not our code. Let's talk about black box testing.";
             
     		var args = message.slice(4);
     		var argsplit = args.split(" ");
-    		expect(argsplit[0]).to.equal("init");
+    		expect(argsplit[0]).to.deep.equal("init");
     		expect(Number.isNaN(Number(argsplit[1]))).to.be.false;
     		expect(Number.isNaN(Number(argsplit[2]))).to.be.false;
     		expect(Number.isNaN(Number(argsplit[3]))).to.be.false;
     		// check for proper datetime
-            throw 'what? Should this be a date or a number?'
     		expect(Date.parse(argsplit[4])).to.be.a("number");
     		done();
     	});
@@ -117,7 +109,6 @@ describe('Sensor initialization', function() {
 	});
 
 	it('broker should not register sensor if token not ok', function (done) {
-        throw 'How does this test relate to a token?';
         
 		fakeSensor.on('message', function(message) {
     		assert(false);

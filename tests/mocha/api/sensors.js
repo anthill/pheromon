@@ -54,7 +54,7 @@ describe('Verify correct Database handling', function() {
         describe('Creation', function(){
 
             it("/sensor/create", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var sensor = {
                     name: 'Sensor1',
@@ -64,8 +64,8 @@ describe('Verify correct Database handling', function() {
                 api.createSensor(sensor)
                 .then(function(created){
 
-                    expect(created.name).to.be.strictEqual('Sensor1');
-                    expect(created.sim).to.be.strictEqual('290');
+                    expect(created.name).to.deep.equal('Sensor1');
+                    expect(created.sim).to.deep.equal('290');
 
                     done();
                 })  
@@ -80,7 +80,7 @@ describe('Verify correct Database handling', function() {
             var id;
 
             before('Creating sensor to be updated', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var sensor = {
                     name: 'Sensor1',
@@ -98,7 +98,7 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/sensor/update", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var delta = {
                     name: 'Pikachu',
@@ -113,8 +113,8 @@ describe('Verify correct Database handling', function() {
                 api.updateSensor(updateData)
                 .then(function(updated){
 
-                    expect(updated.name).to.be.strictEqual('Pikachu');
-                    expect(updated.sim).to.be.strictEqual('300');
+                    expect(updated.name).to.deep.equal('Pikachu');
+                    expect(updated.sim).to.deep.equal('300');
 
                     done();
                 })  
@@ -130,7 +130,7 @@ describe('Verify correct Database handling', function() {
             var id;
 
             before('Creating sensor to be deleted', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var sensor = {
                     name: 'Sensor1',
@@ -148,7 +148,7 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/sensor/delete", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var deleteData = {
                     id: id
@@ -157,8 +157,8 @@ describe('Verify correct Database handling', function() {
                 api.deleteSensor(deleteData.id)
                 .then(function(deleted){
 
-                    expect(deleted.name).to.be.strictEqual('Sensor1');
-                    expect(deleted.sim).to.be.strictEqual('290');
+                    expect(deleted.name).to.deep.equal('Sensor1');
+                    expect(deleted.sim).to.deep.equal('290');
 
                     done();
                 })  
@@ -173,7 +173,7 @@ describe('Verify correct Database handling', function() {
         describe('Delete All Sensors', function(){
 
             before('Creating sensors to be deleted', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var creationPs = [0, 1, 2].map(function(item){
 
@@ -196,12 +196,12 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/sensor/deleteAll", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 api.deleteAllSensors()
                 .then(function(deleted){
 
-                    expect(deleted.length).to.be.strictEqual(3);
+                    expect(deleted.length).to.deep.equal(3);
 
                     done();
                 })  
@@ -217,7 +217,7 @@ describe('Verify correct Database handling', function() {
             var id;
 
             before('Creating sensor', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var sensor = {
                     name: 'Sensor1',
@@ -236,13 +236,13 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/sensor/get", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 api.getSensor(id)
                 .then(function(fetched){
 
-                    expect(fetched.name).to.be.strictEqual('Sensor1');
-                    expect(fetched.sim).to.be.strictEqual('290');
+                    expect(fetched.name).to.deep.equal('Sensor1');
+                    expect(fetched.sim).to.deep.equal('290');
 
                     done();
                 })  
@@ -257,7 +257,7 @@ describe('Verify correct Database handling', function() {
         describe('Get All Sensors', function(){
 
             before('Creating sensors', function(ready){
-                this.timeout(3000);
+                this.timeout(2000);
 
                 var creationPs = [0, 1, 2, 3].map(function(item){
 
@@ -280,12 +280,12 @@ describe('Verify correct Database handling', function() {
             });
 
             it("/sensor/getAll", function (done) {
-                this.timeout(3000);
+                this.timeout(2000);
 
                 api.getAllSensors()
                 .then(function(fetcheds){
 
-                    expect(fetcheds.length).to.be.strictEqual(4);
+                    expect(fetcheds.length).to.deep.equal(4);
 
                     done();
                 })  

@@ -22,36 +22,35 @@ function getDataType(data) {
 
 function printMsg(msg, sim) {
 	return decode(msg)
-		.then(function(decoded) {
-			var type = getDataType(msg);
-			switch (type) {
-				case 'network':
-					console.log('['+sim+']'+"[NETWORK]>" + decoded.toString());
-					break;
-				case 'request':
-					console.log('['+sim+']'+"[REQUEST]>" + decoded.toString());
-					break;
-				case 'message':
-					console.log('['+sim+']'+"[MESSAGE]>" + decoded.toString());
-					break;
-				case 'data':
-					console.log('['+sim+']'+"[DATA]   >" + decoded.toString());
-					break;
-				case 'status':
-					console.log('['+sim+']'+"[STATUS] >" + decoded.toString());
-					break;
-				default:
-					console.log('['+sim+']'+"[OTHER]  >" + decoded.toString());
-					break;
-			}
+	.then(function(decoded) {
+		var type = getDataType(msg);
+		switch (type) {
+			case 'network':
+				console.log('['+sim+']'+"[NETWORK]>" + decoded.toString());
+				break;
+			case 'request':
+				console.log('['+sim+']'+"[REQUEST]>" + decoded.toString());
+				break;
+			case 'message':
+				console.log('['+sim+']'+"[MESSAGE]>" + decoded.toString());
+				break;
+			case 'data':
+				console.log('['+sim+']'+"[DATA]   >" + decoded.toString());
+				break;
+			case 'status':
+				console.log('['+sim+']'+"[STATUS] >" + decoded.toString());
+				break;
+			default:
+				console.log('['+sim+']'+"[OTHER]  >" + decoded.toString());
+				break;
+		}
 
-			return {decoded: decoded.toString(), type: type};
-		})    
-		.catch(function(err){
-	        console.log('Error in printMsg ', err);
-	        throw err;
-	    });
-	});
+		return {decoded: decoded.toString(), type: type};
+	})    
+	.catch(function(err){
+        console.log('Error in printMsg ', err);
+        throw err;
+    });
 }
 
 // Decode any message received by SMS or TCP
