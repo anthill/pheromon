@@ -72,7 +72,7 @@ describe('Sensor initialization', function() {
 	            if (!err) {
 	            	var sensor = JSON.parse(body)[0];
 
-	            	expect(parseInt(sensor.sim)).to.equal(123456677999); 
+	            	expect(sensor.sim).to.equal("123456677999"); 
 	                done();
 	            }
 	            else {
