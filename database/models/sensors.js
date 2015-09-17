@@ -20,7 +20,7 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else 
+                    else
                         resolve(result.rows[0]);
                 });
             });
@@ -69,13 +69,35 @@ module.exports = {
                 });
             });
         })
-        /*.catch(function(err){
+        .catch(function(err){
             console.log('ERROR in update', err);
             throw err;
-        })*/;        
+        });        
     },
 
-    getAllSensors: function() {
+    get: function(id){
+        return databaseP.then(function (db) {
+            
+            var query = sensors
+                .select("*")
+                .where(sensors.id.equals(id))
+                .from(sensors)
+                .toQuery();
+
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+
+                    else resolve(result.rows[0]);
+                });
+            });
+        })
+        .catch(function(err){
+            console.log('ERROR in getSensor', err);
+        }); 
+    },
+
+    getAll: function() {
         return databaseP.then(function (db) {
             
             var query = sensors
@@ -92,7 +114,7 @@ module.exports = {
             });
         })
         .catch(function(err){
-            console.log('ERROR in getAllSensorsInfo', err);
+            console.log('ERROR in getAllSensors', err);
         });        
     },
 
@@ -122,12 +144,13 @@ module.exports = {
             
             var query = sensors
                 .delete()
+                .returning('*')
                 .toQuery();
 
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0]);
+                    else resolve(result.rows);
                 });
             });
         })

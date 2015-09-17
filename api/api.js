@@ -182,17 +182,6 @@ app.get('/allPlaces', function(req, res){
     });
 });
 
-app.get('/allSensors', function(req, res){
-    database.Sensors.getAllSensors()
-    .then(function(data){
-        // debug('All sensors', data);
-        res.send(data);
-    })
-    .catch(function(error){
-        console.log("error in /sensors: ", error);
-    });
-});
-
 app.post('/updatePlace', function(req, res){
     var id = Number(req.body.id);
 
@@ -203,19 +192,6 @@ app.post('/updatePlace', function(req, res){
     .catch(function(error){
         res.status(500).send('Couldn\'t update Places database');
         console.log("error in /updatePlace/'+req.params.id: ", error);
-    });
-});
-
-app.post('/updateSensor', function(req, res){
-    var id = Number(req.body.id);
-
-    database.Sensors.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
-    .then(function(data){
-        res.send(data);
-    })
-    .catch(function(error){
-        res.status(500).send('Couldn\'t update Sensors database');
-        console.log("error in /updateSensors/'+req.params.id: ", error);
     });
 });
 
@@ -245,11 +221,38 @@ app.post('/removePlace', function(req, res){
     });
 });
 
-app.post('/removeSensor', function(req, res){    
-    console.log('remove sensor', req.body.id);
+app.post('/createSensor', function(req, res){    
+    console.log('creating sensor', req.body);
 
-    database.Sensors.delete(req.body.id)
+    database.Sensors.create(req.body)
+    .then(function(data){
+        debug('Sensor created', data);
+        res.send(data);
+    })
+    .catch(function(error){
+        res.status(500).send('Couldn\'t create Sensor in database');
+        console.log("error in /createSensor/'+req.params.id: ", error);
+    });
+});
 
+app.post('/updateSensor', function(req, res){
+    var id = Number(req.body.id);
+
+    database.Sensors.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
+    .then(function(data){
+        res.send(data);
+    })
+    .catch(function(error){
+        res.status(500).send('Couldn\'t update Sensors database');
+        console.log("error in /updateSensors/'+req.params.id: ", error);
+    });
+});
+
+app.post('/removeSensor/:id', function(req, res){    
+    var id = Number(req.params.id);
+    console.log('removing sensor id', id);
+
+    database.Sensors.delete(id)
     .then(function(data){
         res.send(data);
     })
@@ -272,17 +275,28 @@ app.post('/removeAllSensors', function(req, res){
     });
 });
 
-app.post('/createSensor', function(req, res){    
-    console.log('creating sensor', req.body);
+app.get('/getSensor/:id', function(req, res){
+    var id = Number(req.params.id);
+    console.log('requesting sensor id', id);
 
-    database.Sensors.create(req.body)
+    database.Sensors.get(id)
     .then(function(data){
-        debug('Sensor created', data);
+        // debug('All sensors', data);
         res.send(data);
     })
     .catch(function(error){
-        res.status(500).send('Couldn\'t create Sensor in database');
-        console.log("error in /createSensor/'+req.params.id: ", error);
+        console.log("error in /sensors: ", error);
+    });
+});
+
+app.get('/getAllSensors', function(req, res){
+    database.Sensors.getAll()
+    .then(function(data){
+        // debug('All sensors', data);
+        res.send(data);
+    })
+    .catch(function(error){
+        console.log("error in /sensors: ", error);
     });
 });
 
