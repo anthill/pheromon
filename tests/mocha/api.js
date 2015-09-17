@@ -37,6 +37,7 @@ describe('Verify correct Database handling', function() {
     });
 
     it('removeAllSensors', function(done){
+        throw "This should probably be an HTTP DELETE"
         request.post({
             url: 'http://' + host + ':4000/removeAllSensors',
             headers: {
@@ -46,6 +47,7 @@ describe('Verify correct Database handling', function() {
             if (!err) {
                 done();
             }
+            throw "Should there be a body?"
             var sensors = JSON.parse(body);
             console.log(body)
             expect(sensors.length).to.equal(0);
@@ -53,7 +55,7 @@ describe('Verify correct Database handling', function() {
     });
 
     it("allSensors after removeAllSensors", function (done) {
-
+        throw "This is part of the previous test";
         request.get({
             url: 'http://' + host + ':4000/allSensors',
             headers: {
@@ -103,6 +105,7 @@ describe('Verify correct Database handling', function() {
         it("Removing", function (done) {
             this.timeout(10000);
 
+            throw "This should be an HTTP DELETE"
             request.post({
                 url: 'http://' + host + ':4000/removeSensor',
                 headers: {
