@@ -3,7 +3,6 @@
 require("es6-shim");
 var request = require('request');
 
-var assert = assert = require('chai').assert;
 var expect = require('chai').expect;
 
 var prepareAPI = require('../../../tools/prepareOutsideAPI.js');
@@ -65,7 +64,7 @@ describe('Verify correct Database handling', function() {
                 api.createPlace(place)
                 .then(function(created){
 
-                    assert.strictEqual('Place1', created.name);
+                    expect(created.name).to.be.strictEqual('Place1');
                     expect(44.840450 - parseFloat(created.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(created.lon)).to.be.below(0.0001);
                     done();
@@ -115,7 +114,7 @@ describe('Verify correct Database handling', function() {
 
                 api.updatePlace(updateData)
                 .then(function(updated){
-                    assert.strictEqual('Place2', updated.name);
+                    expect(updated.name).to.be.strictEqual('Place2');
                     expect(44.940450 - parseFloat(updated.lat)).to.be.below(0.0001);
                     expect(-0.500468 - parseFloat(updated.lon)).to.be.below(0.0001);
 
@@ -160,7 +159,7 @@ describe('Verify correct Database handling', function() {
 
                 api.deletePlace(deleteData.id)
                 .then(function(deleted){
-                    assert.strictEqual('Place1', deleted.name);
+                    expect(deleted.name).to.be.strictEqual('Place1');
                     expect(44.840450 - parseFloat(deleted.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(deleted.lon)).to.be.below(0.0001);
                     done();
@@ -204,7 +203,7 @@ describe('Verify correct Database handling', function() {
 
                 api.deleteAllPlaces()
                 .then(function(deleted){
-                    assert.strictEqual(3, deleted.length);
+                    expect(deleted.length).to.be.strictEqual(3);
 
                     done();
                 })  
@@ -244,7 +243,7 @@ describe('Verify correct Database handling', function() {
 
                 api.getPlace(id)
                 .then(function(fetched){
-                    assert.strictEqual('Place1', fetched.name);
+                    expect(fetched.name).to.be.strictEqual('Place1');
                     expect(44.840450 - parseFloat(fetched.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(fetched.lon)).to.be.below(0.0001);
 
@@ -289,7 +288,7 @@ describe('Verify correct Database handling', function() {
 
                 api.getAllPlaces()
                 .then(function(fetcheds){
-                    assert.strictEqual(4, fetcheds.length);
+                    expect(fetcheds.length).to.be.strictEqual(4);
 
                     done();
                 })  

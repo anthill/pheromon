@@ -40,7 +40,7 @@ module.exports = {
                     .select(
                         places.id,
                         sensorMeasurement
-                            .literal('array_length(affluence_sensor_measurements.signal_strengths, 1)')
+                            .literal('array_length(affluence_sensor_measurements.measurements, 1)')
                             .as('latest')
                     )
                     .from(
@@ -63,7 +63,7 @@ module.exports = {
                     .subQuery('max_measurement_per_recycling_center')
                     .select(
                         places.id, places.name, places.lat, places.lon,
-                        'max(array_length(affluence_sensor_measurements.signal_strengths, 1))'
+                        'max(array_length(affluence_sensor_measurements.measurements, 1))'
                     )
                     .from(
                         places
@@ -108,9 +108,9 @@ module.exports = {
                         sensor.id,
                         sensorMeasurement.measurement_date,
                         sensorMeasurement
-                            .literal('array_length(affluence_sensor_measurements.signal_strengths, 1)')
-                            .as('measurement'),
-                        sensorMeasurement.signal_strengths
+                            .literal('array_length(affluence_sensor_measurements.measurements, 1)')
+                            .as('entry'),
+                        sensorMeasurement.measurements
                     )
                     .from(
                         sensor

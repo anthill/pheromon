@@ -32,28 +32,30 @@ CREATE TRIGGER updated_at_places BEFORE UPDATE ON places FOR EACH ROW EXECUTE PR
 
 
 CREATE TABLE IF NOT EXISTS sensors (
-    id          SERIAL PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL,
+    id              SERIAL PRIMARY KEY,
+    name            VARCHAR(100) NOT NULL,
     -- type         some_enum -- affluence/bin-level
-    installed_at  integer REFERENCES places (id) DEFAULT NULL,
-    sim  text UNIQUE NOT NULL,
-    quipu_status  quipu_status DEFAULT NULL, 
-    sense_status  sense_status DEFAULT NULL,
-    latest_input  text DEFAULT NULL,
-    latest_output text DEFAULT NULL,
-    signal        network_signal DEFAULT NULL,
-    data_period   real DEFAULT 300, --One measurement every 300 seconds
-    start_time   real DEFAULT 7,
-    stop_time    real DEFAULT 16
+    installed_at    integer REFERENCES places (id) DEFAULT NULL,
+    project         text DEFAULT NULL,
+    sim             text UNIQUE NOT NULL,
+    quipu_status    quipu_status DEFAULT NULL, 
+    sense_status    sense_status DEFAULT NULL,
+    latest_input    text DEFAULT NULL,
+    latest_output   text DEFAULT NULL,
+    signal          network_signal DEFAULT NULL,
+    data_period     real DEFAULT 300, --One measurement every 300 seconds
+    start_time      real DEFAULT 7,
+    stop_time       real DEFAULT 16
 ) INHERITS(lifecycle);
 CREATE TRIGGER updated_at_sensors BEFORE UPDATE ON sensors FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 
 CREATE TABLE IF NOT EXISTS affluence_sensor_measurements (
-    id           SERIAL PRIMARY KEY,
-    sensor_id    integer REFERENCES sensors (id) NOT NULL,
-    signal_strengths  integer[] NOT NULL,
-    measurement_date  timestamp without time zone NOT NULL
+    id                  SERIAL PRIMARY KEY,
+    sensor_id           integer REFERENCES sensors (id) NOT NULL,
+    type                text NOT NULL, -- This can be signal_strength, temperature, pressure, ... but we can't presuppose it in an enum.
+    measurements        real[] NOT NULL, -- This was changed from signal_strengths to measurements
+    measurement_date    timestamp without time zone NOT NULL
 ) INHERITS(lifecycle);
 CREATE TRIGGER updated_at_sensor_measurements BEFORE UPDATE ON affluence_sensor_measurements FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 

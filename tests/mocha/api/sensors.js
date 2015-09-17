@@ -3,7 +3,6 @@
 require("es6-shim");
 var request = require('request');
 
-var assert = assert = require('chai').assert;
 var expect = require('chai').expect;
 
 var prepareAPI = require('../../../tools/prepareOutsideAPI.js');
@@ -59,14 +58,14 @@ describe('Verify correct Database handling', function() {
 
                 var sensor = {
                     name: 'Sensor1',
-                    sim: 290
+                    sim: '290'
                 };
 
                 api.createSensor(sensor)
                 .then(function(created){
 
-                    assert.strictEqual('Sensor1', created.name);
-                    assert.strictEqual(290, parseInt(created.sim));
+                    expect(created.name).to.be.strictEqual('Sensor1');
+                    expect(created.sim).to.be.strictEqual('290');
 
                     done();
                 })  
@@ -85,7 +84,7 @@ describe('Verify correct Database handling', function() {
 
                 var sensor = {
                     name: 'Sensor1',
-                    sim: 290
+                    sim: '290'
                 };
 
                 api.createSensor(sensor)
@@ -103,7 +102,7 @@ describe('Verify correct Database handling', function() {
 
                 var delta = {
                     name: 'Pikachu',
-                    sim: 300
+                    sim: '300'
                 };
 
                 var updateData = {
@@ -113,8 +112,9 @@ describe('Verify correct Database handling', function() {
 
                 api.updateSensor(updateData)
                 .then(function(updated){
-                    assert.strictEqual('Pikachu', updated.name);
-                    assert.strictEqual(300, parseInt(updated.sim));
+
+                    expect(updated.name).to.be.strictEqual('Pikachu');
+                    expect(updated.sim).to.be.strictEqual('300');
 
                     done();
                 })  
@@ -134,7 +134,7 @@ describe('Verify correct Database handling', function() {
 
                 var sensor = {
                     name: 'Sensor1',
-                    sim: 290
+                    sim: '290'
                 };
 
                 api.createSensor(sensor)
@@ -156,8 +156,9 @@ describe('Verify correct Database handling', function() {
 
                 api.deleteSensor(deleteData.id)
                 .then(function(deleted){
-                    assert.strictEqual('Sensor1', deleted.name);
-                    assert.strictEqual(290, parseInt(deleted.sim));
+
+                    expect(deleted.name).to.be.strictEqual('Sensor1');
+                    expect(deleted.sim).to.be.strictEqual('290');
 
                     done();
                 })  
@@ -178,7 +179,7 @@ describe('Verify correct Database handling', function() {
 
                     var sensor = {
                         name: 'Sensor' + item,
-                        sim: item * 10
+                        sim: 'sim' + item * 10
                     };
 
                     return api.createSensor(sensor);
@@ -199,7 +200,8 @@ describe('Verify correct Database handling', function() {
 
                 api.deleteAllSensors()
                 .then(function(deleted){
-                    assert.strictEqual(3, deleted.length);
+
+                    expect(deleted.length).to.be.strictEqual(3);
 
                     done();
                 })  
@@ -219,7 +221,7 @@ describe('Verify correct Database handling', function() {
 
                 var sensor = {
                     name: 'Sensor1',
-                    sim: 290
+                    sim: '290'
                 };
 
                 api.createSensor(sensor)
@@ -238,8 +240,9 @@ describe('Verify correct Database handling', function() {
 
                 api.getSensor(id)
                 .then(function(fetched){
-                    assert.strictEqual('Sensor1', fetched.name);
-                    assert.strictEqual(290, parseInt(fetched.sim));
+
+                    expect(fetched.name).to.be.strictEqual('Sensor1');
+                    expect(fetched.sim).to.be.strictEqual('290');
 
                     done();
                 })  
@@ -281,7 +284,8 @@ describe('Verify correct Database handling', function() {
 
                 api.getAllSensors()
                 .then(function(fetcheds){
-                    assert.strictEqual(4, fetcheds.length);
+
+                    expect(fetcheds.length).to.be.strictEqual(4);
 
                     done();
                 })  
