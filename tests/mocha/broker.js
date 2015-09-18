@@ -11,13 +11,16 @@ var assert = chai.assert;
 // chai.use(require('chai-as-promised'));
 
 var request = require('request');
+var sendReq = require('../../tools/sendNodeReq');
 var PRIVATE = require('./PRIVATE.json');
 
+var prepareAPI = require('../../tools/prepareAPI.js');
+
 var makeTcpReceiver = require('../../tools/makeTcpReceiver');
-var boot2dockerIp = require('../../tools/boot2dockerIp.js');
 
-
-var host;
+var origin = 'http://broker:5100';
+var apiOrigin = 'http://api:4000';
+var api = prepareAPI(sendReq, apiOrigin);
 
 describe('Sensor initialization', function() {
 
@@ -27,31 +30,19 @@ describe('Sensor initialization', function() {
 
 	// get host ip and clean db
 	before(function(ready){
-		boot2dockerIp()
-            .then(function(h){
-                host = h;
-            })
-            .catch(function(error){
-                console.error("Error determining the host");
-                throw error; // forward the error
-            })
-            .then(function(){
-
-                request.post({
-                    url: 'http://' + host + ':4000/removeAllSensors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }, function(err, result, body){
-                    if (!err)
-                        ready();
-                });
-            })
+        sendReq('DELETE', apiOrigin + '/sensor/deleteAll')
+        .then(function(){
+            ready();
+        })
+        .catch(function(err){
+            console.log('err', err);
+            throw err;
+        });
 	});
 
 	// simulate sensor
 	beforeEach(function(ready){
-
+        console.log('socket connection');
         var socket = net.connect({
             host: host,
             port: 5100
@@ -69,23 +60,17 @@ describe('Sensor initialization', function() {
 
 		// check if sensor properly persisted in db
 		fakeSensor.on('message', function(message) {
-    		request.get({
-	            url: 'http://' + host + ':4000/sensor/getAll'
-	        }, function(err, result, body){
-	            if (!err) {
-                    try{
-	            	  var sensor = JSON.parse(body)[0];
-                    }
-                    catch(e){done(e)}
+            sendReq('GET', apiOrigin + '/sensor/getAll')
+            .then(function(body){
+                var sensor = body[0];
 
-	            	expect(sensor.sim).to.deep.equal("123456677999"); 
-	                done();
-	            }
-	            else {
-	            	console.log('err', err);
-                    done(err);
-	            }
-	        });
+                expect(sensor.sim).to.deep.equal("123456677999"); 
+                done();
+            })
+            .catch(function(err){
+                console.log('err', err);
+                done(err);
+            });
     	});
 
     	// send sensor 

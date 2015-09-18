@@ -1,8 +1,8 @@
 api:
-   build: ./
-   command: nodemon api/api.js
+   build: .
+   command: nodemon --watch api --watch database api/api.js
    links:
-      - db
+      - dbtest:db
       - broker
    ports:
       - "4000:4000"
@@ -11,32 +11,36 @@ api:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
-      - NODE_ENV=production
+      - NODE_ENV=development
    volumes:
       - ./:/pheromon
-   tty: true
-   restart: always
+   log_driver: "none" 
 broker:
    build: .
-   command: nodemon broker/index.js
+   command: nodemon --watch broker broker/index.js
    links:
-      - db
+      - dbtest:db
    ports:
       - "5100:5100"
    environment:
       - VIRTUAL_PORT=5100
-      - NODE_ENV=production
+      - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
-   tty: true
-   restart: always
-db:
+   log_driver: "none" 
+dbtest:
    image: postgres:9.4
    environment:
       - POSTGRES_PASSWORD=elements
-      - NODE_ENV=production
+   log_driver: "none" 
+tests:
+   build: ./
+   dockerfile: Dockerfile-test
+   links:
+      - api
+      - broker
+   command: node ./tests/index.js
    volumes:
-      - /data/pheromon:/var/lib/postgresql
+      - ./:/pheromon/
    tty: true
-   restart: always

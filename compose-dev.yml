@@ -2,7 +2,7 @@ api:
    build: ./
    command: nodemon --watch api --watch database api/api.js
    links:
-      - db
+      - dbdev:db
       - broker
    ports:
       - "4000:4000"
@@ -14,11 +14,12 @@ api:
       - NODE_ENV=development
    volumes:
       - ./:/pheromon
+   tty: true
 broker:
    build: .
    command: nodemon --watch broker broker/index.js
    links:
-      - db
+      - dbdev:db
    ports:
       - "5100:5100"
    environment:
@@ -27,9 +28,11 @@ broker:
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
-db:
+   tty: true
+dbdev:
    image: postgres:9.4
    environment:
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./data:/var/lib/postgresql
+   tty: true

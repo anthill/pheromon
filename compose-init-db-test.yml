@@ -2,22 +2,21 @@ pheromon:
    build: .
    command: node tools/init-db
    links:
-      - db
+      - dbtest:db
    environment:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements
       - POSTGRES_PASSWORD=elements
-      # - BACKUP=backups/save.txt.gz
    volumes:
       - ./:/pheromon/
-      # - /data/yourProjectName/backups:/pheromon/data/backups
    tty: true
-db:
+
+dbtest:
    image: postgres:9.4
    environment:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
    volumes:
-      - /data/pheromon:/var/lib/postgresql
+      - ./data:/var/lib/postgresql
    tty: true

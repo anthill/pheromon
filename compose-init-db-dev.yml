@@ -2,15 +2,16 @@ pheromon:
    build: .
    command: node tools/init-db
    links:
-      - db
+      - dbdev:db
    environment:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon/
+   tty: true
 
-db:
+dbdev:
    image: postgres:9.4
    environment:
       - POSTGRES_USER=postgres
@@ -18,3 +19,4 @@ db:
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./data:/var/lib/postgresql
+   tty: true

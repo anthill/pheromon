@@ -6,9 +6,9 @@ var sendReq = require('../../../tools/sendNodeReq');
 var expect = require('chai').expect;
 
 var prepareAPI = require('../../../tools/prepareAPI.js');
-var boot2dockerIp = require('../../../tools/boot2dockerIp.js');
 
-var host;
+var origin = 'http://api:4000';
+// var origin = 'http://192.168.59.103:4000';
 var api;
 
 
@@ -17,14 +17,14 @@ describe('Verify API', function() {
     // Prepare API from outside the Pheromon docker.
     // This fetches boot2docker ip and prepare wrapped server-side functions to access Pheromon database
     before(function(ready){
-        boot2dockerIp()
-        .then(function(host){
-            api = prepareAPI(sendReq, host, 4000);
+        // boot2dockerIp()
+        // .then(function(host){
+            api = prepareAPI(sendReq, origin);
             ready();
-        })
-        .catch(function(error){
-            console.log("Error preparing the API");
-        });    
+        // })
+        // .catch(function(error){
+        //     console.log("Error preparing the API");
+        // });    
     });
 
     describe('Place', function () {

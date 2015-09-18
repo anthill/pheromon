@@ -16,9 +16,11 @@ module.exports = function(){
         
         (function tryConnect(time){
             setTimeout(function(){
+            	
                 var client = new pg.Client(conString);
                 client.connect(function(err) {
                     if(err){
+                    	console.log('TETS', err);
                         if(attempts >= MAX_ATTEMPTS)
                             reject(err); 
                         else

@@ -45,8 +45,6 @@ function generateDefinitions() {
 
 
 // wait database to be created 
-
-
 (function tryRebuildDatabase(){
     console.log("Trying to rebuild database...");
     
