@@ -32,6 +32,8 @@ broker:
 dbtest:
    image: postgres:9.4
    environment:
+      - POSTGRES_USER=postgres
+      - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
    log_driver: "none" 
 tests:
@@ -40,6 +42,11 @@ tests:
    links:
       - api
       - broker
+      - dbtest:db
+   environment:
+      - POSTGRES_USER=postgres
+      - PGPASSWORD=elements # don't change the name of the variable for pg_dump
+      - POSTGRES_PASSWORD=elements
    command: node ./tests/index.js
    volumes:
       - ./:/pheromon/

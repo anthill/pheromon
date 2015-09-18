@@ -44,48 +44,58 @@ function generateDefinitions() {
 }
 
 
-// wait database to be created 
-(function tryRebuildDatabase(){
-    console.log("Trying to rebuild database...");
-    
-    setTimeout(function(){
-        databaseClientP.then(function(){
-            dropAllTables()
-                .catch(function(err){
-                    console.error("Couldn't drop tables", err);
-                    throw err;
-                })
-                .then(createTables)
-                .catch(function(err){
-                    console.error("Couldn't create tables", err);
-                    throw err;
-                })
-                .then(function(){   
-                    if (!process.env.BACKUP) {
-                        console.log('no backup file');
-                        generateDefinitions()
+module.exports = function(){
+
+    return new Promise(function(resolve, reject){
+        // wait database to be created
+        (function tryRebuildDatabase(){
+            console.log("Trying to rebuild database...");
+            
+            setTimeout(function(){
+                databaseClientP
+                .then(function(){
+                    dropAllTables()
+                    .catch(function(err){
+                        console.error("Couldn't drop tables", err);
+                        throw err;
+                    })
+                    .then(createTables)
+                    .catch(function(err){
+                        console.error("Couldn't create tables", err);
+                        throw err;
+                    })
+                    .then(function(){   
+                        if (!process.env.BACKUP) {
+                            console.log('no backup file');
+                            generateDefinitions()
                             .then(function(){
                                 console.log("Dropped and created the tables.");
+                                resolve();
                             })
                             .catch(function(err){
                                 console.error("Couldn't write the schema", err);
                             });
-                    }
-                    else {
-                        generateDefinitions()
-                            .then(console.log('definitions generated'))
+                        }
+                        else {
+                            generateDefinitions()
+                            .then(function(){
+                                console.log('definitions generated');
+                                resolve();
+                            })
                             .catch(function(err){
                                 console.error("Couldn't write the schema", err);
                             });
-                    }
+                        }
+                    })
+                    .catch(function(err){
+                        tryRebuildDatabase()
+                    })
                 })
                 .catch(function(err){
-                    tryRebuildDatabase()
-                })
-            })
-            .catch(function(err){
-                console.error("Couldn't connect tables", err);
-                tryRebuildDatabase();
-            });
-    }, 1000);
-})()
+                    console.error("Couldn't connect tables", err);
+                    tryRebuildDatabase();
+                });
+            }, 1000);
+        })();
+    });
+}

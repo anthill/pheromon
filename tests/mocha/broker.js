@@ -44,7 +44,7 @@ describe('Sensor initialization', function() {
 	beforeEach(function(ready){
         console.log('socket connection');
         var socket = net.connect({
-            host: host,
+            host: 'broker',
             port: 5100
         });
 
