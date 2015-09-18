@@ -172,10 +172,6 @@ module.exports = function(app, debug){
 	});
 
 
-
-
-
-
 	// complex queries
 
 	app.get('/live-affluence', function(req, res){

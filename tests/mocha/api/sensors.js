@@ -1,25 +1,25 @@
 'use strict';
 
 require("es6-shim");
-var request = require('request');
+var sendReq = require('../../../tools/sendNodeReq');
 
 var expect = require('chai').expect;
 
-var prepareAPI = require('../../../tools/prepareOutsideAPI.js');
+var prepareAPI = require('../../../tools/prepareAPI.js');
+var boot2dockerIp = require('../../../tools/boot2dockerIp.js');
 
 var host;
 var api;
 
 
-describe('Verify correct Database handling', function() {
+describe('Verify API', function() {
 
     // Prepare API from outside the Pheromon docker.
     // This fetches boot2docker ip and prepare wrapped server-side functions to access Pheromon database
     before(function(ready){
-        prepareAPI()
-        .then(function(result){
-            host = result.host;
-            api = result.api;
+        boot2dockerIp()
+        .then(function(host){
+            api = prepareAPI(sendReq, host, 4000);
             ready();
         })
         .catch(function(error){
@@ -27,10 +27,9 @@ describe('Verify correct Database handling', function() {
         });     
     });
 
-    describe('Sensor Table ', function () {
+    describe('Sensor', function () {
 
-        // it feels weird to have this before having it tested ...
-        before('clearing Sensor table', function(ready){
+        before('clearing Sensor table', function(ready){ // use direct database function
             api.deleteAllSensors()
             .then(function(){
                 ready();
