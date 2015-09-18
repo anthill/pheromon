@@ -11,13 +11,13 @@ module.exports = {
         return sendReq('POST', '/sensor/update', data);
     },
     deleteSensor: function(id){
-        return sendReq('POST', '/sensor/delete' + id);
+        return sendReq('DELETE', '/sensor/delete/' + id);
     },
     deleteAllSensors: function(){
-        return sendReq('POST', '/sensor/deleteAll');
+        return sendReq('DELETE', '/sensor/deleteAll');
     },
     getSensor: function(id){
-        return sendReq('POST', '/sensor/get' + id);
+        return sendReq('POST', '/sensor/get/' + id);
     },
     getAllSensors: function(){
         return sendReq('POST', '/sensor/getAll');
@@ -31,13 +31,13 @@ module.exports = {
         return sendReq('POST', '/place/update', data);
     },
     deletePlace: function(id){
-        return sendReq('POST', '/place/delete' + id);
+        return sendReq('DELETE', '/place/delete/' + id);
     },
     deleteAllPlaces: function(){
-        return sendReq('POST', '/place/deleteAll');
+        return sendReq('DELETE', '/place/deleteAll');
     },
     getPlace: function(id){
-        return sendReq('POST', '/place/get' + id);
+        return sendReq('POST', '/place/get/' + id);
     },
     getAllPlaces: function(){
         return sendReq('POST', '/place/getAll');
