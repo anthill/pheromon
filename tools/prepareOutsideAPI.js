@@ -19,6 +19,7 @@ module.exports = function(){
         return {
             host: host,
             api: {
+                // SENSORS
                 createSensor: function(data){
                     var method = 'POST';
                     var url = 'http://' + host + ':' + PORT + '/sensor/create';
@@ -32,13 +33,13 @@ module.exports = function(){
                     return sendNodeReq(method, url, data);
                 },
                 deleteSensor: function(id){
-                    var method = 'POST';
+                    var method = 'DELETE';
                     var url = 'http://' + host + ':' + PORT + '/sensor/delete/' + id;
 
                     return sendNodeReq(method, url);
                 },
                 deleteAllSensors: function(){
-                    var method = 'POST';
+                    var method = 'DELETE';
                     var url = 'http://' + host + ':' + PORT + '/sensor/deleteAll';
 
                     return sendNodeReq(method, url);
@@ -56,6 +57,7 @@ module.exports = function(){
                     return sendNodeReq(method, url);
                 },
 
+                // PLACES
                 createPlace: function(data){
                     var method = 'POST';
                     var url = 'http://' + host + ':' + PORT + '/place/create';
@@ -69,13 +71,13 @@ module.exports = function(){
                     return sendNodeReq(method, url, data);
                 },
                 deletePlace: function(id){
-                    var method = 'POST';
+                    var method = 'DELETE';
                     var url = 'http://' + host + ':' + PORT + '/place/delete/' + id;
 
                     return sendNodeReq(method, url);
                 },
                 deleteAllPlaces: function(){
-                    var method = 'POST';
+                    var method = 'DELETE';
                     var url = 'http://' + host + ':' + PORT + '/place/deleteAll';
 
                     return sendNodeReq(method, url);
