@@ -3,6 +3,7 @@
 require('es6-shim');
 
 var net = require('net');
+var mqtt    = require('mqtt');
 var chai = require('chai');
 
 var expect = chai.expect;
@@ -11,13 +12,15 @@ var assert = chai.assert;
 // chai.use(require('chai-as-promised'));
 
 var request = require('request');
-var PRIVATE = require('./PRIVATE.json');
+var PRIVATE = require('../../PRIVATE.json');
 
 var makeTcpReceiver = require('../../tools/makeTcpReceiver');
 var boot2dockerIp = require('../../tools/boot2dockerIp.js');
 
 
 var host;
+var mqttClient;
+var simId = "simNumber1";
 
 describe('Sensor initialization', function() {
 
@@ -37,8 +40,34 @@ describe('Sensor initialization', function() {
             })
             .then(function(){
 
+                mqttClient  = mqtt.connect('mqtt://' + host + ':1883',
+                    {
+                        username: simId,
+                        password: PRIVATE.token,
+                        clientId: simId
+                    }
+                );
+
+                return new Promise(function(resolve, reject){
+
+                    setTimeout(function(){
+                        reject("Timeout in mqqt connection");
+                    }, 1000);
+
+                    mqttClient.on('connect', function () {
+                        resolve();
+                    });
+                });
+                
+            })
+            .catch(function(error){
+                console.error("Error in connecting mqtt");
+                throw error; // forward the error
+            })
+            .then(function(){
+
                 request.post({
-                    url: 'http://' + host + ':4000/removeAllSensors',
+                    url: 'http://' + host + ':4000/sensors/deleteAll',
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -46,6 +75,10 @@ describe('Sensor initialization', function() {
                     if (!err)
                         ready();
                 });
+            })
+            .catch(function(error){
+                console.error("Error removing all sensors");
+                throw error; // forward the error
             })
 	});
 
@@ -78,7 +111,7 @@ describe('Sensor initialization', function() {
                     }
                     catch(e){done(e)}
 
-	            	expect(sensor.sim).to.deep.equal("123456677999"); 
+	            	expect(sensor.sim).to.deep.equal(PRIVATE.token); 
 	                done();
 	            }
 	            else {
@@ -89,7 +122,7 @@ describe('Sensor initialization', function() {
     	});
 
     	// send sensor 
-		fakeSensor.send("init 123456677999 " + PRIVATE.token + "\n");	
+		fakeSensor.send("init " + PRIVATE.token + " dummyCode" + "\n");
 	});
 
 	it('broker should send config parameters to sensor if token ok', function (done) {
@@ -105,7 +138,7 @@ describe('Sensor initialization', function() {
     		expect(Date.parse(argsplit[4])).to.be.a("number");
     		done();
     	});
-		fakeSensor.send("init 123456677999 " + PRIVATE.token + "\n");
+		fakeSensor.send("init " + PRIVATE.token + " dummyCode" + "\n");
 	});
 
 	it('broker should not register sensor if token not ok', function (done) {
@@ -121,7 +154,32 @@ describe('Sensor initialization', function() {
     		assert(true);
     		done();
     	}, 500)
-		fakeSensor.send("init 123456677999 " + "dummyCode" + "\n");
+		fakeSensor.send("init " + PRIVATE.token + " dummyCode" + "\n");
 	});
+
+    it('[MQTT] broker should send back init command when asked', function (done) {
+
+        mqttClient.subscribe(simId + "/#");
+        mqttClient.subscribe('command');
+
+        mqttClient.on('message', function (topic, message) {
+            if(topic === simId + "/command/init") {
+                var argsplit = message.toString().split(" ");
+                expect(Number.isNaN(Number(argsplit[0]))).to.be.false;
+                expect(Number.isNaN(Number(argsplit[1]))).to.be.false;
+                expect(Number.isNaN(Number(argsplit[2]))).to.be.false;
+                // check for proper datetime
+                expect(Date.parse(argsplit[3])).to.be.a("number");
+                done();
+            }
+        });
+
+        mqttClient.publish(simId + "/status/unitialized", "");
+    });
 });
+
+
+
+
+
 

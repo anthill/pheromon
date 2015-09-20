@@ -13,7 +13,9 @@ require('es6-shim');
 var net = require('net');
 var EventEmitter = require('events').EventEmitter;
 var mosca = require('mosca');
+var mqtt    = require('mqtt');
 var pokemon = require("pokemon-names");
+var mqttServer = require("./mqttServer.js");
 var makeTcpReceiver = require('../tools/makeTcpReceiver');
 var database = require('../database');
 var utils = require('./utils.js');
@@ -22,6 +24,7 @@ var CONF = require('../CONF.json');
 // var simulateSensorStatusArrivalTCP = require('./simulateSensorStatusArrivalTCP');
 
 var sim2socket = {};
+var id2sensor = {};
 var monitorPort = 5100;
 var eventEmitter = new EventEmitter();
 
@@ -34,41 +37,100 @@ var debug = function() {
     }
 }
 
-// mqtt server
-
-var pubsubsettings = {
-  type: 'redis',
-  redis: require('redis'),
-  db: 12,
-  port: process.env.REDIS_PORT_6379_TCP_PORT,
-  return_buffers: true, // to handle binary payloads
-  host: process.env.REDIS_PORT_6379_TCP_ADDR
-};
-
-var moscaSettings = {
-  port: 1883,
-  backend: pubsubsettings
-};
-
-var server = new mosca.Server(moscaSettings);
-server.on('ready', function(){ console.log('Mosca server is up and running') });
-
-// fired when a message is published
-server.on('published', function(packet, client) {
-    console.log('Published', packet);
-    console.log('Client', client);
-});
-// fired when a client connects
-server.on('clientConnected', function(client) {
-    console.log('Client Connected:', client.id);
-});
-
-// fired when a client disconnects
-server.on('clientDisconnected', function(client) {
-    console.log('Client Disconnected:', client.id);
-});
-
 // ############### Sensors communication ######################
+var authenticate = function(client, username, token, callback) {
+    var authorized = (token.toString() === PRIVATE.token);
+    if (authorized) {
+
+        // check if sensor exists in db
+        database.Sensors.findBySIMid(client.id)
+        .then(function(sensors) {
+            // if sensor was never registered, create it
+            if(sensors.length === 0) {
+                console.log("Creating the sensor")
+                return database.Sensors.create({
+                    'name': pokemon.random(),
+                    'sim': client.id,
+                    'data_period': CONF.data_period,
+                    'start_time': CONF.start_time,
+                    'stop_time': CONF.stop_time
+                })
+                .then(function(createdSensor){
+                    return createdSensor;
+                })
+                .catch(function(err) {
+                    console.log("[ERROR] Couldn't create sensor :", err);
+                })
+            }
+            else { 
+                return sensors[0];
+            }
+            
+        })
+        .then(function(sensor){
+            id2sensor[client.id] = sensor;
+        })
+        .catch(function(err) {
+            console.log("[ERROR] Couldn't get sensor's config in DB :", err);
+        })
+    }
+
+    callback(null, authorized);
+}
+
+mqttServer(authenticate)
+.then(function(mqttServer){
+
+    // maestro: mqtt client that represents the server
+    // maestro doesn't subscribe to anything since the server tells him everything
+    var maestro  = mqtt.connect('mqtt://localhost:1883',
+        {
+            username: "maestro",
+            password: PRIVATE.token,
+            clientId: "maestro"
+        }
+    );
+
+    maestro.on('connect', function () {
+        console.log("Maestro ready")
+    });
+
+
+
+    mqttServer.on('published', function(packet, client) {
+        console.log('Published', packet.topic);
+        var subtopics = packet.topic.split("/");
+        var id;
+        if(id2sensor[subtopics[0]]) {
+            id = subtopics[0];
+            subtopics.shift();
+        }
+        switch(subtopics[0]) {
+            case "command":
+                console.log("received a command");
+                break;
+            case "status":
+                console.log("received a status");
+                switch (subtopics[1]) {
+                    case "unitialized":
+                        var date = new Date();
+                        var sensor = id2sensor[id];
+                        var data = [sensor.data_period, sensor.start_time, sensor.stop_time, date.toISOString()].join(" ");
+                        maestro.publish(id + "/command/init", data);
+                        break;
+                }
+                break;
+            case "measurement":
+                console.log("received a measurement");
+                break;
+            default:
+                console.log("Received a message of an untreated topic.")
+        }        
+
+    });
+
+});
+
 
 var tcpServerForSensors = net.createServer(function(tcpSocketSensor) {
 

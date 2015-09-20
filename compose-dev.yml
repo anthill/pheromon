@@ -22,6 +22,7 @@ broker:
       - redis
    ports:
       - "5100:5100"
+      - "1883:1883"
    environment:
       - VIRTUAL_PORT=5100
       - NODE_ENV=development
