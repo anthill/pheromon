@@ -37,7 +37,7 @@ dbtest:
       - POSTGRES_PASSWORD=elements
    log_driver: "none" 
 tests:
-   build: ./
+   build: .
    dockerfile: Dockerfile-test
    links:
       - api

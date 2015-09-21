@@ -46,6 +46,7 @@ function generateDefinitions() {
 
 module.exports = function(){
 
+    console.log('hello');
     return new Promise(function(resolve, reject){
         // wait database to be created
         (function tryRebuildDatabase(){
@@ -53,37 +54,45 @@ module.exports = function(){
             
             setTimeout(function(){
                 databaseClientP
-                .then(function(){
+                .then(function(client){
                     dropAllTables()
                     .catch(function(err){
                         console.error("Couldn't drop tables", err);
-                        throw err;
+                        client.end();
+                        reject(err);
                     })
                     .then(createTables)
                     .catch(function(err){
                         console.error("Couldn't create tables", err);
-                        throw err;
+                        client.end();
+                        reject(err);
                     })
                     .then(function(){   
                         if (!process.env.BACKUP) {
                             console.log('no backup file');
                             generateDefinitions()
                             .then(function(){
-                                console.log("Dropped and created the tables.");
+                                console.log("Dropped and created the tables.", client);
+                                client.end();
                                 resolve();
                             })
                             .catch(function(err){
                                 console.error("Couldn't write the schema", err);
+                                client.end();
+                                reject();
                             });
                         }
                         else {
                             generateDefinitions()
                             .then(function(){
                                 console.log('definitions generated');
+                                client.end();
                                 resolve();
                             })
                             .catch(function(err){
                                 console.error("Couldn't write the schema", err);
+                                client.end();
+                                reject(err);
                             });
                         }
                     })
@@ -98,4 +107,4 @@ module.exports = function(){
             }, 1000);
         })();
     });
-}
+};

@@ -1,6 +1,6 @@
 pheromon:
    build: .
-   command: node tools/init-db
+   command: node tools/init-db2
    links:
       - dbtest:db
    environment:

@@ -18,6 +18,7 @@ module.exports = function(){
             setTimeout(function(){
             	
                 var client = new pg.Client(conString);
+
                 client.connect(function(err) {
                     if(err){
                     	console.log('TETS', err);
@@ -33,6 +34,7 @@ module.exports = function(){
                 
                     attempts++;
                 });
+
             }, time);
         })(INITIAL_TIMEOUT_TIME)
         
