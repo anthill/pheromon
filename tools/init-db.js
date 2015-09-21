@@ -43,7 +43,6 @@ function generateDefinitions() {
     });
 }
 
-
 module.exports = function(){
 
     console.log('hello');

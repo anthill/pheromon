@@ -24,12 +24,18 @@ var source = require("vinyl-source-stream");
 
 
 function bundleShare(b, name) {
-    b.bundle()
+    return new Promise(function(resolve, reject){
+        b.bundle()
         .pipe(source( join('.', 'api', 'clients', name+'-browserify-bundle.js') ) )
         .pipe(gulp.dest('.'))
         .on('error', function (err) {
             console.error('bundleShare error', err.message);
+            reject(err);
+        })
+        .on('end', function(){
+            resolve();
         });
+    });
 }
 
 function browserifyShare(name){
@@ -40,18 +46,18 @@ function browserifyShare(name){
     });
     
     b.add( join('.', 'api', 'clients', name, 'src', 'main.js') );
-    bundleShare(b, name);
+    return bundleShare(b, name);
 }
 
 
 
 
 gulp.task('build-dashboard', function(){
-    browserifyShare('Dashboard');
+    return browserifyShare('Dashboard');
 });
 
 gulp.task('build-admin', function(){
-    browserifyShare('Admin');
+    return browserifyShare('Admin');
 });
 
 
@@ -86,7 +92,19 @@ gulp.task('watch-tools', function() {
 
 var dockerComposeProcess;
 gulp.task('start-containers-dev', function(){
-    dockerComposeProcess = spawn('docker-compose', ['-f', 'compose-dev.yml', 'up'], {stdio: 'inherit'});
+    
+    var adminP;
+    if (!fs.existsSync('./api/clients/Admin-browserify-bundle.js'))
+        adminP = gulp.run('build-admin');
+
+    var dashboardP;
+    if (!fs.existsSync('./api/clients/Dashboard-browserify-bundle.js'))
+        dashboardP = gulp.run('build-dashboard');
+
+    Promise.all([adminP, dashboardP])
+    .then(function(){
+        dockerComposeProcess = spawn('docker-compose', ['-f', 'compose-dev.yml', 'up'], {stdio: 'inherit'});
+    }); 
 });
 
 gulp.task('watch', ['watch-dashboard', 'watch-admin', 'watch-tools']);
