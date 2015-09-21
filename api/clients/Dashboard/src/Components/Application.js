@@ -7,9 +7,9 @@ var MapComponent =  React.createFactory(require('./MapComponent.js'));
 
 /*
 
-interface AffluenceHistory{
+interface MeasurementHistory{
     date: Date
-    measurement: number
+    value: number
 }
 
 interface Place{
@@ -19,7 +19,7 @@ interface Place{
     lat: number,
     max: number,
     latest: number,
-    details? : AffluenceHistory[]
+    measurements : MeasurementHistory[]
 }
 
 
@@ -28,7 +28,7 @@ interface ApplicationProps{
     mapId,
     mapCenter,
     placeMap: Map (placeId => Place),
-    getPlaceMeasurements: (placeId) => Promise<AffluenceHistory[]>,
+    getPlaceMeasurements: (placeId) => Promise<MeasurementHistory[]>,
     updatingIDs: [int],
     day: string
 }

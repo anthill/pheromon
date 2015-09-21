@@ -2,15 +2,15 @@ var sql = require('sql');
 
 
 exports.affluence_sensor_measurements = sql.define({
-	name: 'affluence_sensor_measurements',
+	name: 'measurements',
 	columns: [
 		{ name: 'created_at' },
 		{ name: 'updated_at' },
 		{ name: 'id' },
 		{ name: 'sensor_id' },
 		{ name: 'type' },
-		{ name: 'measurements' },
-		{ name: 'measurement_date' }
+		{ name: 'value' },
+		{ name: 'date' }
 	]
 });
 

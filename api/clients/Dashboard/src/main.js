@@ -33,15 +33,15 @@ var topLevelStore = {
     updatingIDs: [],
     getPlaceMeasurements: function(place){
         api.getPlaceMeasurements(place.id)
-            .then(function(details){
-                console.log('place measurements', place, details);
+            .then(function(measurements){
+                console.log('place measurements', place, measurements);
                 
                 // sort by asc time in case it's not already thus sorted
-                details.sort(function(d1, d2){
-                    return new Date(d1.measurement_date).getTime() - new Date(d2.measurement_date).getTime()
+                measurements.sort(function(m1, m2){
+                    return new Date(m1.date).getTime() - new Date(m2.date).getTime()
                 })
             
-                place.details = details;
+                place.measurements = measurements;
                 topLevelStore.selectedPlaceMap.set(place.id, place);
                 render();
             })
@@ -72,10 +72,10 @@ socket.on('data', function (results) {
 
     results.forEach(function(result){
         // GET DATA
-        var id = result.entry.installed_at;
+        var id = result.data.measurement.installed_at;
 
-        var value = result.entry.measurements.length;
-        var date = result.entry.measurement_date;
+        var value = result.data.measurement.value.length;
+        var date = result.data.measurement.date;
 
         // console.log('results', value);
         
@@ -85,11 +85,11 @@ socket.on('data', function (results) {
         place.max = Math.max(place.max, value);
         place.latest = value;
 
-        if (place.details)
+        if (place.measurements)
         // UPDATE CURVE
-            place.details.push({
-                measurement_date: date,
-                measurement: value
+            place.measurements.push({
+                date: date,
+                value: value
             });
 
         topLevelStore.updatingIDs.push(id);

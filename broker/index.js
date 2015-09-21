@@ -320,15 +320,15 @@ function handleData(dat, socket, sim) {
                     var messageContent = {
                         'sensor_id': data.sensor.id,
                         'type': 'wifi', // hardcoded for now
-                        'measurements': msgData.signal_strengths,
-                        'measurement_date': msgData.date
+                        'value': msgData.signal_strengths,
+                        'date': msgData.date
                     };
                     var socketMessage = Object.assign({}, messageContent);
                     socketMessage['installed_at'] = data.sensor.installed_at;
 
                     // persist message in database
-                    if (msgData.date) {
-                        return database.SensorMeasurements.create(messageContent)
+                    if (msgData.date) { // This is because some sensors send weird dates that are not parsed correctly
+                        return database.Measurements.create(messageContent)
                         .then(function(id) {
                             return {
                                 sensorMeasurementId: id,
