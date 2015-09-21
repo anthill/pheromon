@@ -1,7 +1,5 @@
 "use strict";
 
-require('es6-shim');
-
 var net = require('net');
 var chai = require('chai');
 

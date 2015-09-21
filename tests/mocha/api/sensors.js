@@ -1,6 +1,5 @@
 'use strict';
 
-require("es6-shim");
 var sendReq = require('../../../tools/sendNodeReq');
 
 var expect = require('chai').expect;
@@ -17,7 +16,7 @@ describe('Verify API', function() {
     describe('Sensor', function () {
 
         before('clearing Sensor table', function(ready){ // use direct database function
-            api.deleteAllSensors()
+            database.Sensors.deleteAll()
             .then(function(){
                 ready();
             })
@@ -28,7 +27,7 @@ describe('Verify API', function() {
 
         // after each test, clear the table
         afterEach('clearing Sensor Table', function(ready){
-            api.deleteAllSensors()
+            database.Sensors.deleteAll()
             .then(function(){
                 ready();
             })

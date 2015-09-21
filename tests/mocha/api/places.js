@@ -1,6 +1,6 @@
 'use strict';
 
-require("es6-shim");
+var database = require('../../database');
 var sendReq = require('../../../tools/sendNodeReq');
 
 var expect = require('chai').expect;
@@ -17,7 +17,7 @@ describe('Verify API', function() {
     describe('Place', function () {
 
         before('clearing Place table', function(ready){
-            api.deleteAllPlaces()
+            database.Places.deleteAll()
             .then(function(){
                 ready();
             })
@@ -28,7 +28,7 @@ describe('Verify API', function() {
 
         // after each test, clear the table
         afterEach('clearing Place Table', function(ready){
-            api.deleteAllPlaces()
+            database.Places.deleteAll()
             .then(function(){
                 ready();
             })
