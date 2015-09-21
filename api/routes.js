@@ -2,8 +2,6 @@
 
 var database = require('../database');
 
-
-
 module.exports = function(app, debug){
 
 	// --------------> sensor
@@ -174,19 +172,19 @@ module.exports = function(app, debug){
 
 	// complex queries
 
-	app.get('/live-affluence', function(req, res){
+	app.get('/currentAffluence', function(req, res){
 	    database.complexQueries.currentPlaceAffluences()
         .then(function(data){
             res.status(200).send(data);
         })
         .catch(function(error){
-            console.log("error in /live-affluence: ", error);
-            res.status(500).send('Couldn\'t get live-affluence database');
+            console.log("error in /currentAffluence: ", error);
+            res.status(500).send('Couldn\'t get current live affluence database');
         });
 	});
 
-	app.get('/place/:id', function(req, res){
-	    var id = Number(req.params.id);
+	app.get('/measurements/get/:placeId', function(req, res){
+	    var id = Number(req.params.placeId);
 	    console.log('requesting place id', id);
 	    
 	    database.complexQueries.getPlaceMeasurements(id)
@@ -195,7 +193,7 @@ module.exports = function(app, debug){
 	    })
 	    .catch(function(error){
 	    	res.status(500).send('Couldn\'t place measurements from database');
-	        console.log("error in /place/'+req.params.id: ", error);
+	        console.log("error in /place/'+req.params.placeId: ", error);
 	    });
 	});
 

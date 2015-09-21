@@ -43,6 +43,17 @@ module.exports = function(request, origin){
         },
         getAllPlaces: function(){
             return request('GET', origin + '/place/getAll');
+        },
+        
+        // TO UPDATE
+        getLiveAffluence: function(){
+            return request('GET', '/currentAffluence');
+        },
+        getPlaceMeasurements: function(id){
+            return request('GET', '/measurements/get/:placeId' + id);
+        },
+        getAllPlacesInfos: function(){
+            return request('GET', '/allPlacesInfos');
         }
     };
 };

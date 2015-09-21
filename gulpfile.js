@@ -74,13 +74,22 @@ gulp.task('watch-admin', function() {
     });
 });
 
+gulp.task('watch-tools', function() {
+    console.log('Watching broker');
+
+    var toolsWatcher = gulp.watch('./tools/**', ['build-admin', 'build-dashboard']);
+    toolsWatcher.on('change', function(event) {
+        console.log('** Tool ** File ' + path.relative(__dirname, event.path) + ' was ' + event.type);
+    });
+});
+
 
 var dockerComposeProcess;
 gulp.task('start-containers-dev', function(){
     dockerComposeProcess = spawn('docker-compose', ['-f', 'compose-dev.yml', 'up'], {stdio: 'inherit'});
 });
 
-gulp.task('watch', ['watch-dashboard', 'watch-admin']);
+gulp.task('watch', ['watch-dashboard', 'watch-admin', 'watch-tools']);
 
 /*
     Top-level tasks

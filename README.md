@@ -81,7 +81,7 @@ docker-compose -f compose-test.yml build
 ````
 
 Once built, you can use
-````
+```
 npm run test
 ````
 

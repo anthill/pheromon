@@ -4,10 +4,10 @@ var sendReq = require('../../_common/js/sendReq.js');
 
 module.exports = {
     getLiveAffluence: function(){
-        return sendReq('GET', '/live-affluence');
+        return sendReq('GET', '/currentAffluence');
     },
     getPlaceMeasurements: function(id){
-        return sendReq('GET', '/place/' + id);
+        return sendReq('GET', '/measurements/get/:placeId' + id);
     },
     getAllPlacesInfos: function(){
         return sendReq('GET', '/allPlacesInfos');
