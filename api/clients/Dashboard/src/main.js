@@ -57,7 +57,7 @@ function render(){
 render();
 
 // Render again when receiving recyclingCenters from API
-api.getAllPlacesLiveAffluence()
+api.getLiveAffluence()
     .then(function(places){
         console.log('places', places);
 

@@ -75,7 +75,7 @@ gulp.task('watch-admin', function() {
 });
 
 gulp.task('watch-tools', function() {
-    console.log('Watching broker');
+    console.log('Watching tools');
 
     var toolsWatcher = gulp.watch('./tools/**', ['build-admin', 'build-dashboard']);
     toolsWatcher.on('change', function(event) {
