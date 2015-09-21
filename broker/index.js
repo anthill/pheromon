@@ -142,7 +142,6 @@ mqttServer(authenticate)
           
                 break;
             case "status":
-                console.log("received a status");
                 switch (subtopics[1]) {
                     case "unitialized":
                         var date = new Date();
@@ -153,7 +152,25 @@ mqttServer(authenticate)
                 }
                 break;
             case "measurement":
-                console.log("received a measurement");
+                switch (subtopics[1]) {
+                    case "wifi":
+                        var data = JSON.parse(packet.payload.toString());
+                        database.SensorMeasurements.create(
+                            {
+                                sensor_sim: id,
+                                type: "wifi",
+                                measurements: data.signal_strength,
+                                measurement_date: data.datetime 
+                            }  
+                        )
+                        .then(function() {
+                            console.log("wifi data updated");
+                        })
+                        .catch(function(err) {
+                            console.log('error : cannot store measurement in DB :', err)
+                        })
+                        break;
+                }
                 break;
             case 'network':
                 var signal = packet.payload.toString();
@@ -165,78 +182,11 @@ mqttServer(authenticate)
                     console.log('error : cannot store signal in DB :', err)
                 })
                 break;
-            // default:
-                // console.log("Received a message of an untreated topic.")
+            default:
+                console.log("Received a message of an untreated topic.")
         }        
 
     });
 
 });
-
-
-
-
-
-
-//     database.Sensors.update(data.sensor.id, (msgStatus.info.command !== 'null') ?
-//         { // If status + command result
-//             latest_input: msgStatus.info.command,
-//             latest_output: msgStatus.info.result,
-//             quipu_status: msgStatus.quipu.state,
-//             sense_status: msgStatus.sense
-//         } : 
-//         { // If only status
-//             quipu_status: msgStatus.quipu.state,
-//             sense_status: msgStatus.sense
-//         })
-//     .then(function(){
-//         debug('id', data.sensor.id);
-//         debug('Storage Success');
-//         return {
-//             sensorId: data.sensor.id,
-//             socketMessage: msgStatus
-//         };
-//     })
-//     .then(function(result) { // Send data to admin
-//         eventEmitter.emit('data', {type: 'status', data: result});
-//     })
-//     .catch(function(err){
-//         console.log("Storage FAILURE: ", err);
-//     });
-//     break;
-
-// case 'data':
-//     var msgDatas = JSON.parse(data.message.decoded);
-//     Promise.all(msgDatas.map(function(msgData){
-//         var messageContent = {
-//             'sensor_id': data.sensor.id,
-//             'type': 'wifi', // hardcoded for now
-//             'measurements': msgData.signal_strengths,
-//             'measurement_date': msgData.date
-//         };
-//         var socketMessage = Object.assign({}, messageContent);
-//         socketMessage['installed_at'] = data.sensor.installed_at;
-
-//         // persist message in database
-//         if (msgData.date) {
-//             return database.SensorMeasurements.create(messageContent)
-//             .then(function(id) {
-//                 return {
-//                     sensorMeasurementId: id,
-//                     measurement: socketMessage
-//                 }
-//             })
-//             .catch(function(error){
-//                 console.log("Storage FAILURE: ", error);
-//             });
-//         }
-//     }))
-//     .then(function(results) { // Send data to app
-//         debug('Storage SUCCESS');
-//         eventEmitter.emit('data', {type: 'data', data: results});
-//     })
-//     .catch(function(err) {
-//         console.log("Storage FAILURE: ", err);
-//     })
-//     break;
 

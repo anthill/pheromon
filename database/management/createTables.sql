@@ -50,14 +50,14 @@ CREATE TABLE IF NOT EXISTS sensors (
 CREATE TRIGGER updated_at_sensors BEFORE UPDATE ON sensors FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 
-CREATE TABLE IF NOT EXISTS affluence_sensor_measurements (
+CREATE TABLE IF NOT EXISTS sensor_measurements (
     id                  SERIAL PRIMARY KEY,
-    sensor_id           integer REFERENCES sensors (id) NOT NULL,
-    type                text NOT NULL, -- This can be signal_strength, temperature, pressure, ... but we can't presuppose it in an enum.
+    sensor_sim          text REFERENCES sensors (sim) NOT NULL,
+    type                text NOT NULL, -- This can be wifi, temperature, pressure, ... but we can't presuppose it in an enum.
     measurements        real[] NOT NULL, -- This was changed from signal_strengths to measurements
     measurement_date    timestamp without time zone NOT NULL
 ) INHERITS(lifecycle);
-CREATE TRIGGER updated_at_sensor_measurements BEFORE UPDATE ON affluence_sensor_measurements FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER updated_at_sensor_measurements BEFORE UPDATE ON sensor_measurements FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 
 

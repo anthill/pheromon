@@ -243,6 +243,38 @@ describe('Sensor initialization', function() {
 
     });
 
+    it('pushing wifi measurements', function (done) {
+
+        var measurement = {
+            datetime: new Date(),
+            signal_strength: [-10, -9, -99]
+        }
+        fakeSensor.publish(simId + "/measurement/wifi", JSON.stringify(measurement));
+
+        setTimeout(function(){
+            request.get({
+                url: 'http://' + host + ':4000/sensor/' + simId + '/measurements'
+            }, function(err, result, body){
+                if (!err) {
+                    try{
+                      var measurements = JSON.parse(body);
+                    }
+                    catch(e){
+                        console.log(e)
+                    }
+                    expect(measurements[0].measurements).to.deep.equal([-10, -9, -99]);
+                    expect(measurements[0].entry).to.equal(3);
+                    expect(Date.parse(measurements[0].measurement_date)).to.be.a("number");
+                    done();
+                }
+                else {
+                    console.log('err', err);
+                }
+            });
+        }, 20);
+
+    });
+
 });
 
 
