@@ -72,7 +72,7 @@ module.exports = function(){
                             console.log('no backup file');
                             generateDefinitions()
                             .then(function(){
-                                console.log("Dropped and created the tables.", client);
+                                console.log("Dropped and created the tables.");
                                 client.end();
                                 resolve();
                             })

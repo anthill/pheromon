@@ -8,7 +8,7 @@
     "init-db-prod": "node_modules/gulp/bin/gulp.js init-db-prod",
     "dev": "node_modules/gulp/bin/gulp.js dev",
     "lint": "eslint ./",
-    "test": "mocha tests/mocha/*",
+    "test": "docker-compose -f compose-test.yml up",
     "validate": "npm ls"
   },
   "repository": {
