@@ -43,67 +43,54 @@ function generateDefinitions() {
     });
 }
 
-module.exports = function(){
-
-    console.log('hello');
-    return new Promise(function(resolve, reject){
-        // wait database to be created
-        (function tryRebuildDatabase(){
-            console.log("Trying to rebuild database...");
-            
-            setTimeout(function(){
-                databaseClientP
-                .then(function(client){
-                    dropAllTables()
-                    .catch(function(err){
-                        console.error("Couldn't drop tables", err);
-                        client.end();
-                        reject(err);
-                    })
-                    .then(createTables)
-                    .catch(function(err){
-                        console.error("Couldn't create tables", err);
-                        client.end();
-                        reject(err);
-                    })
-                    .then(function(){   
-                        if (!process.env.BACKUP) {
-                            console.log('no backup file');
-                            generateDefinitions()
-                            .then(function(){
-                                console.log("Dropped and created the tables.");
-                                client.end();
-                                resolve();
-                            })
-                            .catch(function(err){
-                                console.error("Couldn't write the schema", err);
-                                client.end();
-                                reject();
-                            });
-                        }
-                        else {
-                            generateDefinitions()
-                            .then(function(){
-                                console.log('definitions generated');
-                                client.end();
-                                resolve();
-                            })
-                            .catch(function(err){
-                                console.error("Couldn't write the schema", err);
-                                client.end();
-                                reject(err);
-                            });
-                        }
+(function tryRebuildDatabase(){
+    console.log("Trying to rebuild database...");
+    
+    setTimeout(function(){
+        databaseClientP
+        .then(function(){
+            dropAllTables()
+            .catch(function(err){
+                console.error("Couldn't drop tables", err);
+                process.exit();
+            })
+            .then(createTables)
+            .catch(function(err){
+                console.error("Couldn't create tables", err);
+                process.exit();
+            })
+            .then(function(){   
+                if (!process.env.BACKUP) {
+                    console.log('no backup file');
+                    generateDefinitions()
+                    .then(function(){
+                        console.log("Dropped and created the tables.");
+                        process.exit();
                     })
                     .catch(function(err){
-                        tryRebuildDatabase()
+                        console.error("Couldn't write the schema", err);
+                        process.exit();
+                    });
+                }
+                else {
+                    generateDefinitions()
+                    .then(function(){
+                        console.log('definitions generated');
+                        process.exit();
                     })
-                })
-                .catch(function(err){
-                    console.error("Couldn't connect tables", err);
-                    tryRebuildDatabase();
-                });
-            }, 1000);
-        })();
-    });
-};
+                    .catch(function(err){
+                        console.error("Couldn't write the schema", err);
+                        process.exit();
+                    });
+                }
+            })
+            .catch(function(err){
+                tryRebuildDatabase()
+            })
+        })
+        .catch(function(err){
+            console.error("Couldn't connect tables", err);
+            tryRebuildDatabase();
+        });
+    }, 1000);
+})();
