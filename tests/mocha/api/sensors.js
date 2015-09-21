@@ -1,5 +1,6 @@
 'use strict';
 
+var database = require('../../database');
 var sendReq = require('../../../tools/sendNodeReq');
 
 var expect = require('chai').expect;

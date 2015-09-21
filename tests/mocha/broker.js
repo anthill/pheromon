@@ -9,6 +9,7 @@ var assert = chai.assert;
 // chai.use(require('chai-as-promised'));
 
 var request = require('request');
+var database = require('../../database');
 var sendReq = require('../../tools/sendNodeReq');
 var PRIVATE = require('./PRIVATE.json');
 
