@@ -2,7 +2,6 @@
 
 require('es6-shim');
 
-var net = require('net');
 var mqtt    = require('mqtt');
 var chai = require('chai');
 
@@ -13,20 +12,16 @@ var assert = chai.assert;
 
 var request = require('request');
 var PRIVATE = require('../../PRIVATE.json');
-
-var makeTcpReceiver = require('../../tools/makeTcpReceiver');
 var boot2dockerIp = require('../../tools/boot2dockerIp.js');
 
-
-var host;
-var mqttClient;
-var simId = "simNumber1";
 
 describe('Sensor initialization', function() {
 
 	this.timeout(2000);
 
+    var host;
 	var fakeSensor;
+    var simId = "simNumber1";
 
 	// get host ip and clean db
 	before(function(ready){
@@ -40,40 +35,27 @@ describe('Sensor initialization', function() {
             })
             .then(function(){
 
-                mqttClient  = mqtt.connect('mqtt://' + host + ':1883',
-                    {
-                        username: simId,
-                        password: PRIVATE.token,
-                        clientId: simId
-                    }
-                );
-
-                return new Promise(function(resolve, reject){
-
-                    setTimeout(function(){
-                        reject("Timeout in mqqt connection");
-                    }, 1000);
-
-                    mqttClient.on('connect', function () {
-                        resolve();
-                    });
-                });
-                
-            })
-            .catch(function(error){
-                console.error("Error in connecting mqtt");
-                throw error; // forward the error
-            })
-            .then(function(){
-
                 request.post({
                     url: 'http://' + host + ':4000/sensors/deleteAll',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 }, function(err, result, body){
-                    if (!err)
-                        ready();
+                    if (!err) {
+                        fakeSensor  = mqtt.connect('mqtt://' + host + ':1883',
+                            {
+                                username: simId,
+                                password: PRIVATE.token,
+                                clientId: simId
+                            }
+                        );
+
+                        fakeSensor.on('connect', function () {
+                            console.log("received connect")
+                            ready();
+                        });                        
+                    }
+                        
                 });
             })
             .catch(function(error){
@@ -82,87 +64,68 @@ describe('Sensor initialization', function() {
             })
 	});
 
-	// simulate sensor
-	beforeEach(function(ready){
-
-        var socket = net.connect({
-            host: host,
-            port: 5100
-        });
-
-        socket.on('connect', function(){
-            fakeSensor = makeTcpReceiver(socket, "\n");
-            fakeSensor.send = socket.write.bind(socket);
-            ready();
-        });
-
-	});
 
 	it('broker should register unknown sensor if token ok', function (done) {
 
-		// check if sensor properly persisted in db
-		fakeSensor.on('message', function(message) {
-    		request.get({
-	            url: 'http://' + host + ':4000/sensor/getAll'
-	        }, function(err, result, body){
-	            if (!err) {
-                    try{
-	            	  var sensor = JSON.parse(body)[0];
+		// check if sensor properly was persisted in db
+		request.get({
+            url: 'http://' + host + ':4000/sensor/getAll'
+        }, function(err, result, body){
+            if (!err) {
+            	var sensors = JSON.parse(body);
+                var nbFound = 0;
+                sensors.forEach(function(sensor){
+                    if (sensor.sim === simId) {
+                        nbFound++;
+                        
                     }
-                    catch(e){done(e)}
+                })
+                expect(nbFound).to.equal(1);
+                done();
+            }
+            else {
+            	console.log('err', err);
+            }
+        });
 
-	            	expect(sensor.sim).to.deep.equal(PRIVATE.token); 
-	                done();
-	            }
-	            else {
-	            	console.log('err', err);
-                    done(err);
-	            }
-	        });
-    	});
-
-    	// send sensor 
-		fakeSensor.send("init " + PRIVATE.token + " dummyCode" + "\n");
 	});
 
-	it('broker should send config parameters to sensor if token ok', function (done) {
-		fakeSensor.on('message', function(message) {
-            
-    		var args = message.slice(4);
-    		var argsplit = args.split(" ");
-    		expect(argsplit[0]).to.deep.equal("init");
-    		expect(Number.isNaN(Number(argsplit[1]))).to.be.false;
-    		expect(Number.isNaN(Number(argsplit[2]))).to.be.false;
-    		expect(Number.isNaN(Number(argsplit[3]))).to.be.false;
-    		// check for proper datetime
-    		expect(Date.parse(argsplit[4])).to.be.a("number");
-    		done();
-    	});
-		fakeSensor.send("init " + PRIVATE.token + " dummyCode" + "\n");
-	});
 
-	it('broker should not register sensor if token not ok', function (done) {
+	// it('broker should not allow sensor to connect if token not ok', function (done) {
         
-		fakeSensor.on('message', function(message) {
-    		assert(false);
-    		done();
-    	});
+ //        try {
+ //            fakeSensor  = mqtt.connect('mqtt://' + host + ':1883',
+ //                {
+ //                    username: simId,
+ //                    password: "dummyCode",
+ //                    clientId: simId
+ //                }
+ //            );
+ //        } catch(e){
+ //            assert(true);
+ //            done();
+ //        }
+
+ //        // if connect test fails
+ //        fakeSensor.on('connect', function () {
+ //            assert(false);
+ //            done();
+ //        });
         
         
-    	// if no response from server after 500 ms, consider ignored
-    	setTimeout(function(){
-    		assert(true);
-    		done();
-    	}, 500)
-		fakeSensor.send("init " + PRIVATE.token + " dummyCode" + "\n");
-	});
+ //    	// if no response from server after 500 ms, consider ignored
+ //    	setTimeout(function(){
+ //    		assert(true);
+ //    		done();
+ //    	}, 500)
 
-    it('[MQTT] broker should send back init command when asked', function (done) {
+	// });
 
-        mqttClient.subscribe(simId + "/#");
-        mqttClient.subscribe('command');
+    it('broker should send back init command when asked', function (done) {
 
-        mqttClient.on('message', function (topic, message) {
+        fakeSensor.subscribe(simId + "/#");
+
+        fakeSensor.on('message', function (topic, message) {
             if(topic === simId + "/command/init") {
                 var argsplit = message.toString().split(" ");
                 expect(Number.isNaN(Number(argsplit[0]))).to.be.false;
@@ -174,8 +137,35 @@ describe('Sensor initialization', function() {
             }
         });
 
-        mqttClient.publish(simId + "/status/unitialized", "");
+        fakeSensor.publish(simId + "/status/unitialized", "");
     });
+
+    it('network status should be properly persisted', function (done) {
+
+        fakeSensor.publish(simId + "/network", "H/H+");
+
+        request.get({
+            url: 'http://' + host + ':4000/sensor/get/' + simId
+        }, function(err, result, body){
+            if (!err) {
+                try{
+                  var sensor = JSON.parse(body);
+                }
+                catch(e){
+                    console.log(e)
+                }
+                expect(sensor.signal).to.equal("H/H+");
+                done();
+            }
+            else {
+                console.log('err', err);
+            }
+        });
+
+
+
+    });
+
 });
 
 

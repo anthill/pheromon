@@ -22,7 +22,7 @@ module.exports = function(app, debug){
 	});
 
 	app.post('/sensor/update', function(req, res){
-	    var id = Number(req.body.id);
+	    var id = req.body.id;
 
 	    database.Sensors.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
 	    .then(function(data){
@@ -35,7 +35,7 @@ module.exports = function(app, debug){
 	});
 
 	app.get('/sensor/get/:id', function(req, res){
-	    var id = Number(req.params.id);
+	    var id = req.params.id;
 	    console.log('requesting sensor id', id);
 
 	    database.Sensors.get(id)
@@ -62,7 +62,7 @@ module.exports = function(app, debug){
 	});
 
 	app.post('/sensor/delete/:id', function(req, res){    
-	    var id = Number(req.params.id);
+	    var id = req.params.id;
 	    console.log('deleting sensor id', id);
 
 	    database.Sensors.delete(id)
@@ -104,7 +104,7 @@ module.exports = function(app, debug){
 	});
 
 	app.post('/place/update', function(req, res){
-	    var id = Number(req.body.id);
+	    var id = req.body.id;
 
 	    database.Places.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
 	    .then(function(data){
@@ -117,7 +117,7 @@ module.exports = function(app, debug){
 	});
 
 	app.get('/place/get/:id', function(req, res){
-	    var id = Number(req.params.id);
+	    var id = req.params.id;
 	    console.log('requesting place id', id);
 
 	    database.Places.get(id)
@@ -144,7 +144,7 @@ module.exports = function(app, debug){
 	});
 
 	app.post('/place/delete/:id', function(req, res){    
-	    var id = Number(req.params.id);
+	    var id = req.params.id;
 	    console.log('deleting place id', id);
 
 	    database.Places.delete(id)
@@ -189,7 +189,7 @@ module.exports = function(app, debug){
 	});
 
 	app.get('/place/:id', function(req, res){
-	    var id = Number(req.params.id);
+	    var id = req.params.id;
 	    console.log('requesting place id', id);
 	    
 	    database.complexQueries.getPlaceMeasurements(id)

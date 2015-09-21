@@ -34,7 +34,7 @@ module.exports = {
             
             var query = sensors
                 .update(delta)
-                .where(sensors.id.equals(id))
+                .where(sensors.sim.equals(id))
                 .returning("*")
                 .toQuery();
 
@@ -56,7 +56,7 @@ module.exports = {
             
             var query = sensors
                 .select("*")
-                .where(sensors.id.equals(id))
+                .where(sensors.sim.equals(id))
                 .from(sensors)
                 .toQuery();
 
@@ -99,7 +99,7 @@ module.exports = {
             
             var query = sensors
                 .delete()
-                .where(sensors.id.equals(id))
+                .where(sensors.sim.equals(id))
                 .returning('*')
                 .toQuery();
 
@@ -133,29 +133,6 @@ module.exports = {
         .catch(function(err){
             console.log('ERROR in deleteAll sensors', err);
         });        
-    },
-
-    findBySIMid: function(sim) {
-        return databaseP.then(function (db) {
-            
-            var query = sensors
-                .select("*")
-                .from(sensors)
-                .where(sensors.sim.equals(sim))
-                .toQuery();
-
-            //console.log('sensors findBySIMid query', query);
-
-            return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
-                    if (err) reject(err);
-                    else resolve(result.rows);
-                });
-            });
-        })
-        .catch(function(err){
-            console.log('ERROR in findBySIMid', err);
-        });          
     }
 
 };
