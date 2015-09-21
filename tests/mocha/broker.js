@@ -51,7 +51,6 @@ describe('Sensor initialization', function() {
                         );
 
                         fakeSensor.on('connect', function () {
-                            console.log("received connect")
                             ready();
                         });                        
                     }
@@ -144,25 +143,103 @@ describe('Sensor initialization', function() {
 
         fakeSensor.publish(simId + "/network", "H/H+");
 
-        request.get({
-            url: 'http://' + host + ':4000/sensor/get/' + simId
-        }, function(err, result, body){
-            if (!err) {
-                try{
-                  var sensor = JSON.parse(body);
+        setTimeout(function(){
+            request.get({
+                url: 'http://' + host + ':4000/sensor/get/' + simId
+            }, function(err, result, body){
+                if (!err) {
+                    try{
+                      var sensor = JSON.parse(body);
+                    }
+                    catch(e){
+                        console.log(e)
+                    }
+                    expect(sensor.signal).to.equal("H/H+");
+                    done();
                 }
-                catch(e){
-                    console.log(e)
+                else {
+                    console.log('err', err);
                 }
-                expect(sensor.signal).to.equal("H/H+");
-                done();
-            }
-            else {
-                console.log('err', err);
-            }
-        });
+            });
+        }, 20);
 
+    });
 
+    it('change start hour', function (done) {
+
+        fakeSensor.publish(simId + "/command/starthour", "9");
+
+        setTimeout(function(){
+            request.get({
+                url: 'http://' + host + ':4000/sensor/get/' + simId
+            }, function(err, result, body){
+                if (!err) {
+                    try{
+                      var sensor = JSON.parse(body);
+                    }
+                    catch(e){
+                        console.log(e)
+                    }
+                    expect(sensor.start_hour).to.equal(9);
+                    done();
+                }
+                else {
+                    console.log('err', err);
+                }
+            });
+        }, 20);
+
+    });
+
+    it('change stop hour', function (done) {
+
+        fakeSensor.publish(simId + "/command/stophour", "19");
+
+        setTimeout(function(){
+            request.get({
+                url: 'http://' + host + ':4000/sensor/get/' + simId
+            }, function(err, result, body){
+                if (!err) {
+                    try{
+                      var sensor = JSON.parse(body);
+                    }
+                    catch(e){
+                        console.log(e)
+                    }
+                    expect(sensor.stop_hour).to.equal(19);
+                    done();
+                }
+                else {
+                    console.log('err', err);
+                }
+            });
+        }, 20);
+
+    });
+
+    it('change period', function (done) {
+
+        fakeSensor.publish(simId + "/command/period", "200");
+
+        setTimeout(function(){
+            request.get({
+                url: 'http://' + host + ':4000/sensor/get/' + simId
+            }, function(err, result, body){
+                if (!err) {
+                    try{
+                      var sensor = JSON.parse(body);
+                    }
+                    catch(e){
+                        console.log(e)
+                    }
+                    expect(sensor.period).to.equal(200);
+                    done();
+                }
+                else {
+                    console.log('err', err);
+                }
+            });
+        }, 20);
 
     });
 

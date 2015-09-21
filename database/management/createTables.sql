@@ -43,9 +43,9 @@ CREATE TABLE IF NOT EXISTS sensors (
     latest_input    text DEFAULT NULL,
     latest_output   text DEFAULT NULL,
     signal          network_signal DEFAULT NULL,
-    data_period     real DEFAULT 300, --One measurement every 300 seconds
-    start_time      real DEFAULT 7,
-    stop_time       real DEFAULT 16
+    period     real DEFAULT 300, --One measurement every 300 seconds
+    start_hour      real DEFAULT 7,
+    stop_hour       real DEFAULT 16
 ) INHERITS(lifecycle);
 CREATE TRIGGER updated_at_sensors BEFORE UPDATE ON sensors FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 

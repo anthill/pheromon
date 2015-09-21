@@ -68,7 +68,7 @@ npm run dev
 We don't want sensors to have a manually hard-coded id (for deployment's simplicity) so we use SIM id (queried with AT command):
 
 - [sensor] query SIM id and sends [init id passw] on `command`
-- [broker] associate SIM id to a tcp Socket and sends [init period, start_time, stop_time, date] on `command`
+- [broker] associate SIM id to a tcp Socket and sends [period, start_hour, stop_hour, date] on `command`
 - 
 
 

@@ -49,9 +49,9 @@ var authenticate = function(client, username, token, callback) {
                 return database.Sensors.create({
                     'name': pokemon.random(),
                     'sim': client.id,
-                    'data_period': CONF.data_period,
-                    'start_time': CONF.start_time,
-                    'stop_time': CONF.stop_time
+                    'period': CONF.period,
+                    'start_hour': CONF.start_hour,
+                    'stop_hour': CONF.stop_hour
                 })
                 .then(function(createdSensor){
                     return createdSensor;
@@ -105,7 +105,41 @@ mqttServer(authenticate)
         }
         switch(subtopics[0]) {
             case "command":
-                console.log("received a command");
+                switch (subtopics[1]) {
+                    case 'starthour' :
+                        var data = packet.payload.toString();
+                        database.Sensors.update(id, {start_hour: parseInt(data)})
+                        .then(function() {
+                            console.log("start_hour updated");
+                        })
+                        .catch(function(err) {
+                            console.log('error : cannot store start_hour in DB :', err)
+                        })
+                        break;
+                    case 'stophour' :
+                        var data = packet.payload.toString();
+                        database.Sensors.update(id, {stop_hour: parseInt(data)})
+                        .then(function() {
+                            console.log("stop_hour updated");
+                        })
+                        .catch(function(err) {
+                            console.log('error : cannot store stop_hour in DB :', err)
+                        })
+                        break;
+                    case 'period' :
+                        var data = packet.payload.toString();
+                        database.Sensors.update(id, {period: parseInt(data)})
+                        .then(function() {
+                            console.log("period updated");
+                        })
+                        .catch(function(err) {
+                            console.log('error : cannot store period in DB :', err)
+                        })
+                        break;
+                    default:
+                        console.log("Unknown command ", subtopics[1]);
+                }
+          
                 break;
             case "status":
                 console.log("received a status");
@@ -113,7 +147,7 @@ mqttServer(authenticate)
                     case "unitialized":
                         var date = new Date();
                         var sensor = id2sensor[id];
-                        var data = [sensor.data_period, sensor.start_time, sensor.stop_time, date.toISOString()].join(" ");
+                        var data = [sensor.period, sensor.start_hour, sensor.stop_hour, date.toISOString()].join(" ");
                         maestro.publish(id + "/command/init", data);
                         break;
                 }
@@ -125,7 +159,7 @@ mqttServer(authenticate)
                 var signal = packet.payload.toString();
                 database.Sensors.update(id, {signal: signal})
                 .then(function() {
-                    console.log("NETWORK UPDATED.")
+                    console.log("network updated");
                 })
                 .catch(function(err) {
                     console.log('error : cannot store signal in DB :', err)
@@ -143,51 +177,6 @@ mqttServer(authenticate)
 
 
 
-// case 'message':
-//     if (data.message.decoded === 'init') {
-//         var date = new Date();
-//         sendCommand(socket, 'date ' + date.toISOString())
-//     }
-//     break;
-
-// case 'status':
-//     var msgStatus = JSON.parse(data.message.decoded);
-//     var cmd = msgStatus.info.command.toLowerCase();
-
-//     new Promise(function (resolve, reject) {
-//         switch (cmd) {
-//             case 'changestarttime' :
-//                 if (msgStatus.info.result === 'KO') {
-//                     reject('KO');
-//                 }
-//                 database.Sensors.update(data.sensor.id, {start_time: parseInt(msgStatus.info.result)})
-//                 .then(resolve);
-//                 break;
-//             case 'changestoptime' :
-//                 if (msgStatus.info.result === 'KO') {
-//                     reject('KO');
-//                 }
-//                 database.Sensors.update(data.sensor.id, {stop_time: parseInt(msgStatus.info.result)})
-//                 .then(resolve);
-//                 break;
-//             case 'changeperiod' :
-//                 if (msgStatus.info.result === 'KO') {
-//                     reject('KO');
-//                 }
-//                 database.Sensors.update(data.sensor.id, {data_period: parseInt(msgStatus.info.result)})
-//                 .then(resolve);
-//                 break;
-//             default:
-//                 reject(null)
-//         }
-//     })
-//     .then(function() {
-//         debug(cmd + ' result successfully stored in database');
-//     })
-//     .catch(function(err) {
-//         if (err)
-//             console.log('error : ' + 'cannot store result of ' + cmd + ' in database ('+err+')')
-//     });
 
 //     database.Sensors.update(data.sensor.id, (msgStatus.info.command !== 'null') ?
 //         { // If status + command result
