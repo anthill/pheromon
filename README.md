@@ -71,6 +71,9 @@ We don't want sensors to have a manually hard-coded id (for deployment's simplic
 - [broker] associate SIM id to a tcp Socket and sends [init period, start_time, stop_time, date] on `command`
 - 
 
+## Unitary tests
+
+TODO
 
 ## Contribute :
 
