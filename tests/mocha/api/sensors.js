@@ -69,6 +69,7 @@ describe('Verify API', function() {
                     sim: sensor.sim,
                     delta: delta
                 };
+                console.log('AHAHAHAH');
 
                 return api.updateSensor(updateData)
                 .then(function(updated){

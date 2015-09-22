@@ -16,11 +16,11 @@ module.exports = {
                 .toQuery();
 
             //console.log('sensors create query', query);
-
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0]);
+                    else
+                        resolve(result.rows[0]);
                 });
             });
         })
@@ -41,14 +41,10 @@ module.exports = {
             //console.log('sensors findBySIMid query', query);
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
-                    if (err) {
-                        console.log("qqqqqqqqqqqq ", err)
+                    if (err)
                         reject(err);
-                    }
-                    else {
-                        console.log("zzzzzzzzz ", result.rows)
+                    else 
                         resolve(result.rows[0]);
-                    }
                 });
             });
         })
@@ -91,7 +87,8 @@ module.exports = {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
 
-                    else resolve(result.rows);
+                    else
+                        resolve(result.rows);
                 });
             });
         })

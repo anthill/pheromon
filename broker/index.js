@@ -38,6 +38,7 @@ var debug = function() {
 // ############### Sensors communication ######################
 var authenticate = function(client, username, token, callback) {
     var authorized = (token.toString() === PRIVATE.token);
+
     if (authorized) {
 
         // check if sensor exists in db
@@ -45,7 +46,6 @@ var authenticate = function(client, username, token, callback) {
         .then(function(sensor) {
             // if sensor was never registered, create it
             if(!sensor) {
-                console.log("Creating the sensor")
                 return database.Sensors.create({
                     'name': pokemon.random(),
                     'sim': client.id,
@@ -53,27 +53,21 @@ var authenticate = function(client, username, token, callback) {
                     'start_hour': CONF.start_hour,
                     'stop_hour': CONF.stop_hour
                 })
-                .then(function(createdSensor){
-                    return createdSensor;
-                })
                 .catch(function(err) {
                     console.log("[ERROR] Couldn't create sensor :", err);
-                })
+                });
             }
-            else { 
+            else
                 return sensor;
-            }
-            
         })
         .then(function(sensor){
             id2sensor[client.id] = sensor;
+            callback(null, authorized);
         })
         .catch(function(err) {
             console.log("[ERROR] Couldn't get sensor's config in DB :", err);
-        })
+        });
     }
-
-    callback(null, authorized);
 }
 
 mqttServer(authenticate)
@@ -92,8 +86,6 @@ mqttServer(authenticate)
     maestro.on('connect', function () {
         console.log("Maestro ready")
     });
-
-
 
     mqttServer.on('published', function(packet, client) {
         console.log("MQTT ", packet.topic, packet.payload.toString())
@@ -143,7 +135,7 @@ mqttServer(authenticate)
                 break;
             case "status":
                 switch (subtopics[1]) {
-                    case "unitialized":
+                    case "uninitialized":
                         var date = new Date();
                         var sensor = id2sensor[id];
                         var data = [sensor.period, sensor.start_hour, sensor.stop_hour, date.toISOString()].join(" ");

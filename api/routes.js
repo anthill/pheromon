@@ -19,7 +19,7 @@ module.exports = function(app, debug){
 	    });
 	});
 
-	app.post('/sensor/update/:sim', function(req, res){
+	app.post('/sensor/update', function(req, res){
 	    var sim = req.body.sim;
 
 	    database.Sensors.update(sim, req.body.delta)
@@ -32,18 +32,18 @@ module.exports = function(app, debug){
 	    });
 	});
 
-	app.get('/sensor/get/:id', function(req, res){
-	    var id = req.params.id;
-	    console.log('requesting sensor id', id);
+	app.get('/sensor/get/:sim', function(req, res){
+	    var sim = req.params.sim;
+	    console.log('requesting sensor sim', sim);
 
-	    database.Sensors.get(id)
+	    database.Sensors.get(sim)
 	    .then(function(data){
 	        // debug('All sensors', data);
 	        res.status(200).send(data);
 	    })
 	    .catch(function(error){
 	    	res.status(500).send('Couldn\'t get sensor from database');
-	        console.log("error in GET /sensor/" + id, error);
+	        console.log("error in GET /sensor/" + sim, error);
 	    });
 	});
 
@@ -59,17 +59,17 @@ module.exports = function(app, debug){
 	    });
 	});
 
-	app.delete('/sensor/delete/:id', function(req, res){    
-	    var id = req.params.id;
-	    console.log('deleting', id);
+	app.delete('/sensor/delete/:sim', function(req, res){    
+	    var sim = req.params.sim;
+	    console.log('deleting', sim);
 
-	    database.Sensors.delete(id)
+	    database.Sensors.delete(sim)
 	    .then(function(data){
 	        res.status(200).send(data);
 	    })
 	    .catch(function(error){
 	        res.status(500).send('Couldn\'t delete Sensor from database');
-	        console.log("error in DELETE /sensor/" + id, error);
+	        console.log("error in DELETE /sensor/" + sim, error);
 	    });
 	});
 

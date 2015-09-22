@@ -33,37 +33,32 @@ describe('Sensor initialization', function() {
 
 
 	before(function(){
-        return database.Sensors.deleteAll()
-		.then(function(){
-			return new Promise(function(resolve, reject){
-				fakeSensor  = mqtt.connect('mqtt://broker:1883',
-					{
-						username: simId,
-						password: PRIVATE.token,
-						clientId: simId
-					}
-				);
-
-				fakeSensor.on('connect', function () {
-					resolve();
-				});
-			});
-		});
+        return database.Sensors.deleteAll();
 	});
-
 
 	it('broker should register unknown sensor if token ok', function () {
 
-        return api.getAllSensors()
-        .then(function(sensors){
-            var nbFound = 0;
-            sensors.forEach(function(sensor){
-                if (sensor.sim === simId) {
-                    nbFound++;
+        return new Promise(function(resolve, reject){
+            fakeSensor = mqtt.connect('mqtt://broker:1883',
+                {
+                    username: simId,
+                    password: PRIVATE.token,
+                    clientId: simId
                 }
-            })
-            expect(nbFound).to.equal(1);
+            );
+
+            fakeSensor.on('connect', function () {
+                console.log('sensors', api.getAllSensors());
+                resolve();
+            });
         })
+        .then(function(){
+            return api.getAllSensors();
+        })
+        .then(function(sensors){
+            console.log('sensors', sensors);
+            expect(sensors[0].sim).to.deep.equal(simId);
+        });
 
 	});
 

@@ -32,8 +32,10 @@ module.exports = function (method, url, data){
                 }, function(error, response, body){
                     if (!error)
                         resolve(JSON.parse(body));
+                        
                     else 
                         reject(new Error('HTTP error ', error));
+                        
                 });
                 break;
 
