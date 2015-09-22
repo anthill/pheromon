@@ -13,7 +13,14 @@ var assert = chai.assert;
 var request = require('request');
 var PRIVATE = require('../../PRIVATE.json');
 var boot2dockerIp = require('../../tools/boot2dockerIp.js');
+var sendReq = require('../../tools/sendNodeReq');
 
+var prepareAPI = require('../../tools/prepareAPI.js');
+
+var makeTcpReceiver = require('../../tools/makeTcpReceiver');
+var origin = 'http://broker:5100';
+var apiOrigin = 'http://api:4000';
+var api = prepareAPI(sendReq, apiOrigin);
 
 describe('Sensor initialization', function() {
 
@@ -25,6 +32,7 @@ describe('Sensor initialization', function() {
 
 	// get host ip and clean db
 	before(function(ready){
+
 		boot2dockerIp()
             .then(function(h){
                 host = h;

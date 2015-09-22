@@ -37,6 +37,17 @@ module.exports = function (method, url, data){
                 });
                 break;
 
+            case 'DELETE':
+                request.del({
+                    url: url
+                }, function(error, response, body){
+                    if (!error)
+                        resolve(JSON.parse(body));
+                    else 
+                        reject(new Error('HTTP error ', error));
+                });
+                break;
+
             default :
                 reject(new Error('HTTP request method unknown'));
                 break;

@@ -2,8 +2,6 @@
 
 var database = require('../database');
 
-
-
 module.exports = function(app, debug){
 
 	// --------------> sensor
@@ -45,7 +43,7 @@ module.exports = function(app, debug){
 	    })
 	    .catch(function(error){
 	    	res.status(500).send('Couldn\'t get sensor from database');
-	        console.log("error in /sensor/get/" + id, error);
+	        console.log("error in GET /sensor/" + id, error);
 	    });
 	});
 
@@ -57,12 +55,13 @@ module.exports = function(app, debug){
 	    })
 	    .catch(function(error){
 	    	res.status(500).send('Couldn\'t gett all sensors database');
-	        console.log("error in /sensor/getAll: ", error);
+	        console.log("error in GET /sensor/all: ", error);
 	    });
 	});
 
-	app.post('/sensor/delete/:id', function(req, res){    
+	app.delete('/sensor/delete/:id', function(req, res){    
 	    var id = req.params.id;
+	    console.log('req.params.id', req.params.id);
 	    console.log('deleting sensor id', id);
 
 	    database.Sensors.delete(id)
@@ -71,11 +70,11 @@ module.exports = function(app, debug){
 	    })
 	    .catch(function(error){
 	        res.status(500).send('Couldn\'t delete Sensor from database');
-	        console.log("error in /sensor/delete/" + id, error);
+	        console.log("error in DELETE /sensor/" + id, error);
 	    });
 	});
 
-	app.post('/sensor/deleteAll', function(req, res){    
+	app.delete('/sensor/deleteAll', function(req, res){    
 	    console.log('deleting all sensors');
 
 	    database.Sensors.deleteAll()
@@ -84,7 +83,7 @@ module.exports = function(app, debug){
 	    })
 	    .catch(function(error){
 	        res.status(500).send('Couldn\'t delete all Sensors from database');
-	        console.log("error in /sensor/deleteAll", error);
+	        console.log("error in DELETE /sensor/all", error);
 	    });
 	});
 
@@ -143,7 +142,7 @@ module.exports = function(app, debug){
 	    });
 	});
 
-	app.post('/place/delete/:id', function(req, res){    
+	app.delete('/place/delete/:id', function(req, res){    
 	    var id = req.params.id;
 	    console.log('deleting place id', id);
 
@@ -157,7 +156,7 @@ module.exports = function(app, debug){
 	    });
 	});
 
-	app.post('/place/deleteAll', function(req, res){    
+	app.delete('/place/deleteAll', function(req, res){    
 	    console.log('deleting all sensors');
 
 	    database.Places.deleteAll()
@@ -171,24 +170,21 @@ module.exports = function(app, debug){
 	});
 
 
-
-
-
-
 	// complex queries
 
-	app.get('/live-affluence', function(req, res){
+	app.get('/currentAffluence', function(req, res){
 	    database.complexQueries.currentPlaceAffluences()
         .then(function(data){
             res.status(200).send(data);
         })
         .catch(function(error){
-            console.log("error in /live-affluence: ", error);
-            res.status(500).send('Couldn\'t get live-affluence database');
+            console.log("error in /currentAffluence: ", error);
+            res.status(500).send('Couldn\'t get current live affluence database');
         });
 	});
 
-	app.get('/place/:id/measurements', function(req, res){
+
+	app.get('/measurements/get/:placeId', function(req, res){
 	    var id = req.params.id;
 	    console.log('requesting place id', id);
 	    

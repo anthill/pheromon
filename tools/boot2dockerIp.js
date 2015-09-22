@@ -7,9 +7,8 @@ module.exports = function(){
 		exec("boot2docker ip", function(error, ip){
 			if (error)
 				resolve("localhost");
-			else {
+			else
 				resolve(ip.trim());
-			}
 		});
 	});
 };

@@ -71,6 +71,19 @@ We don't want sensors to have a manually hard-coded id (for deployment's simplic
 - [broker] associate SIM id to a tcp Socket and sends [period, start_hour, stop_hour, date] on `command`
 - 
 
+## Unitary tests
+
+You can run tests in a dedicated docker.
+
+First build the container:
+````
+docker-compose -f compose-test.yml build
+````
+
+Once built, you can use
+```
+npm run test
+````
 
 ## Contribute :
 

@@ -14,6 +14,7 @@ module.exports = function(){
             db.query(dropTableScript, function(err, result) {
                 if(err) reject(err); else resolve(result);
             });
+
         }).catch(reject);
     });
 };

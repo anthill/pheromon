@@ -1,33 +1,20 @@
 'use strict';
 
 require("es6-shim");
-var request = require('request');
+var sendReq = require('../../../tools/sendNodeReq');
 
 var expect = require('chai').expect;
 
-var prepareAPI = require('../../../tools/prepareOutsideAPI.js');
+var prepareAPI = require('../../../tools/prepareAPI.js');
 
-var host;
-var api;
+var origin = 'http://api:4000';
+// var origin = 'http://192.168.59.103:4000';
+var api = prepareAPI(sendReq, origin);
 
 
-describe('Verify correct Database handling', function() {
+describe('Verify API', function() {
 
-    // Prepare API from outside the Pheromon docker.
-    // This fetches boot2docker ip and prepare wrapped server-side functions to access Pheromon database
-    before(function(ready){
-        prepareAPI()
-        .then(function(result){
-            host = result.host;
-            api = result.api;
-            ready();
-        })
-        .catch(function(error){
-            console.log("Error preparing the API");
-        });     
-    });
-
-    describe('Place Table ', function () {
+    describe('Place', function () {
 
         before('clearing Place table', function(ready){
             api.deleteAllPlaces()

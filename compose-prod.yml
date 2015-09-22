@@ -14,6 +14,7 @@ api:
       - NODE_ENV=production
    volumes:
       - ./:/pheromon
+   tty: true
    restart: always
 broker:
    build: .
@@ -28,6 +29,7 @@ broker:
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
+   tty: true
    restart: always
 db:
    image: postgres:9.4
@@ -36,4 +38,5 @@ db:
       - NODE_ENV=production
    volumes:
       - /data/pheromon:/var/lib/postgresql
+   tty: true
    restart: always

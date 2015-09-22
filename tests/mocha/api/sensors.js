@@ -1,36 +1,22 @@
 'use strict';
 
 require("es6-shim");
-var request = require('request');
+var sendReq = require('../../../tools/sendNodeReq');
 
 var expect = require('chai').expect;
 
-var prepareAPI = require('../../../tools/prepareOutsideAPI.js');
+var prepareAPI = require('../../../tools/prepareAPI.js');
 
-var host;
-var api;
+var origin = 'http://api:4000';
+// var origin = 'http://192.168.59.103:4000';
+var api = prepareAPI(sendReq, origin);
 
 
-describe('Verify correct Database handling', function() {
+describe('Verify API', function() {
 
-    // Prepare API from outside the Pheromon docker.
-    // This fetches boot2docker ip and prepare wrapped server-side functions to access Pheromon database
-    before(function(ready){
-        prepareAPI()
-        .then(function(result){
-            host = result.host;
-            api = result.api;
-            ready();
-        })
-        .catch(function(error){
-            console.log("Error preparing the API");
-        });     
-    });
+    describe('Sensor', function () {
 
-    describe('Sensor Table ', function () {
-
-        // it feels weird to have this before having it tested ...
-        before('clearing Sensor table', function(ready){
+        before('clearing Sensor table', function(ready){ // use direct database function
             api.deleteAllSensors()
             .then(function(){
                 ready();
@@ -68,7 +54,7 @@ describe('Verify correct Database handling', function() {
                     expect(created.sim).to.deep.equal('290');
 
                     done();
-                })  
+                })
                 .catch(function(err){
                     console.log('err in /sensor/create', err);
                 });
@@ -91,7 +77,7 @@ describe('Verify correct Database handling', function() {
                 .then(function(result){
                     id = result.id;
                     ready();
-                })  
+                })
                 .catch(function(err){
                     console.log('err in update before sensor update', err);
                 });
@@ -117,7 +103,7 @@ describe('Verify correct Database handling', function() {
                     expect(updated.sim).to.deep.equal('300');
 
                     done();
-                })  
+                })
                 .catch(function(err){
                     console.log('err in updateSensor', err);
                 });
@@ -141,7 +127,7 @@ describe('Verify correct Database handling', function() {
                 .then(function(result){
                     id = result.id;
                     ready();
-                })  
+                })
                 .catch(function(err){
                     console.log('err in sensor creation before delete sensor', err);
                 });
@@ -161,7 +147,7 @@ describe('Verify correct Database handling', function() {
                     expect(deleted.sim).to.deep.equal('290');
 
                     done();
-                })  
+                })
                 .catch(function(err){
                     console.log('err in /sensor/delete', err);
                 });
@@ -192,7 +178,7 @@ describe('Verify correct Database handling', function() {
                 .catch(function(err){
                     console.log('err in create sensors before delete all sensors', err);
                 });
-                
+
             });
 
             it("/sensor/deleteAll", function (done) {
@@ -204,7 +190,7 @@ describe('Verify correct Database handling', function() {
                     expect(deleted.length).to.deep.equal(3);
 
                     done();
-                })  
+                })
                 .catch(function(err){
                     console.log('err in /sensor/deleteAll', err);
                 });
@@ -232,7 +218,7 @@ describe('Verify correct Database handling', function() {
                 .catch(function(err){
                     console.log('err in createSensor before get sensor', err);
                 });
-                
+
             });
 
             it("/sensor/get", function (done) {
@@ -245,7 +231,7 @@ describe('Verify correct Database handling', function() {
                     expect(fetched.sim).to.deep.equal('290');
 
                     done();
-                })  
+                })
                 .catch(function(err){
                     console.log('err in sensor get', err);
                 });
@@ -276,7 +262,7 @@ describe('Verify correct Database handling', function() {
                 .catch(function(err){
                     console.log('err in create sensor before getAll sensors', err);
                 });
-                
+
             });
 
             it("/sensor/getAll", function (done) {
@@ -288,7 +274,7 @@ describe('Verify correct Database handling', function() {
                     expect(fetcheds.length).to.deep.equal(4);
 
                     done();
-                })  
+                })
                 .catch(function(err){
                     console.log('err in /sensor/getAll', err);
                 });
@@ -297,6 +283,3 @@ describe('Verify correct Database handling', function() {
         });
     });
 });
-
-
-

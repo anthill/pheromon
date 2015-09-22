@@ -5,7 +5,11 @@ var io = require('socket.io-client');
 
 var Application = React.createFactory(require('./Components/Application.js'));
 
-var serverAPI = require('./serverAPI.js');
+var prepareAPI = require('../../../../tools/prepareAPI.js');
+var sendReq = require('../../../../tools/sendReq.js');
+
+var api = prepareAPI(sendReq);
+
 var makeMap = require('../../_common/js/makeMap.js');
 
 var errlog = console.error.bind(console);
@@ -28,7 +32,7 @@ var topLevelStore = {
     selectedPlaceMap: new Map(),
     updatingIDs: [],
     getPlaceMeasurements: function(place){
-        serverAPI.getPlaceMeasurements(place.id)
+        api.getPlaceMeasurements(place.id)
             .then(function(details){
                 console.log('place measurements', place, details);
                 
@@ -53,7 +57,7 @@ function render(){
 render();
 
 // Render again when receiving recyclingCenters from API
-serverAPI.getAllPlacesLiveAffluence()
+api.getLiveAffluence()
     .then(function(places){
         console.log('places', places);
 
