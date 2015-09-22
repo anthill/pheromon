@@ -1,7 +1,7 @@
 "use strict";
 require('es6-shim');
 
-var mqtt    = require('mqtt');
+var mqtt = require('mqtt');
 var chai = require('chai');
 
 var chai = require("chai");
