@@ -48,7 +48,6 @@ describe('Sensor initialization', function() {
             );
 
             fakeSensor.on('connect', function () {
-                console.log('sensors', api.getAllSensors());
                 resolve();
             });
         })
@@ -56,7 +55,6 @@ describe('Sensor initialization', function() {
             return api.getAllSensors();
         })
         .then(function(sensors){
-            console.log('sensors', sensors);
             expect(sensors[0].sim).to.deep.equal(simId);
         });
 
@@ -108,7 +106,7 @@ describe('Sensor initialization', function() {
             }
         });
 
-        fakeSensor.publish(simId + "/status/unitialized", "");
+        fakeSensor.publish(simId + "/status/uninitialized", "");
     });
 
     it('network status should be properly persisted', function (done) {

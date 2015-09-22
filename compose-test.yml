@@ -14,7 +14,7 @@ api:
       - NODE_ENV=development
    volumes:
       - ./:/pheromon
-   #log_driver: "none" 
+   log_driver: "none" 
 broker:
    build: .
    command: nodemon --watch broker broker/index.js
@@ -29,7 +29,7 @@ broker:
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
-   #log_driver: "none" 
+   log_driver: "none" 
 dbtest:
    image: postgres:9.4
    environment:
