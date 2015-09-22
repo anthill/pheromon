@@ -155,12 +155,12 @@ mqttServer(authenticate)
                 switch (subtopics[1]) {
                     case "wifi":
                         var data = JSON.parse(packet.payload.toString());
-                        database.SensorMeasurements.create(
+                        database.Measurements.create(
                             {
                                 sensor_sim: id,
                                 type: "wifi",
-                                measurements: data.signal_strength,
-                                measurement_date: data.datetime 
+                                value: data.signal_strength,
+                                date: data.datetime 
                             }  
                         )
                         .then(function() {

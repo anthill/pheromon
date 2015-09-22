@@ -10,6 +10,20 @@ exports.lifecycle = sql.define({
 });
 
 
+exports.measurements = sql.define({
+	name: 'measurements',
+	columns: [
+		{ name: 'created_at' },
+		{ name: 'updated_at' },
+		{ name: 'id' },
+		{ name: 'sensor_sim' },
+		{ name: 'type' },
+		{ name: 'value' },
+		{ name: 'date' }
+	]
+});
+
+
 exports.places = sql.define({
 	name: 'places',
 	columns: [
@@ -20,20 +34,6 @@ exports.places = sql.define({
 		{ name: 'type' },
 		{ name: 'lat' },
 		{ name: 'lon' }
-	]
-});
-
-
-exports.sensor_measurements = sql.define({
-	name: 'sensor_measurements',
-	columns: [
-		{ name: 'created_at' },
-		{ name: 'updated_at' },
-		{ name: 'id' },
-		{ name: 'sensor_sim' },
-		{ name: 'type' },
-		{ name: 'measurements' },
-		{ name: 'measurement_date' }
 	]
 });
 

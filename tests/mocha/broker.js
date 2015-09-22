@@ -1,105 +1,75 @@
 "use strict";
-
 require('es6-shim');
 
 var mqtt    = require('mqtt');
 var chai = require('chai');
 
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
 var expect = chai.expect;
 var assert = chai.assert;
 
-// chai.use(require('chai-as-promised'));
-
 var request = require('request');
 var PRIVATE = require('../../PRIVATE.json');
-var boot2dockerIp = require('../../tools/boot2dockerIp.js');
+
+var database = require('../../database');
 var sendReq = require('../../tools/sendNodeReq');
 
 var prepareAPI = require('../../tools/prepareAPI.js');
 
 var makeTcpReceiver = require('../../tools/makeTcpReceiver');
-var origin = 'http://broker:5100';
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
+
+// TO BE REWRITTEN WITH MQTT FUNCTIONS
 
 describe('Sensor initialization', function() {
 
 	this.timeout(2000);
 
-    var host;
 	var fakeSensor;
     var simId = "simNumber1";
 
-	// get host ip and clean db
-	before(function(ready){
 
-		boot2dockerIp()
-            .then(function(h){
-                host = h;
-            })
-            .catch(function(error){
-                console.error("Error determining the host");
-                throw error; // forward the error
-            })
-            .then(function(){
+	before(function(){
+        return database.Sensors.deleteAll()
+		.then(function(){
+			return new Promise(function(resolve, reject){
+				fakeSensor  = mqtt.connect('mqtt://broker:1883',
+					{
+						username: simId,
+						password: PRIVATE.token,
+						clientId: simId
+					}
+				);
 
-                request.post({
-                    url: 'http://' + host + ':4000/sensors/deleteAll',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }, function(err, result, body){
-                    if (!err) {
-                        fakeSensor  = mqtt.connect('mqtt://' + host + ':1883',
-                            {
-                                username: simId,
-                                password: PRIVATE.token,
-                                clientId: simId
-                            }
-                        );
-
-                        fakeSensor.on('connect', function () {
-                            ready();
-                        });                        
-                    }
-                        
-                });
-            })
-            .catch(function(error){
-                console.error("Error removing all sensors");
-                throw error; // forward the error
-            })
+				fakeSensor.on('connect', function () {
+					resolve();
+				});
+			});
+		});
 	});
 
 
-	it('broker should register unknown sensor if token ok', function (done) {
+	it('broker should register unknown sensor if token ok', function () {
 
-		// check if sensor properly was persisted in db
-		request.get({
-            url: 'http://' + host + ':4000/sensor/getAll'
-        }, function(err, result, body){
-            if (!err) {
-            	var sensors = JSON.parse(body);
-                var nbFound = 0;
-                sensors.forEach(function(sensor){
-                    if (sensor.sim === simId) {
-                        nbFound++;
-                        
-                    }
-                })
-                expect(nbFound).to.equal(1);
-                done();
-            }
-            else {
-            	console.log('err', err);
-            }
-        });
+        return api.getAllSensors()
+        .then(function(sensors){
+            var nbFound = 0;
+            sensors.forEach(function(sensor){
+                if (sensor.sim === simId) {
+                    nbFound++;
+                }
+            })
+            expect(nbFound).to.equal(1);
+        })
 
 	});
 
 
 	// it('broker should not allow sensor to connect if token not ok', function (done) {
-        
+
  //        try {
  //            fakeSensor  = mqtt.connect('mqtt://' + host + ':1883',
  //                {
@@ -118,8 +88,7 @@ describe('Sensor initialization', function() {
  //            assert(false);
  //            done();
  //        });
-        
-        
+
  //    	// if no response from server after 500 ms, consider ignored
  //    	setTimeout(function(){
  //    		assert(true);
@@ -153,7 +122,7 @@ describe('Sensor initialization', function() {
 
         setTimeout(function(){
             request.get({
-                url: 'http://' + host + ':4000/sensor/get/' + simId
+                url: 'http://api:4000/sensor/get/' + simId
             }, function(err, result, body){
                 if (!err) {
                     try{
@@ -179,7 +148,7 @@ describe('Sensor initialization', function() {
 
         setTimeout(function(){
             request.get({
-                url: 'http://' + host + ':4000/sensor/get/' + simId
+                url: 'http://api:4000/sensor/get/' + simId
             }, function(err, result, body){
                 if (!err) {
                     try{
@@ -205,7 +174,7 @@ describe('Sensor initialization', function() {
 
         setTimeout(function(){
             request.get({
-                url: 'http://' + host + ':4000/sensor/get/' + simId
+                url: 'http://api:4000/sensor/get/' + simId
             }, function(err, result, body){
                 if (!err) {
                     try{
@@ -231,7 +200,7 @@ describe('Sensor initialization', function() {
 
         setTimeout(function(){
             request.get({
-                url: 'http://' + host + ':4000/sensor/get/' + simId
+                url: 'http://api:4000/sensor/get/' + simId
             }, function(err, result, body){
                 if (!err) {
                     try{
@@ -261,7 +230,7 @@ describe('Sensor initialization', function() {
 
         setTimeout(function(){
             request.get({
-                url: 'http://' + host + ':4000/sensor/' + simId + '/measurements'
+                url: 'http://api:4000/sensor/' + simId + '/measurements'
             }, function(err, result, body){
                 if (!err) {
                     try{
@@ -270,9 +239,9 @@ describe('Sensor initialization', function() {
                     catch(e){
                         console.log(e)
                     }
-                    expect(measurements[0].measurements).to.deep.equal([-10, -9, -99]);
+                    expect(measurements[0].value).to.deep.equal([-10, -9, -99]);
                     expect(measurements[0].entry).to.equal(3);
-                    expect(Date.parse(measurements[0].measurement_date)).to.be.a("number");
+                    expect(Date.parse(measurements[0].date)).to.be.a("number");
                     done();
                 }
                 else {
@@ -284,9 +253,3 @@ describe('Sensor initialization', function() {
     });
 
 });
-
-
-
-
-
-

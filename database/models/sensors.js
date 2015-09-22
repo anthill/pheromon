@@ -29,20 +29,26 @@ module.exports = {
         });  
     },
     
-    update: function(id, delta) {
+    update: function(sim, delta) {
         return databaseP.then(function (db) {
             
             var query = sensors
                 .update(delta)
-                .where(sensors.sim.equals(id))
+                .where(sensors.sim.equals(sim))
                 .returning("*")
                 .toQuery();
 
             //console.log('sensors findBySIMid query', query);
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
-                    if (err) reject(err);
-                    else resolve(result.rows[0]);
+                    if (err) {
+                        console.log("qqqqqqqqqqqq ", err)
+                        reject(err);
+                    }
+                    else {
+                        console.log("zzzzzzzzz ", result.rows)
+                        resolve(result.rows[0]);
+                    }
                 });
             });
         })
@@ -51,12 +57,12 @@ module.exports = {
         });        
     },
 
-    get: function(id){
+    get: function(sim){
         return databaseP.then(function (db) {
             
             var query = sensors
                 .select("*")
-                .where(sensors.sim.equals(id))
+                .where(sensors.sim.equals(sim))
                 .from(sensors)
                 .toQuery();
 

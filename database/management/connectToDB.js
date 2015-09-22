@@ -21,7 +21,6 @@ module.exports = function(){
 
                 client.connect(function(err) {
                     if(err){
-                    	console.log('TETS', err);
                         if(attempts >= MAX_ATTEMPTS)
                             reject(err); 
                         else

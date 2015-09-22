@@ -20,6 +20,7 @@ broker:
    command: nodemon --watch broker broker/index.js
    links:
       - dbtest:db
+      - redis
    ports:
       - "5100:5100"
    environment:
@@ -35,6 +36,9 @@ dbtest:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
+   log_driver: "none" 
+redis:
+   image: redis:3
    log_driver: "none" 
 tests:
    build: .

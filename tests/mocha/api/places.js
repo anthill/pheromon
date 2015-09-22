@@ -1,9 +1,13 @@
 'use strict';
+require('es6-shim');
 
-require("es6-shim");
+var database = require('../../../database');
 var sendReq = require('../../../tools/sendNodeReq');
 
-var expect = require('chai').expect;
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+var expect = chai.expect;
 
 var prepareAPI = require('../../../tools/prepareAPI.js');
 
@@ -13,61 +17,42 @@ var api = prepareAPI(sendReq, origin);
 
 
 describe('Verify API', function() {
+    this.timeout(2000);
 
     describe('Place', function () {
 
-        before('clearing Place table', function(ready){
-            api.deleteAllPlaces()
-            .then(function(){
-                ready();
-            })
-            .catch(function(error){
-                console.log("clearing Place table :", error);
-            });
+        before('clearing Place table', function(){
+            return database.Places.deleteAll();
         });
 
         // after each test, clear the table
-        afterEach('clearing Place Table', function(ready){
-            api.deleteAllPlaces()
-            .then(function(){
-                ready();
-            })
-            .catch(function(error){
-                console.log("clearing Place Table :", error);
-            });
+        afterEach('clearing Place Table', function(){
+            return database.Places.deleteAll();
         });
 
         describe('Creation', function(){
 
-            it("/place/create", function (done) {
-                this.timeout(2000);
-
+            it("/place/create", function () {
+                
                 var place = {
                     name: 'Place1',
                     lat: 44.840450,
                     lon: -0.570468
                 };
 
-                api.createPlace(place)
+                return api.createPlace(place)
                 .then(function(created){
-
                     expect(created.name).to.deep.equal('Place1');
                     expect(44.840450 - parseFloat(created.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(created.lon)).to.be.below(0.0001);
-                    done();
-                })  
-                .catch(function(err){
-                    console.log('err in createPlace', err);
                 });
-
             });
         });
 
         describe('Update', function(){
             var id;
 
-            before('Creating place to be updated', function(ready){
-                this.timeout(2000);
+            before('Creating place to be updated', function(){
 
                 var place = {
                     name: 'Place1',
@@ -75,17 +60,13 @@ describe('Verify API', function() {
                     lon: -0.570468
                 };
 
-                api.createPlace(place)
+                return api.createPlace(place)
                 .then(function(result){
                     id = result.id;
-                    ready();
-                })  
-                .catch(function(err){
-                    console.log('err in createPlace before place update', err);
                 });
             });
 
-            it("/update/place", function (done) {
+            it("/update/place", function () {
                 this.timeout(2000);
 
                 var delta = {
@@ -99,18 +80,12 @@ describe('Verify API', function() {
                     delta: delta
                 };
 
-                api.updatePlace(updateData)
+                return api.updatePlace(updateData)
                 .then(function(updated){
                     expect(updated.name).to.deep.equal('Place2');
                     expect(44.940450 - parseFloat(updated.lat)).to.be.below(0.0001);
                     expect(-0.500468 - parseFloat(updated.lon)).to.be.below(0.0001);
-
-                    done();
-                })  
-                .catch(function(err){
-                    console.log('err in updatePlace', err);
                 });
-
             });
 
         });
@@ -118,8 +93,7 @@ describe('Verify API', function() {
         describe('Deletion', function(){
             var id;
 
-            before('Creating place to be deleted', function(ready){
-                this.timeout(2000);
+            before('Creating place to be deleted', function(){
 
                 var place = {
                     name: 'Place1',
@@ -127,33 +101,21 @@ describe('Verify API', function() {
                     lon: -0.570468
                 };
 
-                api.createPlace(place)
+                return api.createPlace(place)
                 .then(function(result){
                     id = result.id;
-                    ready();
-                })  
-                .catch(function(err){
-                    console.log('err in place creation before deletion', err);
                 });
             });
 
-            it("/place/delete", function (done) {
-                this.timeout(2000);
+            it("/place/delete", function () {
 
-                var deleteData = {
-                    id: id
-                };
-
-                api.deletePlace(deleteData.id)
+                return api.deletePlace(id)
                 .then(function(deleted){
                     expect(deleted.name).to.deep.equal('Place1');
                     expect(44.840450 - parseFloat(deleted.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(deleted.lon)).to.be.below(0.0001);
-                    done();
-                })  
-                .catch(function(err){
-                    console.log('err in delete place', err);
                 });
+                
 
             });
 
@@ -161,8 +123,7 @@ describe('Verify API', function() {
 
         describe('Delete All Places', function(){
 
-            before('Creating places to be deleted', function(ready){
-                this.timeout(2000);
+            before('Creating places to be deleted', function(){
 
                 var creationPs = [0, 1, 2].map(function(item){
 
@@ -175,27 +136,15 @@ describe('Verify API', function() {
                     return api.createPlace(place);
                 });
 
-                Promise.all(creationPs)
-                .then(function(){
-                    ready();
-                })
-                .catch(function(err){
-                    console.log('err in createPlace place before delete all', err);
-                });
-                
+                return Promise.all(creationPs);
+            
             });
 
-            it("/place/deleteAll", function (done) {
-                this.timeout(2000);
+            it("/place/deleteAll", function () {
 
-                api.deleteAllPlaces()
+                return api.deleteAllPlaces()
                 .then(function(deleted){
                     expect(deleted.length).to.deep.equal(3);
-
-                    done();
-                })  
-                .catch(function(err){
-                    console.log('err in deleteAllPlaces', err);
                 });
 
             });
@@ -205,8 +154,7 @@ describe('Verify API', function() {
         describe('Get Place', function(){
             var id;
 
-            before('Creating place', function(ready){
-                this.timeout(2000);
+            before('Creating place', function(){
 
                 var place = {
                     name: 'Place1',
@@ -214,40 +162,28 @@ describe('Verify API', function() {
                     lon: -0.570468
                 };
 
-                api.createPlace(place)
+                return api.createPlace(place)
                 .then(function(result){
                     id = result.id;
-                    ready();
-                })
-                .catch(function(err){
-                    console.log('err in createPlace before get', err);
                 });
                 
             });
 
-            it("/place/get", function (done) {
-                this.timeout(2000);
+            it("/place/get", function () {
 
-                api.getPlace(id)
+                return api.getPlace(id)
                 .then(function(fetched){
                     expect(fetched.name).to.deep.equal('Place1');
                     expect(44.840450 - parseFloat(fetched.lat)).to.be.below(0.0001);
                     expect(-0.570468 - parseFloat(fetched.lon)).to.be.below(0.0001);
-
-                    done();
-                })  
-                .catch(function(err){
-                    console.log('err in getPlace', err);
                 });
 
             });
-
         });
 
         describe('Get All Places', function(){
 
-            before('Creating places', function(ready){
-                this.timeout(2000);
+            before('Creating places', function(){
 
                 var creationPs = [0, 1, 2, 3].map(function(item){
 
@@ -260,27 +196,15 @@ describe('Verify API', function() {
                     return api.createPlace(place);
                 });
 
-                Promise.all(creationPs)
-                .then(function(){
-                    ready();
-                })
-                .catch(function(err){
-                    console.log('err in createPlace before get all palces', err);
-                });
+                return Promise.all(creationPs);
                 
             });
 
-            it("/place/getAll", function (done) {
-                this.timeout(2000);
+            it("/place/getAll", function () {
 
-                api.getAllPlaces()
+                return api.getAllPlaces()
                 .then(function(fetcheds){
                     expect(fetcheds.length).to.deep.equal(4);
-
-                    done();
-                })  
-                .catch(function(err){
-                    console.log('err in getAllPlaces', err);
                 });
 
             });

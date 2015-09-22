@@ -19,16 +19,16 @@ module.exports = function(app, debug){
 	    });
 	});
 
-	app.post('/sensor/update', function(req, res){
-	    var id = req.body.id;
+	app.post('/sensor/update/:sim', function(req, res){
+	    var sim = req.body.sim;
 
-	    database.Sensors.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
+	    database.Sensors.update(sim, req.body.delta)
 	    .then(function(data){
 	        res.status(200).send(data);
 	    })
 	    .catch(function(error){
 	        res.status(500).send('Couldn\'t update Sensors database');
-	        console.log("error in /sensor/update/" + id, error);
+	        console.log("error in /sensor/update/" + sim, error);
 	    });
 	});
 
@@ -61,8 +61,7 @@ module.exports = function(app, debug){
 
 	app.delete('/sensor/delete/:id', function(req, res){    
 	    var id = req.params.id;
-	    console.log('req.params.id', req.params.id);
-	    console.log('deleting sensor id', id);
+	    console.log('deleting', id);
 
 	    database.Sensors.delete(id)
 	    .then(function(data){
