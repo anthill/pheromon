@@ -1,7 +1,16 @@
 var sql = require('sql');
 
 
-exports.affluence_sensor_measurements = sql.define({
+exports.lifecycle = sql.define({
+	name: 'lifecycle',
+	columns: [
+		{ name: 'created_at' },
+		{ name: 'updated_at' }
+	]
+});
+
+
+exports.measurements = sql.define({
 	name: 'measurements',
 	columns: [
 		{ name: 'created_at' },
@@ -11,15 +20,6 @@ exports.affluence_sensor_measurements = sql.define({
 		{ name: 'type' },
 		{ name: 'value' },
 		{ name: 'date' }
-	]
-});
-
-
-exports.lifecycle = sql.define({
-	name: 'lifecycle',
-	columns: [
-		{ name: 'created_at' },
-		{ name: 'updated_at' }
 	]
 });
 

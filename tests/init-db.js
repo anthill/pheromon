@@ -1,7 +1,5 @@
 "use strict";
 
-require('es6-shim');
-
 var fs = require('fs');
 var path = require('path');
 
@@ -45,7 +43,6 @@ function generateDefinitions() {
 
 module.exports = function(){
 
-    console.log('hello');
     return new Promise(function(resolve, reject){
         // wait database to be created
         (function tryRebuildDatabase(){

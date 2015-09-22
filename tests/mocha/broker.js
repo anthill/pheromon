@@ -1,12 +1,14 @@
 "use strict";
+require('es6-shim');
 
 var net = require('net');
 var chai = require('chai');
 
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
 var expect = chai.expect;
 var assert = chai.assert;
-
-// chai.use(require('chai-as-promised'));
 
 var request = require('request');
 var database = require('../../database');
@@ -21,22 +23,16 @@ var origin = 'http://broker:5100';
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
 
+// TO BE REWRITTEN WITH MQTT FUNCTIONS
+
 describe('Sensor initialization', function() {
 
 	this.timeout(2000);
 
 	var fakeSensor;
 
-	// get host ip and clean db
-	before(function(ready){
-        sendReq('DELETE', apiOrigin + '/sensor/deleteAll')
-        .then(function(){
-            ready();
-        })
-        .catch(function(err){
-            console.log('err', err);
-            throw err;
-        });
+	before(function(){
+        return database.Sensors.deleteAll()
 	});
 
 	// simulate sensor
@@ -52,23 +48,17 @@ describe('Sensor initialization', function() {
             fakeSensor.send = socket.write.bind(socket);
             ready();
         });
-
 	});
 
-	it('broker should register unknown sensor if token ok', function (done) {
+	it('broker should register unknown sensor if token ok', function () {
 
 		// check if sensor properly persisted in db
 		fakeSensor.on('message', function(message) {
-            sendReq('GET', apiOrigin + '/sensor/getAll')
+            return sendReq('GET', apiOrigin + '/sensor/getAll')
             .then(function(body){
                 var sensor = body[0];
 
                 expect(sensor.sim).to.deep.equal("123456677999"); 
-                done();
-            })
-            .catch(function(err){
-                console.log('err', err);
-                done(err);
             });
     	});
 
@@ -78,7 +68,7 @@ describe('Sensor initialization', function() {
 
 	it('broker should send config parameters to sensor if token ok', function (done) {
 		fakeSensor.on('message', function(message) {
-            
+
     		var args = message.slice(4);
     		var argsplit = args.split(" ");
     		expect(argsplit[0]).to.deep.equal("init");
@@ -87,7 +77,8 @@ describe('Sensor initialization', function() {
     		expect(Number.isNaN(Number(argsplit[3]))).to.be.false;
     		// check for proper datetime
     		expect(Date.parse(argsplit[4])).to.be.a("number");
-    		done();
+
+            done();
     	});
 		fakeSensor.send("init 123456677999 " + PRIVATE.token + "\n");
 	});
@@ -98,7 +89,6 @@ describe('Sensor initialization', function() {
     		assert(false);
     		done();
     	});
-        
         
     	// if no response from server after 500 ms, consider ignored
     	setTimeout(function(){
