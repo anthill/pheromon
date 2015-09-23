@@ -5,7 +5,6 @@ require('better-log').install();
 
 var path = require('path');
 var fs = require('fs');
-var net = require('net');
 var spawn = require('child_process').spawn;
 var zlib = require('zlib');
 
@@ -39,11 +38,7 @@ io.on('connection', function(socket) {
     })
 });
 
-var endpointConfig =
-    {
-        host: process.env.BROKER_PORT_5100_TCP_ADDR ? process.env.BROKER_PORT_5100_TCP_ADDR : "127.0.0.1",
-        port: process.env.INTERNAL_PORT ? process.env.INTERNAL_PORT : 55555
-    };
+
 
 var debug = function() {
     if (DEBUG) {
@@ -51,35 +46,6 @@ var debug = function() {
         console.log.apply(console, arguments);
     }
 }
-
-// listening to the reception server
-
-var endpointInterval = setInterval(function() {
-    tcpSocketEndpoint = net.connect(endpointConfig, function(){
-
-        debug('connected to the reception server on '+ tcpSocketEndpoint.remoteAddress+':'+tcpSocketEndpoint.remotePort)
-        
-        var tcpSocketEndpointReceiver = makeTcpReceiver(tcpSocketEndpoint, "\n");
-
-        tcpSocketEndpointReceiver.on('message', function(message) {
-            var packet = JSON.parse(message);
-
-            if (packet.type === 'status') {
-                io.sockets.emit('status', packet.data);
-            }
-        })
-            
-    });
-
-    tcpSocketEndpoint.on('error', function(err) {
-        console.log('[ERROR]: INTERNAL SOCKET : ' + err.message);
-    });
-
-    tcpSocketEndpoint.on('connect', function() {
-        console.log('connection')
-        clearInterval(endpointInterval);
-    });
-}, 5000);
 
 
 // Backup database everyday at 3AM

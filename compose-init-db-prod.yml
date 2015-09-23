@@ -11,6 +11,7 @@ pheromon:
    volumes:
       - ./:/pheromon/
       # - /data/yourProjectName/backups:/pheromon/data/backups
+   tty: true
 db:
    image: postgres:9.4
    environment:
@@ -19,3 +20,4 @@ db:
       - POSTGRES_PASSWORD=elements
    volumes:
       - /data/pheromon:/var/lib/postgresql
+   tty: true

@@ -16,11 +16,11 @@ module.exports = {
                 .toQuery();
 
             //console.log('sensors create query', query);
-
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0]);
+                    else
+                        resolve(result.rows[0]);
                 });
             });
         })
@@ -29,20 +29,22 @@ module.exports = {
         });  
     },
     
-    update: function(id, delta) {
+    update: function(sim, delta) {
         return databaseP.then(function (db) {
             
             var query = sensors
                 .update(delta)
-                .where(sensors.id.equals(id))
+                .where(sensors.sim.equals(sim))
                 .returning("*")
                 .toQuery();
 
             //console.log('sensors findBySIMid query', query);
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
-                    if (err) reject(err);
-                    else resolve(result.rows[0]);
+                    if (err)
+                        reject(err);
+                    else 
+                        resolve(result.rows[0]);
                 });
             });
         })
@@ -51,12 +53,12 @@ module.exports = {
         });        
     },
 
-    get: function(id){
+    get: function(sim){
         return databaseP.then(function (db) {
             
             var query = sensors
                 .select("*")
-                .where(sensors.id.equals(id))
+                .where(sensors.sim.equals(sim))
                 .from(sensors)
                 .toQuery();
 
@@ -85,7 +87,8 @@ module.exports = {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
 
-                    else resolve(result.rows);
+                    else
+                        resolve(result.rows);
                 });
             });
         })
@@ -99,7 +102,7 @@ module.exports = {
             
             var query = sensors
                 .delete()
-                .where(sensors.id.equals(id))
+                .where(sensors.sim.equals(id))
                 .returning('*')
                 .toQuery();
 
@@ -133,29 +136,6 @@ module.exports = {
         .catch(function(err){
             console.log('ERROR in deleteAll sensors', err);
         });        
-    },
-
-    findBySIMid: function(sim) {
-        return databaseP.then(function (db) {
-            
-            var query = sensors
-                .select("*")
-                .from(sensors)
-                .where(sensors.sim.equals(sim))
-                .toQuery();
-
-            //console.log('sensors findBySIMid query', query);
-
-            return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
-                    if (err) reject(err);
-                    else resolve(result.rows);
-                });
-            });
-        })
-        .catch(function(err){
-            console.log('ERROR in findBySIMid', err);
-        });          
     }
 
 };

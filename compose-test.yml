@@ -1,8 +1,8 @@
 api:
-   build: ./
+   build: .
    command: nodemon --watch api --watch database api/api.js
    links:
-      - dbdev:db
+      - dbtest:db
       - broker
    ports:
       - "4000:4000"
@@ -14,29 +14,44 @@ api:
       - NODE_ENV=development
    volumes:
       - ./:/pheromon
-   tty: true
+   log_driver: "none" 
 broker:
    build: .
    command: nodemon --watch broker broker/index.js
    links:
-      - dbdev:db
+      - dbtest:db
       - redis
    ports:
-      - "1883:1883"
+      - "5100:5100"
    environment:
-      - VIRTUAL_PORT=1883
+      - VIRTUAL_PORT=5100
       - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
-   tty: true
-dbdev:
+   log_driver: "none" 
+dbtest:
    image: postgres:9.4
    environment:
+      - POSTGRES_USER=postgres
+      - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
-   volumes:
-      - ./data:/var/lib/postgresql
-   tty: true
+   log_driver: "none" 
 redis:
    image: redis:3
    log_driver: "none" 
+tests:
+   build: .
+   dockerfile: Dockerfile-test
+   links:
+      - api
+      - broker
+      - dbtest:db
+   environment:
+      - POSTGRES_USER=postgres
+      - PGPASSWORD=elements # don't change the name of the variable for pg_dump
+      - POSTGRES_PASSWORD=elements
+   command: node ./tests/index.js
+   volumes:
+      - ./:/pheromon/
+   tty: true

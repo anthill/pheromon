@@ -5,12 +5,12 @@ var databaseP = require('./management/databaseClientP');
 
 var places = decl.places;
 var sensor = decl.sensors;
-var sensorMeasurement = decl.affluence_sensor_measurements;
+var measurement = decl.measurements;
 
 module.exports = {
     Places: require('./models/places.js'),
     Sensors: require('./models/sensors.js'),
-    SensorMeasurements: require('./models/sensor-measurements.js'),
+    Measurements: require('./models/measurements.js'),
     complexQueries: {
         currentPlaceAffluences: function(){
             return databaseP.then(function(db) {
@@ -21,16 +21,16 @@ module.exports = {
                     .subQuery('latest_recycling_center_measurement_date')
                     .select(
                         places.id,
-                        sensorMeasurement.measurement_date.max().as('last_date')
+                        measurement.date.max().as('last_date')
                     )
                     .from(
                         places
                             .join(sensor
-                                .join(sensorMeasurement)
-                                .on(sensor.id.equals(sensorMeasurement.sensor_id)))
+                                .join(measurement)
+                                .on(sensor.sim.equals(measurement.sensor_sim)))
                             .on(places.id.equals(sensor.installed_at))
                     )
-                    .group(places.id, sensor.id);
+                    .group(places.id, sensor.sim);
                 
                 /*
                     For each recycling center, get the measurement value associated to the last measurement date
@@ -39,19 +39,19 @@ module.exports = {
                     .subQuery('latest_recycling_center_measurement_value')
                     .select(
                         places.id,
-                        sensorMeasurement
-                            .literal('array_length(affluence_sensor_measurements.measurements, 1)')
+                        measurement
+                            .literal('array_length(measurements.value, 1)')
                             .as('latest')
                     )
                     .from(
                         places
                             .join(sensor
-                                .join(sensorMeasurement)
-                                .on(sensor.id.equals(sensorMeasurement.sensor_id)))
+                                .join(measurement)
+                                .on(sensor.sim.equals(measurement.sensor_sim)))
                             .on(places.id.equals(sensor.installed_at))
                             .join(latestPlaceMeasurementDate)
                             .on(places.id.equals(latestPlaceMeasurementDate.id).and(
-                                latestPlaceMeasurementDate.last_date.equals(sensorMeasurement.measurement_date)
+                                latestPlaceMeasurementDate.last_date.equals(measurement.date)
                             ))
                     );
                 
@@ -63,16 +63,16 @@ module.exports = {
                     .subQuery('max_measurement_per_recycling_center')
                     .select(
                         places.id, places.name, places.lat, places.lon,
-                        'max(array_length(affluence_sensor_measurements.measurements, 1))'
+                        'max(array_length(measurements.value, 1))'
                     )
                     .from(
                         places
                             .join(sensor
-                                .join(sensorMeasurement)
-                                .on(sensor.id.equals(sensorMeasurement.sensor_id)))
+                                .join(measurement)
+                                .on(sensor.sim.equals(measurement.sensor_sim)))
                             .on(places.id.equals(sensor.installed_at))
                     )
-                    .group(places.id, sensor.id);
+                    .group(places.id, sensor.sim);
                 
                 /*
                     For each recycling center, get
@@ -105,19 +105,48 @@ module.exports = {
 
                 var query = sensor
                     .select(
-                        sensor.id,
-                        sensorMeasurement.measurement_date,
-                        sensorMeasurement
-                            .literal('array_length(affluence_sensor_measurements.measurements, 1)')
+                        sensor.sim,
+                        measurement.date,
+                        measurement
+                            .literal('array_length(measurements.value, 1)')
                             .as('entry'),
-                        sensorMeasurement.measurements
+                        measurement.value
                     )
                     .from(
                         sensor
-                            .join(sensorMeasurement)
-                            .on(sensor.id.equals(sensorMeasurement.sensor_id))
+                            .join(measurement)
+                            .on(sensor.sim.equals(measurement.sensor_sim))
                     )
                     .where(sensor.installed_at.equals(placeId))
+                    .toQuery();
+                
+                return new Promise(function (resolve, reject) {
+                    db.query(query, function (err, result) {
+                        if (err) reject(err);
+                        else resolve(result.rows);
+                    });
+                });
+            })
+        },
+
+        getSensorMeasurements: function(sim){
+            return databaseP.then(function(db){
+
+                var query = sensor
+                    .select(
+                        sensor.sim,
+                        measurement.date,
+                        measurement
+                            .literal('array_length(measurements.value, 1)')
+                            .as('entry'),
+                        measurement.value
+                    )
+                    .where(sensor.sim.equals(sim))
+                    .from(
+                        sensor
+                            .join(measurement)
+                            .on(sensor.sim.equals(measurement.sensor_sim))
+                    )
                     .toQuery();
                 
                 return new Promise(function (resolve, reject) {
@@ -134,7 +163,7 @@ module.exports = {
             
                 var query = places
                     .select(
-                        sensor.literal('array_agg(sensors.id)').as('sensor_ids'), 
+                        sensor.literal('array_agg(sensors.sim)').as('sensor_sims'), 
                         places.star()
                     )
                     .from(

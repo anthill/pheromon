@@ -4,7 +4,7 @@ var React = require("react");
 
 /*
 interface LineChart Props{
-    measurements: [{id: 18, measurement: 18, measurement_date: "2015-07-09T12:45:53.629Z"}],
+    measurements: [{id: 18, value: 18, date: "2015-07-09T12:45:53.629Z"}],
     day: string
 }
 interface LineChart State{
@@ -37,9 +37,9 @@ var LineChart = React.createClass({
     update: function() {
         var props = this.props;
     
-        var data = props.measurements.map(function(x){
-            var date = new Date(x.measurement_date);
-            return [date, x.measurement];
+        var data = props.measurements.map(function(measurement){
+            var date = new Date(measurement.date);
+            return [date, measurement.value];
         });
 
         var beginDay;

@@ -1,25 +1,25 @@
 var sql = require('sql');
 
 
-exports.affluence_sensor_measurements = sql.define({
-	name: 'affluence_sensor_measurements',
-	columns: [
-		{ name: 'created_at' },
-		{ name: 'updated_at' },
-		{ name: 'id' },
-		{ name: 'sensor_id' },
-		{ name: 'type' },
-		{ name: 'measurements' },
-		{ name: 'measurement_date' }
-	]
-});
-
-
 exports.lifecycle = sql.define({
 	name: 'lifecycle',
 	columns: [
 		{ name: 'created_at' },
 		{ name: 'updated_at' }
+	]
+});
+
+
+exports.measurements = sql.define({
+	name: 'measurements',
+	columns: [
+		{ name: 'created_at' },
+		{ name: 'updated_at' },
+		{ name: 'id' },
+		{ name: 'sensor_sim' },
+		{ name: 'type' },
+		{ name: 'value' },
+		{ name: 'date' }
 	]
 });
 
@@ -53,9 +53,9 @@ exports.sensors = sql.define({
 		{ name: 'latest_input' },
 		{ name: 'latest_output' },
 		{ name: 'signal' },
-		{ name: 'data_period' },
-		{ name: 'start_time' },
-		{ name: 'stop_time' }
+		{ name: 'period' },
+		{ name: 'start_hour' },
+		{ name: 'stop_hour' }
 	]
 });
 

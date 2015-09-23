@@ -118,9 +118,9 @@ var Ant = React.createClass({
                         ),
                         React.DOM.div({className: 'settings'},
                             React.DOM.div({}, 'Settings: '),
-                            React.DOM.div({}, props.ant.data_period ? props.ant.data_period : 'ND'),
-                            React.DOM.div({}, props.ant.start_time ? props.ant.start_time : 'ND'),
-                            React.DOM.div({}, props.ant.stop_time ? props.ant.stop_time : 'ND')
+                            React.DOM.div({}, props.ant.period ? props.ant.period : 'ND'),
+                            React.DOM.div({}, props.ant.start_hour ? props.ant.start_hour : 'ND'),
+                            React.DOM.div({}, props.ant.stop_hour ? props.ant.stop_hour : 'ND')
                         )
                     )
                 ),

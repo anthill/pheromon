@@ -4,9 +4,16 @@ var React = require('react');
 var io = require('socket.io-client');
 
 var Application = React.createFactory(require('./Components/Application.js'));
+
 var makeMap = require('../../_common/js/makeMap.js');
 var resetUpdate = require('../../_common/js/resetUpdate.js');
-var serverAPI = require('./serverAPI.js');
+
+var prepareAPI = require('../../../../tools/prepareAPI.js');
+var sendReq = require('../../../../tools/sendReq.js');
+
+var api = prepareAPI(sendReq);
+
+console.log('api', api);
 
 var dbStatusMap = require('./dbStatusMap.js');
 
@@ -48,7 +55,7 @@ function updatePlaceInDb(datas) {
     });
 
     var queryP = objs.map(function (obj) {
-        return serverAPI.updatePlace(obj);
+        return api.updatePlace(obj);
     });
 
     Promise.all(queryP)
@@ -80,7 +87,7 @@ function updateSensorInDb(datas) {
     });
 
     var queryPs = objs.map(function (obj) {
-        return serverAPI.updateSensor(obj);
+        return api.updateSensor(obj);
     });
     // console.log("queryP", queryP);
     return Promise.all(queryPs)
@@ -99,7 +106,7 @@ function createPlaceInDb(data) {
 
     console.log('createPLACE data', data);
 
-    serverAPI.createPlace(data)
+    api.createPlace(data)
     .then(function() {
         console.log('Places database created successfully (createPlaceDb)');
         refreshView();
@@ -118,7 +125,7 @@ function deletePlaceFromDb(data) {
     queryP
     .then(function() {
         console.log("Ants uninstall successfull");
-        return serverAPI.deletePlace({
+        return api.deletePlace({
             id: data.placeId
         });
     })
@@ -136,7 +143,7 @@ function deleteSensorFromDb(data) {
 
     console.log('deleteSensor data', data);
 
-    serverAPI.deleteSensor({
+    api.deleteSensor({
         id: data.sensorId
     })
     .then(function() {
@@ -153,7 +160,7 @@ function createSensorInDb(data) {
 
     console.log('createSensor data', data);
 
-    serverAPI.createSensor(data)
+    api.createSensor(data)
     .then(function() {
         console.log('Sensor database created successfully (createSensorDb)');
         refreshView();
@@ -167,9 +174,9 @@ function createSensorInDb(data) {
 var updatingID;
 
 function refreshView(){
-
-    var placesP = serverAPI.getAllPlacesInfos();
-    var sensorsP = serverAPI.getAllSensors();
+    //dsds
+    var placesP = api.getAllPlacesInfos();
+    var sensorsP = api.getAllSensors();
 
     Promise.all([placesP, sensorsP])
     .then(function(results){
@@ -227,7 +234,7 @@ function refreshView(){
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
-                        serverAPI.getPlaceMeasurements(sensor.installed_at)
+                        api.getPlaceMeasurements(sensor.installed_at)
                         .then(function (measurements) {
 
                             if (measurements && measurements.length)

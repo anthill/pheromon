@@ -8,7 +8,7 @@
     "init-db-prod": "node_modules/gulp/bin/gulp.js init-db-prod",
     "dev": "node_modules/gulp/bin/gulp.js dev",
     "lint": "eslint ./",
-    "test": "mocha tests/mocha/*",
+    "test": "docker-compose -f compose-test.yml up",
     "validate": "npm ls"
   },
   "repository": {
@@ -34,6 +34,7 @@
     "better-log": "^1.1.0",
     "body-parser": "^1.10.1",
     "browserify": "^10.2.0",
+    "chai-as-promised": "^5.1.0",
     "compression": "^1.4.4",
     "dygraphs": "^1.1.1",
     "es6-shim": "^0.31.2",
@@ -44,11 +45,14 @@
     "keymirror": "^0.1.1",
     "leaflet": "^0.7.3",
     "moment": "^2.10.3",
+    "mosca": "^0.32.0",
+    "mqtt": "^1.4.1",
     "node-schedule": "^0.2.9",
     "pg": "^4.3.0",
     "pokemon-names": "^1.0.0",
-    "quipu": "^0.1.0",
+    "quipu": "^0.1.5",
     "react": "^0.13.3",
+    "redis": "^1.0.0",
     "request": "^2.58.0",
     "socket.io": "^1.3.5",
     "socket.io-client": "^1.3.5",
@@ -61,6 +65,7 @@
   },
   "devDependencies": {
     "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
     "eslint": "^1.3.1",
     "mocha": "^2.3.2",
     "watchify": "^3.2.1"
