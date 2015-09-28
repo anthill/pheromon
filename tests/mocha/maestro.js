@@ -4,8 +4,9 @@ require('es6-shim');
 /* TODO
 
     - Command management with socketIO => no need to check all commands, only that client receives the correct string
-    - maestro Check sensor
+    - Sensor latest measurement update changes when measurement is registered in DB
     - maestro Import sensors
+    - sensor status update
 
 */
 
@@ -26,33 +27,94 @@ var prepareAPI = require('../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
 
+var maestroUtils = require('../../api/utils/maestro.js');
+
+function createFakeSensor(simId){
+    return new Promise(function(resolve, reject){
+        var newSensor = mqtt.connect('mqtt://broker:1883', {
+            username: simId,
+            password: PRIVATE.token,
+            clientId: simId
+        });
+
+        newSensor.on('connect', function(){
+            newSensor.subscribe(simId);
+            resolve(newSensor);
+        });
+    });
+}
+
 describe('Maestro testing', function(){
 
     this.timeout(5000);
 
-    beforeEach(function(){
+    // before all tests, clear the table
+    before('clearing Sensor table', function(){
         return database.Sensors.deleteAll();
+    });
+
+    // after each test, clear the table
+    afterEach('clearing Sensor Table', function(){
+        return database.Sensors.deleteAll();
+    });
+
+    describe('checkSensor utils', function() {
+
+        var sensor = {
+            name: 'Sensor1',
+            sim: '290'
+        };
+
+        var sim2sensor = {};
+
+        it('checkSensor should register unknown sensor', function () {
+            return maestroUtils.checkSensor(sensor.sim, sim2sensor)
+            .then(function(wasSensorCreated){
+                expect(Object.keys(sim2sensor).length).to.deep.equal(1);
+                expect(wasSensorCreated).to.be.true;
+            });
+        });
+
+        it('checkSensor should not register known sensor', function () {
+            return maestroUtils.checkSensor(sensor.sim, sim2sensor)
+            .then(function(wasSensorCreated){
+                expect(wasSensorCreated).to.be.false;
+            });
+        });
+    });
+
+    describe('importSensor utils', function() {
+
+        before('Creating sensors', function(){
+            var creationPs = [0, 1, 2, 3].map(function(item){
+
+                var sensor = {
+                    name: 'Sensor' + item,
+                    sim: item * 10
+                };
+
+                return api.createSensor(sensor);
+            });
+
+            return Promise.all(creationPs);    
+        });
+
+        it('importSensor should return an object with all sensors in DB', function () {
+            return maestroUtils.importSensors()
+            .then(function(sim2sensor){
+                expect(Object.keys(sim2sensor).length).to.deep.equal(4);
+            });
+        });
     });
 
     describe('Sensor Registration', function() {
 
         var fakeSensor;
-        var simId = "simNumber1";
+        var simId = 'simNumber1';
 
         before('Creating Fake Sensor', function(){
-            return new Promise(function(resolve, reject){
-                fakeSensor = mqtt.connect('mqtt://broker:1883', {
-                    username: simId,
-                    password: PRIVATE.token,
-                    clientId: simId
-                });
-
-                fakeSensor.on('connect', function(){
-                    resolve(fakeSensor);
-                });
-            })
+            return createFakeSensor(simId)
             .then(function(sensor){
-                sensor.subscribe(simId);
                 fakeSensor = sensor;
             });
         });
@@ -74,22 +136,11 @@ describe('Maestro testing', function(){
     describe('Sensor Initialization', function() {
 
         var fakeSensor;
-        var simId = "simNumber1";
+        var simId = 'simNumber1';
 
         before('Creating Fake Sensor', function(){
-            return new Promise(function(resolve, reject){
-                fakeSensor = mqtt.connect('mqtt://broker:1883', {
-                    username: simId,
-                    password: PRIVATE.token,
-                    clientId: simId
-                });
-
-                fakeSensor.on('connect', function(){
-                    resolve(fakeSensor);
-                });
-            })
+            return createFakeSensor(simId)
             .then(function(sensor){
-                sensor.subscribe(simId);
                 fakeSensor = sensor;
             });
         });
@@ -124,28 +175,16 @@ describe('Maestro testing', function(){
     describe('Measurements push', function(){
 
         var fakeSensor;
-        var simId = "simNumber1";
+        var simId = 'simNumber1';
 
         before('Creating Fake Sensor and Measurements', function(){
-            return new Promise(function(resolve, reject){
-                fakeSensor = mqtt.connect('mqtt://broker:1883', {
-                    username: simId,
-                    password: PRIVATE.token,
-                    clientId: simId
-                });
-
-                fakeSensor.on('connect', function(){
-                    resolve(fakeSensor);
-                });
-
-            })
+            return createFakeSensor(simId)
             .then(function(sensor){
-                sensor.subscribe(simId);
                 fakeSensor = sensor;
             });
         });
 
-        it('pushing wifi measurements', function (done) {
+        it('pushing wifi measurements', function () {
 
             var measurement = {
                 datetime: new Date(),
@@ -163,6 +202,7 @@ describe('Maestro testing', function(){
 
                 return api.getMeasurements(data)
                 .then(function(measurements){
+                    console.log('Measurements', measurements);
                     expect(measurements[0].value).to.deep.equal([-10, -9, -99]);
                     expect(measurements[0].entry).to.equal(3);
                     expect(Date.parse(measurements[0].date)).to.be.a("number");

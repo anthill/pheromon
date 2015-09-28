@@ -2,6 +2,7 @@
 
 var pokemon = require("pokemon-names");
 var database = require('../../database');
+var debug = require('../../tools/debug');
 
 var CONF = require('../../CONF.json');
 
@@ -18,10 +19,11 @@ function checkSensor(sim, sim2sensor){
         })
         .then(function(sensor){
             sim2sensor[sim] = sensor;
+            return true;
         });
     }
     else
-        return Promise.resolve();
+        return Promise.resolve(false);
 }
 
 function importSensors(){
@@ -29,6 +31,9 @@ function importSensors(){
 
     return database.Sensors.getAll()
     .then(function(sensors){
+
+        debug('Got all sensors from DB', sensors);
+
         sensors.forEach(function(sensor){
             sim2sensor[sensor.sim] = sensor;
         });

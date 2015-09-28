@@ -205,6 +205,7 @@ module.exports = function(app, debug){
 	    console.log('requesting sensor measurements for sensor', sim);
 	    database.complexQueries.getSensorMeasurements(sim, type)
 	    .then(function(data){
+	    	console.log('data', data);
 	        res.status(200).send(data);
 	    })
 	    .catch(function(error){

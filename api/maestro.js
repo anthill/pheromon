@@ -82,6 +82,9 @@ module.exports = function(authToken){
                             switch (type) {
                                 case "wifi":
                                     var data = JSON.parse(message);
+
+                                    debug('Measurement to register', data);
+
                                     database.Measurements.create({
                                         sensor_sim: sim,
                                         type: "wifi",
