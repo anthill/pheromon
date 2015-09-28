@@ -182,12 +182,11 @@ module.exports = function(app, debug){
         });
 	});
 
-
-	app.get('/measurements/get/:placeId', function(req, res){
-	    var id = req.params.id;
+	app.post('/measurements/place/', function(req, res){
+	    var id = req.body.id;
 	    console.log('requesting place id', id);
 	    
-	    database.complexQueries.getPlaceMeasurements(id)
+	    database.complexQueries.getPlaceMeasurements(body)
 	    .then(function(data){
 	        res.status(200).send(data);
 	    })
@@ -197,16 +196,20 @@ module.exports = function(app, debug){
 	    });
 	});
 
-	app.get('/sensor/:id/measurements', function(req, res){
-	    var id = req.params.id;
-	    console.log('requesting sensor measurements for sensor', id);
-	    database.complexQueries.getSensorMeasurements(id)
+	app.post('/measurements/sensor/', function(req, res){
+
+		console.log('BODY', req.body);
+	    var sim = req.body.sim;
+	    var type = req.body.type;
+
+	    console.log('requesting sensor measurements for sensor', sim);
+	    database.complexQueries.getSensorMeasurements(sim, type)
 	    .then(function(data){
 	        res.status(200).send(data);
 	    })
 	    .catch(function(error){
 	    	res.status(500).send('Couldn\'t sensor measurements from database');
-	        console.log("error in /sensor/'+req.params.id:/measurements ", error);
+	        console.log("error in /measurements/sensor/ ", error);
 	    });
 	});
 

@@ -129,13 +129,14 @@ module.exports = {
             })
         },
 
-        getSensorMeasurements: function(sim){
+        getSensorMeasurements: function(sim, type){
             return databaseP.then(function(db){
 
                 var query = sensor
                     .select(
                         sensor.sim,
                         measurement.date,
+                        measurement.type,
                         measurement
                             .literal('array_length(measurements.value, 1)')
                             .as('entry'),

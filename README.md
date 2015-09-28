@@ -67,9 +67,13 @@ npm run dev
 
 We don't want sensors to have a manually hard-coded id (for deployment's simplicity) so we use SIM id (queried with AT command):
 
-- [sensor] query SIM id and sends [init id passw] on `command`
-- [broker] associate SIM id to a tcp Socket and sends [period, start_hour, stop_hour, date] on `command`
-- 
+- [sensor] on initialization, sensor sends its [`uninitialized`, `simId`] on `status` topic.
+- [broker] authenticates sensor message and transfers it to subscribers.
+- [api] receives message, check `simId` in DB, creates sensor if needed, and sends back [`init`, `parameters`] on `simId/command` topic.
+- [broker]
+- [sensor] receives message, initializes its `parameters` and sends back [`initialized`, `simId`]
+- [broker]
+- [api] updates DB and web clients 
 
 ## Unitary tests
 

@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS sensors (
     latest_input    text DEFAULT NULL,
     latest_output   text DEFAULT NULL,
     signal          network_signal DEFAULT NULL,
-    period     real DEFAULT 300, --One measurement every 300 seconds
+    period          real DEFAULT 300, --One measurement every 300 seconds
     start_hour      real DEFAULT 7,
     stop_hour       real DEFAULT 16
 ) INHERITS(lifecycle);

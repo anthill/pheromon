@@ -15,37 +15,30 @@ var compression = require('compression');
 var bodyParser = require('body-parser');
 var schedule = require('node-schedule');
 
-var makeTcpReceiver = require('../tools/makeTcpReceiver');
+var debug = require('../tools/debug');
 var routes = require('./routes.js');
+
+var PRIVATE = require('../PRIVATE.json');
+var maestro = require('./maestro')(PRIVATE.token); // API-side mqtt client
+
+var server = new http.Server(app);
+var io = require('socket.io')(server);
 
 
 var PORT = 4000;
-var DEBUG = process.env.NODE_ENV === "development" ? true : false;
-var tcpSocketEndpoint;
 
-var server = new http.Server(app);
-
-var io = require('socket.io')(server);
 
 io.set('origins', '*:*');
 
 io.on('connection', function(socket) {
     socket.on('cmd', function(cmd) {
         console.log('admin client data received');
-        if (tcpSocketEndpoint) {
-            tcpSocketEndpoint.write(JSON.stringify(cmd) + "\n");
-        }
+        maestro.distribute(cmd);
     })
+    maestro.sockets.push(socket)
 });
 
 
-
-var debug = function() {
-    if (DEBUG) {
-        [].unshift.call(arguments, "[DEBUG Pheromon] ");
-        console.log.apply(console, arguments);
-    }
-}
 
 
 // Backup database everyday at 3AM
