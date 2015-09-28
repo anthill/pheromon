@@ -49,12 +49,12 @@ describe('Maestro testing', function(){
     this.timeout(5000);
 
     // before all tests, clear the table
-    before('clearing Sensor table', function(){
+    before('Clearing Sensor table', function(){
         return database.Sensors.deleteAll();
     });
 
     // after each test, clear the table
-    afterEach('clearing Sensor Table', function(){
+    afterEach('Clearing Sensor Table', function(){
         return database.Sensors.deleteAll();
     });
 
@@ -119,7 +119,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('maestro should register unknown sensor', function () {
+        it('Maestro should register unknown sensor', function () {
 
             fakeSensor.publish('init/' + simId, "");
             
@@ -145,7 +145,7 @@ describe('Maestro testing', function(){
             });
         });
         
-        it('broker should send back init command when asked', function () {
+        it('Maestro should send back init command when asked', function () {
             // sensor sends '' on topic 'init/simId'
             // then receives 'init params' on topic 'simId'
 
@@ -167,8 +167,6 @@ describe('Maestro testing', function(){
 
                 fakeSensor.publish('init/' + simId, "");
             });
-
-            
         });
     });
 
@@ -184,7 +182,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('pushing wifi measurements', function () {
+        it('Pushing wifi measurements', function () {
 
             var measurement = {
                 datetime: new Date(),
