@@ -67,13 +67,39 @@ npm run dev
 
 We don't want sensors to have a manually hard-coded id (for deployment's simplicity) so we use SIM id (queried with AT command):
 
-- [sensor] on initialization, sensor sends its [`uninitialized`, `simId`] on `status` topic.
-- [broker] authenticates sensor message and transfers it to subscribers.
-- [api] receives message, check `simId` in DB, creates sensor if needed, and sends back [`init`, `parameters`] on `simId/command` topic.
-- [broker]
-- [sensor] receives message, initializes its `parameters` and sends back [`initialized`, `simId`]
-- [broker]
-- [api] updates DB and web clients 
+**Sequence**
+
+- [sensor] when powering up, sensor tries to connect to MQTT broker with authentification token.
+- [broker] authenticates sensor.
+- [sensor] when authenticated, sensor subscribes to `mySensorSimId` and `all` topics, then sends an empty message on `init/mySensorSimId` topic.
+- [maestro] receives message, checks `mySensorSimId` in DB, creates Sensor if needed, and sends back [`init`, `parameters`] on `simId` topic.
+- [sensor] receives message, initializes its `parameters` and sends back `initialized` on `status/mySensorSimId/statusType` topic for status update.
+
+## Status update sequence
+
+Each time the sensor's status changes, a message is sent to the maestro to update the DB and react accordingly depending on the situation. Status can be of 3 types:
+- `quipu`: state of communication between sensor and kerrigan server
+- `wifi`: wifi monitoring state of sensor 
+- `blue`: bluetooth monitoring state of sensor
+
+**Sequence**
+
+- [somewhere] something happens that changes the sensor `type` status to `newStatus`.
+- [sensor] sends `newStatus` on `status/mySensorSimId/type` topic.
+- [maestro] receives message, check `mySensorSimId` in DB, creates Sensor if needed, and updates sensor in DB.
+
+## Measurement push sequence
+
+By default, sensor has measurement capabilities (for wifi and bluetooth). Every `n` minutes, sensor send measurements to kerrigan server to be recorded in DB.
+
+**Sequence**
+
+- [time passing] `n` minutes has passed since last measurement on `measurementType`
+- [sensor] wraps collected information into `measurementContent` and sends `measurementContent` on `measurement/mySensorSimId/measurementType` topic.
+- [maestro] receives message, check `mySensorSimId` in DB, creates Sensor if needed, and then creates Measurement in DB.
+
+## Command sending sequence
+TODO
 
 ## Unitary tests
 
