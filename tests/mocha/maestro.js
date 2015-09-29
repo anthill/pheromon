@@ -5,7 +5,6 @@ require('es6-shim');
 
     - Command management with socketIO => no need to check all commands, only that client receives the correct string
     - Sensor latest measurement update changes when measurement is registered in DB
-    - maestro Import sensors
     - sensor status update
 
 */
@@ -85,7 +84,7 @@ describe('Maestro testing', function(){
 
     describe('importSensor utils', function() {
 
-        before('Creating sensors', function(){
+        before('Creating sensors in DB', function(){
             var creationPs = [0, 1, 2, 3].map(function(item){
 
                 var sensor = {
@@ -107,7 +106,7 @@ describe('Maestro testing', function(){
         });
     });
 
-    describe('Sensor Registration', function() {
+    describe('Sensor Registration / Fake sensor', function() {
 
         var fakeSensor;
         var simId = 'simNumber1';
@@ -131,9 +130,89 @@ describe('Maestro testing', function(){
 
             }, 500);
         });
+
+        it('Maestro should send back init command when asked', function () {
+            // sensor sends '' on topic 'init/simId'
+            // then receives 'init params' on topic 'simId'
+
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function (topic, message) {
+                    if(topic === simId || 'all') {
+                        var argsplit = message.toString().split(" ");
+
+                        expect(argsplit[0]).to.deep.equal('init');
+                        // check parameters are numbers
+                        expect(Number.isNaN(Number(argsplit[1]))).to.be.false;
+                        expect(Number.isNaN(Number(argsplit[2]))).to.be.false;
+                        expect(Number.isNaN(Number(argsplit[3]))).to.be.false;
+                        // check for proper datetime
+                        expect(Date.parse(argsplit[4])).to.be.a("number");
+                        resolve();
+                    }
+                });
+
+                fakeSensor.publish('init/' + simId, "");
+            });
+        });
+
+        it('Maestro should register sensor status update', function () {
+
+            fakeSensor.publish('status/' + simId + '/wifi', "recording");
+            
+            setTimeout(function(){
+                return api.getSensor(simId)
+                .then(function(sensor){
+                    expect(sensor.sense_status).to.deep.equal('recording');
+                });
+
+            }, 500);
+        });
+
+        it('Pushing wifi measurements', function () {
+
+            var measurement = {
+                datetime: new Date(),
+                signal_strength: [-10, -9, -99]
+            };
+
+            fakeSensor.publish("measurement/" + simId + "/wifi", JSON.stringify(measurement));
+
+            setTimeout(function(){
+
+                var data = {
+                    sim: simId,
+                    type: 'wifi'
+                };
+
+                return api.getMeasurements(data)
+                .then(function(measurements){
+                    console.log('Measurements', measurements);
+                    expect(measurements[0].value).to.deep.equal([-10, -9, -99]);
+                    expect(measurements[0].entry).to.equal(3);
+                    expect(Date.parse(measurements[0].date)).to.be.a("number");
+                })
+            }, 500);
+
+        });
+
     });
 
-    describe('Sensor Initialization', function() {
+    // describe('Sensor Initialization', function() {
+
+    //     var fakeSensor;
+    //     var simId = 'simNumber1';
+
+    //     before('Creating Fake Sensor', function(){
+    //         return createFakeSensor(simId)
+    //         .then(function(sensor){
+    //             fakeSensor = sensor;
+    //         });
+    //     });
+    // });
+
+
+/*
+    describe('Sensor Status update', function() {
 
         var fakeSensor;
         var simId = 'simNumber1';
@@ -169,45 +248,21 @@ describe('Maestro testing', function(){
             });
         });
     });
+*/
 
-    describe('Measurements push', function(){
+    // describe('Measurements push', function(){
 
-        var fakeSensor;
-        var simId = 'simNumber1';
+    //     var fakeSensor;
+    //     var simId = 'simNumber1';
 
-        before('Creating Fake Sensor and Measurements', function(){
-            return createFakeSensor(simId)
-            .then(function(sensor){
-                fakeSensor = sensor;
-            });
-        });
+    //     before('Creating Fake Sensor', function(){
+    //         return createFakeSensor(simId)
+    //         .then(function(sensor){
+    //             fakeSensor = sensor;
+    //         });
+    //     });
 
-        it('Pushing wifi measurements', function () {
-
-            var measurement = {
-                datetime: new Date(),
-                signal_strength: [-10, -9, -99]
-            };
-
-            fakeSensor.publish("measurement/" + simId + "/wifi", JSON.stringify(measurement));
-
-            setTimeout(function(){
-
-                var data = {
-                    sim: simId,
-                    type: 'wifi'
-                };
-
-                return api.getMeasurements(data)
-                .then(function(measurements){
-                    console.log('Measurements', measurements);
-                    expect(measurements[0].value).to.deep.equal([-10, -9, -99]);
-                    expect(measurements[0].entry).to.equal(3);
-                    expect(Date.parse(measurements[0].date)).to.be.a("number");
-                })
-            }, 500);
-
-        });
-    });
+        
+    // });
 });
 
