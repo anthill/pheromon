@@ -28,16 +28,13 @@ var io = require('socket.io')(server);
 
 var PORT = 4000;
 
-var sockets = [];
-
 io.set('origins', '*:*');
 
 io.on('connection', function(socket) {
     socket.on('cmd', function(cmd) {
         console.log('admin client data received');
         maestro.distribute(cmd);
-    })
-    sockets.push(socket);
+    });
 });
 
 
