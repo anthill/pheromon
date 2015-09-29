@@ -26,5 +26,25 @@ module.exports = {
                 });
             });
         })
+    },
+
+    deleteAll: function() {
+        return databaseP.then(function (db) {
+            
+            var query = measurements
+                .delete()
+                .returning('*')
+                .toQuery();
+
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+                    else resolve(result.rows);
+                });
+            });
+        })
+        .catch(function(err){
+            console.log('ERROR in deleteAll measurements', err);
+        });        
     }
 };

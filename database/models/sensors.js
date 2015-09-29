@@ -31,7 +31,6 @@ module.exports = {
     
     update: function(sim, delta) {
         return databaseP.then(function (db) {
-            
             var query = sensors
                 .update(delta)
                 .where(sensors.sim.equals(sim))
