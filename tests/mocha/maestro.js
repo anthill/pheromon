@@ -2,8 +2,6 @@
 require('es6-shim');
 
 /* TODO
-
-    - Command management with socketIO => no need to check all commands, only that client receives the correct string
     - Sensor latest measurement update changes when measurement is registered in DB
 */
 

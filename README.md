@@ -94,12 +94,16 @@ By default, sensor has measurement capabilities (for wifi and bluetooth). Every 
 
 **Sequence**
 
-- [time passing] `n` minutes has passed since last measurement on `measurementType`
+- [time passing] `n` minutes has passed since last measurement on `measurementType`.
 - [sensor] wraps collected information into `measurementContent` and sends `measurementContent` on `measurement/mySensorSimId/measurementType` topic.
 - [maestro] receives message, check `mySensorSimId` in DB, creates Sensor if needed, and then creates Measurement in DB.
 
 ## Command sending sequence
-TODO
+
+- [some admin client] sends a `command` to `[mySensorSimId]` through socketIO.
+- [maestro] receives `command` from client, and forwards it to the corresponding sensors through MQTT.
+- [sensor] receives message, execute `command`.
+
 
 ## Unitary tests
 
