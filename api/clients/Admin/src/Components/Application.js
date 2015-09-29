@@ -18,7 +18,7 @@ interface AppProps{
         lon: int,
         name: string,
         sensor_ids : list[],
-        type, string,
+        type: string,
         updated_at, string
     })
     sensorMap: Map (id => sensor{
@@ -29,9 +29,10 @@ interface AppProps{
         latest_input: string,
         latest_output: string
         name: string,
-        phone_number: string,
+        sim: string,
         quipu_status: string,
-        sense_status: string,
+        wifi_status: string,
+        blue_status: string,
         updated_at: string
     }),
     onChangePlace: function(),

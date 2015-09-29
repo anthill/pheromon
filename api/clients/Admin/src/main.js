@@ -277,16 +277,16 @@ function refreshView(){
 }
 
 function sendCommand(command, selectedAntSet){
-    var antNames = [];
+    var antSims = [];
     selectedAntSet.forEach(function(id){
-        antNames.push(topLevelStore.sensorMap.get(id).phone_number);
+        antSims.push(topLevelStore.sensorMap.get(id).sim);
     });
 
     socket.emit('cmd', {
         command: command,
-        to: antNames
+        to: antSims
     });
-    console.log('Sending command', command, ' to ', antNames.join(' '));
+    console.log('Sending command', command, ' to ', antSims.join(' '));
 }
 
 
