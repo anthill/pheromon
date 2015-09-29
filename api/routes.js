@@ -168,7 +168,6 @@ module.exports = function(app, debug){
 	    });
 	});
 
-
 	// complex queries
 
 	app.get('/currentAffluence', function(req, res){
@@ -182,7 +181,7 @@ module.exports = function(app, debug){
         });
 	});
 
-	app.post('/measurements/place/', function(req, res){
+	app.post('/measurements/place', function(req, res){
 	    var id = req.body.id;
 	    console.log('requesting place id', id);
 	    
@@ -196,9 +195,8 @@ module.exports = function(app, debug){
 	    });
 	});
 
-	app.post('/measurements/sensor/', function(req, res){
+	app.post('/measurements/sensor', function(req, res){
 
-		console.log('BODY', req.body);
 	    var sim = req.body.sim;
 	    var type = req.body.type;
 

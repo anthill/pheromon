@@ -7,8 +7,8 @@ var debug = require('../../tools/debug');
 var CONF = require('../../CONF.json');
 
 function checkSensor(sim, sim2sensor){
-
     if (!sim2sensor[sim]){
+        debug('Sensor not present in cache, creating in DB');
         // if sensor was never registered, create it
         return database.Sensors.create({
             'name': pokemon.random(),

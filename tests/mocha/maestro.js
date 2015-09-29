@@ -49,69 +49,90 @@ describe('Maestro testing', function(){
 
     // before all tests, clear the table
     before('Clearing Sensor table', function(){
+        console.log('Before: Clearing Sensor table');
         return database.Sensors.deleteAll();
     });
 
-    // after each test, clear the table
-    afterEach('Clearing Sensor Table', function(){
-        return database.Sensors.deleteAll();
+    describe('Maestro utils', function(){
+        // after each test, clear the table
+        afterEach('Clearing Sensor Table', function(){
+            console.log('After: Clearing Sensor table');
+            return database.Sensors.deleteAll();
+        });
+
+        describe('checkSensor utils', function() {
+        
+            var sensor = {
+                name: 'Sensor1',
+                sim: '290'
+            };
+
+            var sim2sensor = {};
+
+            it('checkSensor should register unknown sensor', function () {
+                return maestroUtils.checkSensor(sensor.sim, sim2sensor)
+                .then(function(wasSensorCreated){
+                    expect(Object.keys(sim2sensor).length).to.deep.equal(1);
+                    expect(wasSensorCreated).to.be.true;
+                });
+            });
+
+            it('checkSensor should not register known sensor', function () {
+                return maestroUtils.checkSensor(sensor.sim, sim2sensor)
+                .then(function(wasSensorCreated){
+                    expect(wasSensorCreated).to.be.false;
+                });
+            });
+        });
+
+        describe('importSensor utils', function() {
+
+            before('Creating sensors in DB', function(){
+                var creationPs = [0, 1, 2, 3].map(function(item){
+
+                    var sensor = {
+                        name: 'Sensor' + item,
+                        sim: item * 10
+                    };
+
+                    return api.createSensor(sensor);
+                });
+
+                return Promise.all(creationPs);    
+            });
+
+            it('importSensor should return an object with all sensors in DB', function () {
+                return maestroUtils.importSensors()
+                .then(function(sim2sensor){
+                    expect(Object.keys(sim2sensor).length).to.deep.equal(4);
+                });
+            });
+        });
+
     });
 
-    describe('checkSensor utils', function() {
+    // describe('Sensor Registration', function() {
 
-        var sensor = {
-            name: 'Sensor1',
-            sim: '290'
-        };
+    //     var fakeSensor;
+    //     var simId = 'simNumber1';
 
-        var sim2sensor = {};
+    //     before('Creating Fake Sensor', function(){
+    //         return createFakeSensor(simId)
+    //         .then(function(sensor){
+    //             fakeSensor = sensor;
+    //         });
+    //     });
 
-        it('checkSensor should register unknown sensor', function () {
-            return maestroUtils.checkSensor(sensor.sim, sim2sensor)
-            .then(function(wasSensorCreated){
-                expect(Object.keys(sim2sensor).length).to.deep.equal(1);
-                expect(wasSensorCreated).to.be.true;
-            });
-        });
+        
+    // });
 
-        it('checkSensor should not register known sensor', function () {
-            return maestroUtils.checkSensor(sensor.sim, sim2sensor)
-            .then(function(wasSensorCreated){
-                expect(wasSensorCreated).to.be.false;
-            });
-        });
-    });
-
-    describe('importSensor utils', function() {
-
-        before('Creating sensors in DB', function(){
-            var creationPs = [0, 1, 2, 3].map(function(item){
-
-                var sensor = {
-                    name: 'Sensor' + item,
-                    sim: item * 10
-                };
-
-                return api.createSensor(sensor);
-            });
-
-            return Promise.all(creationPs);    
-        });
-
-        it('importSensor should return an object with all sensors in DB', function () {
-            return maestroUtils.importSensors()
-            .then(function(sim2sensor){
-                expect(Object.keys(sim2sensor).length).to.deep.equal(4);
-            });
-        });
-    });
-
-    describe('Sensor Registration / Fake sensor', function() {
+    describe('Fake Sensor', function() {
 
         var fakeSensor;
         var simId = 'simNumber1';
 
         before('Creating Fake Sensor', function(){
+            console.log('Before: creating fake sensor');
             return createFakeSensor(simId)
             .then(function(sensor){
                 fakeSensor = sensor;
@@ -122,13 +143,19 @@ describe('Maestro testing', function(){
 
             fakeSensor.publish('init/' + simId, "");
             
-            setTimeout(function(){
-                return api.getAllSensors()
-                .then(function(sensors){
-                    expect(sensors[0].sim).to.deep.equal(simId);
-                })
+            return new Promise(function(resolve, reject){
+                setTimeout(function(){
+                    api.getAllSensors()
+                    .then(function(sensors){
+                        expect(sensors[0].sim).to.deep.equal('simNumber1');
+                        resolve();
+                    })
+                    .catch(function(err){
+                        reject(err);
+                    });
 
-            }, 500);
+                }, 200);
+            });
         });
 
         it('Maestro should send back init command when asked', function () {
@@ -153,19 +180,6 @@ describe('Maestro testing', function(){
 
                 fakeSensor.publish('init/' + simId, "");
             });
-        });
-
-        it('Maestro should register sensor status update', function () {
-
-            fakeSensor.publish('status/' + simId + '/wifi', "recording");
-            
-            setTimeout(function(){
-                return api.getSensor(simId)
-                .then(function(sensor){
-                    expect(sensor.sense_status).to.deep.equal('recording');
-                });
-
-            }, 500);
         });
 
         it('Pushing wifi measurements', function () {
@@ -177,42 +191,33 @@ describe('Maestro testing', function(){
 
             fakeSensor.publish("measurement/" + simId + "/wifi", JSON.stringify(measurement));
 
-            setTimeout(function(){
+            var data = {
+                sim: simId,
+                type: 'wifi'
+            };
 
-                var data = {
-                    sim: simId,
-                    type: 'wifi'
-                };
+            return new Promise(function(resolve, reject){
+                setTimeout(function(){
 
-                return api.getMeasurements(data)
-                .then(function(measurements){
-                    console.log('Measurements', measurements);
-                    expect(measurements[0].value).to.deep.equal([-10, -9, -99]);
-                    expect(measurements[0].entry).to.equal(3);
-                    expect(Date.parse(measurements[0].date)).to.be.a("number");
-                })
-            }, 500);
+                    api.getMeasurements(data)
+                    .then(function(measurements){
+                    //     // console.log('THEN');
+                        expect(measurements[0].value).to.deep.equal([-10, -9, -99]);
+                        expect(measurements[0].entry).to.equal(3);
+                        expect(Date.parse(measurements[0].date)).to.be.a("number");
+                        resolve();
+                    })
+                    .catch(function(err){
+                        reject(err);
+                    });
+
+                }, 200);
+            });
 
         });
-
     });
 
-    // describe('Sensor Initialization', function() {
-
-    //     var fakeSensor;
-    //     var simId = 'simNumber1';
-
-    //     before('Creating Fake Sensor', function(){
-    //         return createFakeSensor(simId)
-    //         .then(function(sensor){
-    //             fakeSensor = sensor;
-    //         });
-    //     });
-    // });
-
-
-/*
-    describe('Sensor Status update', function() {
+    /*describe('Sensor Status registration', function() {
 
         var fakeSensor;
         var simId = 'simNumber1';
@@ -223,32 +228,24 @@ describe('Maestro testing', function(){
                 fakeSensor = sensor;
             });
         });
-        
-        it('Maestro should send back init command when asked', function () {
-            // sensor sends '' on topic 'init/simId'
-            // then receives 'init params' on topic 'simId'
 
-            return new Promise(function(resolve, reject){
-                fakeSensor.on('message', function (topic, message) {
-                    if(topic === simId || 'all') {
-                        var argsplit = message.toString().split(" ");
+        it('Maestro should register sensor status update', function () {
 
-                        expect(argsplit[0]).to.deep.equal('init');
-                        // check parameters are numbers
-                        expect(Number.isNaN(Number(argsplit[1]))).to.be.false;
-                        expect(Number.isNaN(Number(argsplit[2]))).to.be.false;
-                        expect(Number.isNaN(Number(argsplit[3]))).to.be.false;
-                        // check for proper datetime
-                        expect(Date.parse(argsplit[4])).to.be.a("number");
-                        resolve();
-                    }
+            fakeSensor.publish('status/' + simId + '/wifi', "recording");
+            
+            console.log('NBORDEL');
+
+            setTimeout(function(){
+                console.log('HEY');
+                return api.getSensor(simId)
+                .then(function(sensor){
+                    console.log('Sensor STATUS', sensor);
+                    expect(sensor.wifi_status).to.deep.equal('recordingDD');
                 });
 
-                fakeSensor.publish('init/' + simId, "");
-            });
+            }, 100);
         });
-    });
-*/
+    });*/
 
     // describe('Measurements push', function(){
 
@@ -263,6 +260,9 @@ describe('Maestro testing', function(){
     //     });
 
         
+
+        
     // });
+    
 });
 

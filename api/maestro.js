@@ -4,11 +4,12 @@
 var mqtt = require('mqtt');
 var utils = require('./utils/maestro.js');
 var debug = require('../tools/debug');
+var database = require('../database');
+
+var sim2sensor;
 
 module.exports = function(authToken){    
     var self = this;
-
-    var sim2sensor;
 
     var maestro = mqtt.connect('mqtt://broker:1883', {
         username: "maestro",
@@ -75,31 +76,27 @@ module.exports = function(authToken){
                             })
                             .catch(function(err) {
                                 console.log('error : cannot store measurement in DB :', err)
-                            })
+                            });
                             break;
 
                         case "measurement":
-                            switch (type) {
-                                case "wifi":
-                                    var data = JSON.parse(message);
+                            var data = JSON.parse(message);
 
-                                    debug('Measurement to register', data);
+                            debug('Measurement to register', data);
 
-                                    database.Measurements.create({
-                                        sensor_sim: sim,
-                                        type: "wifi",
-                                        value: data.signal_strength,
-                                        date: data.datetime 
-                                    })
-                                    .then(function() {
-                                        // socket IO emitter
-                                        console.log("wifi data updated");
-                                    })
-                                    .catch(function(err) {
-                                        console.log('error : cannot store measurement in DB :', err)
-                                    })
-                                    break;
-                            }
+                            database.Measurements.create({
+                                sensor_sim: sim,
+                                type: type,
+                                value: data.signal_strength,
+                                date: data.datetime 
+                            })
+                            .then(function() {
+                                // socket IO emitter
+                                console.log("wifi data updated");
+                            })
+                            .catch(function(err) {
+                                console.log('error : cannot store measurement in DB :', err)
+                            });                        
                             break; 
                     }
                 })          

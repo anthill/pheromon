@@ -50,10 +50,10 @@ module.exports = function(request, origin){
             return request('GET', origin + '/currentAffluence');
         },
         getPlaceMeasurements: function(data){
-            return request('POST', origin + '/measurements/place/', data);
+            return request('POST', origin + '/measurements/place', data);
         },
         getMeasurements: function(data){
-            return request('POST', origin + '/measurements/sensor/', data);
+            return request('POST', origin + '/measurements/sensor', data);
         },
         getAllPlacesInfos: function(){
             return request('GET', origin + '/allPlacesInfos');
