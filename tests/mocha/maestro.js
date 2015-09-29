@@ -5,8 +5,6 @@ require('es6-shim');
 
     - Command management with socketIO => no need to check all commands, only that client receives the correct string
     - Sensor latest measurement update changes when measurement is registered in DB
-    - sensor status update
-
 */
 
 var mqtt = require('mqtt');
@@ -15,6 +13,8 @@ var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 var assert = chai.assert;
+
+var io = require('socket.io-client');
 
 var request = require('request');
 var PRIVATE = require('../../PRIVATE.json');
@@ -25,6 +25,8 @@ var sendReq = require('../../tools/sendNodeReq');
 var prepareAPI = require('../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
+
+var socket = io(apiOrigin);
 
 var maestroUtils = require('../../api/utils/maestro.js');
 
@@ -38,6 +40,7 @@ function createFakeSensor(simId){
 
         newSensor.on('connect', function(){
             newSensor.subscribe(simId);
+            newSensor.subscribe('all');
             resolve(newSensor);
         });
     });
@@ -45,7 +48,7 @@ function createFakeSensor(simId){
 
 describe('Maestro testing', function(){
 
-    this.timeout(5000);
+    this.timeout(2000);
 
     // before all tests, clear the table
     before('Clearing Sensor table', function(){
@@ -126,7 +129,7 @@ describe('Maestro testing', function(){
         var fakeSensor;
         var simId = 'simNumber1';
 
-        before('Creating Fake Sensor', function(){
+        beforeEach('Creating Fake Sensor', function(){
             console.log('Before: creating fake sensor');
             return createFakeSensor(simId)
             .then(function(sensor){
@@ -158,7 +161,7 @@ describe('Maestro testing', function(){
             // then receives 'init params' on topic 'simId'
 
             return new Promise(function(resolve, reject){
-                fakeSensor.on('message', function (topic, message) {
+                fakeSensor.on('message', function(topic, message){
                     if(topic === simId || 'all') {
                         var argsplit = message.toString().split(" ");
 
@@ -177,7 +180,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should register sensor status update', function () {
+        it('Maestro should register sensor status update in DB', function () {
 
             fakeSensor.publish('status/' + simId + '/wifi', "recording");
             
@@ -196,7 +199,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Pushing wifi measurements', function () {
+        it('Pushing wifi measurements should register measurements in DB', function () {
 
             var measurement = {
                 datetime: new Date(),
@@ -227,8 +230,27 @@ describe('Maestro testing', function(){
 
                 }, 200);
             });
-
         });
+
+        it('Emitting commands through socket should send command to sensors', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    console.log('handleCMD', message.toString());
+
+                    if(topic === simId || 'all') {
+                        expect(message.toString()).to.deep.equal('myCommand');
+                        resolve();
+                    }
+                });
+
+                socket.emit('cmd', {
+                    command: 'myCommand',
+                    to: [simId]
+                });
+
+            });
+        });
+
     });
     
 });

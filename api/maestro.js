@@ -9,7 +9,6 @@ var database = require('../database');
 var sim2sensor;
 
 module.exports = function(authToken){    
-    var self = this;
 
     var maestro = mqtt.connect('mqtt://broker:1883', {
         username: "maestro",
@@ -29,9 +28,9 @@ module.exports = function(authToken){
 
             // wrapper of the mqtt.publish() function
             maestro.distribute = function(message){
-
                 if (message.to.length === Object.keys(sim2sensor).length)
                     maestro.publish('all', message.command);
+                    
                 else
                     message.to.forEach(function(sim){
                         maestro.publish(sim, message.command);
@@ -102,4 +101,6 @@ module.exports = function(authToken){
             console.log("Maestro ready");
         });
     });
+
+    return maestro;
 }
