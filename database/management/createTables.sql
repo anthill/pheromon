@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS lifecycle(
 );
 
 CREATE TYPE quipu_status AS ENUM ('uninitialized', 'initialized', '3G_connected', 'tunnelling');
-CREATE TYPE sense_status AS ENUM ('sleeping', 'monitoring', 'recording');
+CREATE TYPE wifi_status AS ENUM ('sleeping', 'monitoring', 'recording');
+CREATE TYPE blue_status AS ENUM ('sleeping', 'recording');
 CREATE TYPE network_signal AS ENUM ('NODATA', 'GPRS', 'EDGE', '3G', 'H/H+');
 
 -- http://www.revsys.com/blog/2006/aug/04/automatically-updating-a-timestamp-column-in-postgresql/
@@ -39,11 +40,12 @@ CREATE TABLE IF NOT EXISTS sensors (
     project         text DEFAULT NULL,
     sim             text UNIQUE NOT NULL,
     quipu_status    quipu_status DEFAULT NULL, 
-    sense_status    sense_status DEFAULT NULL,
+    wifi_status     wifi_status DEFAULT NULL,
+    blue_status     blue_status DEFAULT NULL,
     latest_input    text DEFAULT NULL,
     latest_output   text DEFAULT NULL,
     signal          network_signal DEFAULT NULL,
-    period     real DEFAULT 300, --One measurement every 300 seconds
+    period          real DEFAULT 300, --One measurement every 300 seconds
     start_hour      real DEFAULT 7,
     stop_hour       real DEFAULT 16
 ) INHERITS(lifecycle);

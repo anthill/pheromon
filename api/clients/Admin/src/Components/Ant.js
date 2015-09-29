@@ -19,7 +19,8 @@ interface AntProps{
         phone_number: string,
         quipu_status: string,
         signal: string,
-        sense_status: string,
+        wifi_status: string,
+        blue_status: string,
         updated_at: string,
         isSelected: bool
     },
@@ -59,7 +60,7 @@ var Ant = React.createClass({
         var classes = [
             'ant',
             props.ant.quipu_status ? props.ant.quipu_status.toLowerCase() : '',
-            props.ant.sense_status ? props.ant.sense_status.toLowerCase() : '',
+            props.ant.wifi_status ? props.ant.wifi_status.toLowerCase() : '',
             props.isSelected ? 'selected' : '',
             props.ant.isUpdating ? 'updating' : ''
         ];
@@ -111,10 +112,10 @@ var Ant = React.createClass({
                 ),
                 React.DOM.li({className: 'sense light'},
                     React.DOM.div({},
-                        React.DOM.div({}, '6sense'),
+                        React.DOM.div({}, 'Wifi'),
                         React.DOM.div({className: 'status'},
                             React.DOM.div({}, 'Status: '),
-                            React.DOM.div({}, props.ant.sense_status)
+                            React.DOM.div({}, props.ant.wifi_status)
                         ),
                         React.DOM.div({className: 'settings'},
                             React.DOM.div({}, 'Settings: '),

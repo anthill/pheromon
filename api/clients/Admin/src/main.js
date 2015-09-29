@@ -282,12 +282,10 @@ function sendCommand(command, selectedAntSet){
         antNames.push(topLevelStore.sensorMap.get(id).phone_number);
     });
 
-    socket.emit('cmd', 
-        {
-            type:'cmd',
-            command:command,
-            to:antNames
-        });
+    socket.emit('cmd', {
+        command: command,
+        to: antNames
+    });
     console.log('Sending command', command, ' to ', antNames.join(' '));
 }
 

@@ -12,14 +12,14 @@ module.exports = function(request, origin){
         updateSensor: function(data){
             return request('POST', origin + '/sensor/update', data);
         },
-        deleteSensor: function(id){
-            return request('DELETE', origin + '/sensor/delete/' + id);
+        deleteSensor: function(sim){
+            return request('DELETE', origin + '/sensor/delete/' + sim);
         },
         deleteAllSensors: function(){
             return request('DELETE', origin + '/sensor/deleteAll');
         },
-        getSensor: function(id){
-            return request('GET', origin + '/sensor/get/' + id);
+        getSensor: function(sim){
+            return request('GET', origin + '/sensor/get/' + sim);
         },
         getAllSensors: function(){
             return request('GET', origin + '/sensor/getAll');
@@ -47,13 +47,16 @@ module.exports = function(request, origin){
         
         // TO UPDATE
         getLiveAffluence: function(){
-            return request('GET', '/currentAffluence');
+            return request('GET', origin + '/currentAffluence');
         },
-        getPlaceMeasurements: function(id){
-            return request('GET', '/measurements/get/:placeId' + id);
+        getPlaceMeasurements: function(data){
+            return request('POST', origin + '/measurements/place', data);
+        },
+        getMeasurements: function(data){
+            return request('POST', origin + '/measurements/sensor', data);
         },
         getAllPlacesInfos: function(){
-            return request('GET', '/allPlacesInfos');
+            return request('GET', origin + '/allPlacesInfos');
         }
     };
 };
