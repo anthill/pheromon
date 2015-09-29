@@ -49,8 +49,18 @@ describe('Maestro testing', function(){
 
     // before all tests, clear the table
     before('Clearing Sensor table', function(){
-        console.log('Before: Clearing Sensor table');
+        console.log('Clearing Sensor table');
         return database.Sensors.deleteAll();
+    });
+
+    // after all tests, clear the table
+    after('Clearing Sensor table', function(){
+        console.log('Clearing Sensor table');
+
+        return database.Measurements.deleteAll() 
+        .then(function(){
+            return database.Sensors.deleteAll();
+        });
     });
 
     describe('Maestro utils', function(){
@@ -111,21 +121,6 @@ describe('Maestro testing', function(){
 
     });
 
-    // describe('Sensor Registration', function() {
-
-    //     var fakeSensor;
-    //     var simId = 'simNumber1';
-
-    //     before('Creating Fake Sensor', function(){
-    //         return createFakeSensor(simId)
-    //         .then(function(sensor){
-    //             fakeSensor = sensor;
-    //         });
-    //     });
-
-        
-    // });
-
     describe('Fake Sensor', function() {
 
         var fakeSensor;
@@ -182,6 +177,25 @@ describe('Maestro testing', function(){
             });
         });
 
+        it('Maestro should register sensor status update', function () {
+
+            fakeSensor.publish('status/' + simId + '/wifi', "recording");
+            
+            return new Promise(function(resolve, reject){
+                setTimeout(function(){
+                    api.getSensor(simId)
+                    .then(function(sensor){
+                        expect(sensor.wifi_status).to.deep.equal('recording');
+                        resolve();
+                    })
+                    .catch(function(err){
+                        reject(err);
+                    });
+
+                }, 200);
+            });
+        });
+
         it('Pushing wifi measurements', function () {
 
             var measurement = {
@@ -216,53 +230,6 @@ describe('Maestro testing', function(){
 
         });
     });
-
-    /*describe('Sensor Status registration', function() {
-
-        var fakeSensor;
-        var simId = 'simNumber1';
-
-        before('Creating Fake Sensor', function(){
-            return createFakeSensor(simId)
-            .then(function(sensor){
-                fakeSensor = sensor;
-            });
-        });
-
-        it('Maestro should register sensor status update', function () {
-
-            fakeSensor.publish('status/' + simId + '/wifi', "recording");
-            
-            console.log('NBORDEL');
-
-            setTimeout(function(){
-                console.log('HEY');
-                return api.getSensor(simId)
-                .then(function(sensor){
-                    console.log('Sensor STATUS', sensor);
-                    expect(sensor.wifi_status).to.deep.equal('recordingDD');
-                });
-
-            }, 100);
-        });
-    });*/
-
-    // describe('Measurements push', function(){
-
-    //     var fakeSensor;
-    //     var simId = 'simNumber1';
-
-    //     before('Creating Fake Sensor', function(){
-    //         return createFakeSensor(simId)
-    //         .then(function(sensor){
-    //             fakeSensor = sensor;
-    //         });
-    //     });
-
-        
-
-        
-    // });
     
 });
 
