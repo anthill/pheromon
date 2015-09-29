@@ -65,10 +65,7 @@ module.exports = function(authToken){
                             var delta = {};
                             delta[type + "_status"] = message;
 
-                            database.Sensors.update({
-                                id: sensor.id,
-                                delta: delta
-                            })
+                            database.Sensors.update(sensor.sim, delta)
                             .then(function(updated) {
                                 sim2sensor[sim] = updated;
                                 // TODO: socket IO emitter
