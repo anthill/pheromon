@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 require('es6-shim');
 
 /* TODO
@@ -7,7 +7,7 @@ require('es6-shim');
 
 var mqtt = require('mqtt');
 var chai = require('chai');
-var chaiAsPromised = require("chai-as-promised");
+var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 var assert = chai.assert;
@@ -137,7 +137,7 @@ describe('Maestro testing', function(){
 
         it('Maestro should register unknown sensor', function () {
 
-            fakeSensor.publish('init/' + simId, "");
+            fakeSensor.publish('init/' + simId, ');
             
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
@@ -161,7 +161,7 @@ describe('Maestro testing', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
                     if(topic === simId || 'all') {
-                        var argsplit = message.toString().split(" ");
+                        var argsplit = message.toString().split(' ');
 
                         expect(argsplit[0]).to.deep.equal('init');
                         // check parameters are numbers
@@ -169,18 +169,18 @@ describe('Maestro testing', function(){
                         expect(Number.isNaN(Number(argsplit[2]))).to.be.false;
                         expect(Number.isNaN(Number(argsplit[3]))).to.be.false;
                         // check for proper datetime
-                        expect(Date.parse(argsplit[4])).to.be.a("number");
+                        expect(Date.parse(argsplit[4])).to.be.a('number');
                         resolve();
                     }
                 });
 
-                fakeSensor.publish('init/' + simId, "");
+                fakeSensor.publish('init/' + simId, ');
             });
         });
 
         it('Maestro should register sensor status update in DB', function () {
 
-            fakeSensor.publish('status/' + simId + '/wifi', "recording");
+            fakeSensor.publish('status/' + simId + '/wifi', 'recording');
             
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
@@ -204,7 +204,7 @@ describe('Maestro testing', function(){
                 signal_strength: [-10, -9, -99]
             };
 
-            fakeSensor.publish("measurement/" + simId + "/wifi", JSON.stringify(measurement));
+            fakeSensor.publish('measurement/' + simId + '/wifi', JSON.stringify(measurement));
 
             var data = {
                 sim: simId,
@@ -219,7 +219,7 @@ describe('Maestro testing', function(){
                     //     // console.log('THEN');
                         expect(measurements[0].value).to.deep.equal([-10, -9, -99]);
                         expect(measurements[0].entry).to.equal(3);
-                        expect(Date.parse(measurements[0].date)).to.be.a("number");
+                        expect(Date.parse(measurements[0].date)).to.be.a('number');
                         resolve();
                     })
                     .catch(function(err){

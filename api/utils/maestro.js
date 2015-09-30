@@ -1,6 +1,6 @@
 'use strict';
 
-var pokemon = require("pokemon-names");
+var pokemon = require('pokemon-names');
 var database = require('../../database');
 var debug = require('../../tools/debug');
 

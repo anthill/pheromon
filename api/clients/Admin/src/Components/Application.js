@@ -134,7 +134,7 @@ var App = React.createClass({
         var temp = {};
         placeIDList.forEach(function (placeID) {
             temp[placeID.name] = placeID.id;
-        })
+        });
 
         var placeIDMap = new Immutable.OrderedMap(temp);
 

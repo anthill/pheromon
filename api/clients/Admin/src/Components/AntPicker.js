@@ -35,19 +35,19 @@ var AntPicker = React.createClass({
             //                                    Transform a place to an orphan plance (with no sensor)
             if (props.currentSensorId) {
                 objDb = [{
-                        'field': "installed_at",
+                        'field': 'installed_at',
                         'id': antId,
                         'value': props.currentPlaceId
                     },
                     {
-                        'field': "installed_at",
+                        'field': 'installed_at',
                         'id': props.currentSensorId,
                         'value': null
                     }];
             }
             else {
                 objDb = [{
-                    'field': "installed_at",
+                    'field': 'installed_at',
                     'id': antId,
                     'value': props.currentPlaceId
                 }];

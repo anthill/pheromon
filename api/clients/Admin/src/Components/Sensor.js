@@ -91,7 +91,7 @@ var Sensor = React.createClass({
                     self.toggleList();
                 }
             },
-            props.sensor.installed_at ? props.placeName : "Add me a place",
+            props.sensor.installed_at ? props.placeName : 'Add me a place',
             state.isListOpen ? new PlacePicker({
                 placeIDMap: props.placeIDMap,
                 placeId: props.placeId,

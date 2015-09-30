@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var fs = require('fs');
 var zlib = require('zlib');
@@ -13,7 +13,7 @@ module.exports = function(){
             var sqlFile;
             if (process.env.BACKUP){
                 // if a environement variable is set, use it to load some data
-                console.log("== A dump file is specified, loading the data. ==");
+                console.log('== A dump file is specified, loading the data. ==');
                 sqlFile = '/pheromon/data/' + process.env.BACKUP;
                 var gzip = zlib.createGunzip();
                 var readStream = fs.createReadStream(sqlFile);
@@ -23,14 +23,14 @@ module.exports = function(){
                     .pipe(proc.stdin);
 
                 // This code doesn't work because gzip is too slow
-                // readStream.on("close", function(){
+                // readStream.on('close', function(){
                 //     resolve();
                 // })
 
                 setTimeout(resolve, 3000); // <-- not a beautiful patch, but it works
                 
             } else {
-                console.log("== Resetting the database ==")
+                console.log('== Resetting the database ==');
                 var createTableScript = fs.readFileSync( require.resolve('./createTables.sql') ).toString();
                 db.query(createTableScript, function(err, result) {
                     if(err) reject(err); else resolve(result);

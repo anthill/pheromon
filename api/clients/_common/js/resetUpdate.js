@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = function (element){
-	element.isUpdating = false;
+    element.isUpdating = false;
 };

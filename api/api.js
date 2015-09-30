@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 require('es6-shim');
 require('better-log').install();
@@ -40,7 +40,7 @@ io.on('connection', function(socket) {
 
 // Backup database everyday at 3AM
 schedule.scheduleJob('0 3 * * *', function(){
-    console.log("Backup database");
+    console.log('Backup database');
     var gzip = zlib.createGzip();
     var today = new Date();
     var wstream = fs.createWriteStream('/pheromon/data/backups/' + today.getDay() + '.txt.gz');
@@ -50,7 +50,7 @@ schedule.scheduleJob('0 3 * * *', function(){
         .pipe(wstream);
     proc.stderr.on('data', function(buffer) {
         console.log(buffer.toString().replace('\n', ''));
-    })
+    });
 });
 
 
@@ -59,13 +59,13 @@ app.use(compression());
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
-app.use("/leaflet.css", express.static(path.join(__dirname, '../node_modules/leaflet/dist/leaflet.css')));
+app.use('/leaflet.css', express.static(path.join(__dirname, '../node_modules/leaflet/dist/leaflet.css')));
 
-app.use("/dygraph-combined.js", express.static(path.join(__dirname, '../node_modules/dygraphs/dygraph-combined.js')));
+app.use('/dygraph-combined.js', express.static(path.join(__dirname, '../node_modules/dygraphs/dygraph-combined.js')));
 
-app.use("/Admin", express.static(path.join(__dirname, './clients/Admin')));
-app.use("/Dashboard", express.static(path.join(__dirname, './clients/Dashboard')));
-app.use("/_common", express.static(path.join(__dirname, './clients/_common')));
+app.use('/Admin', express.static(path.join(__dirname, './clients/Admin')));
+app.use('/Dashboard', express.static(path.join(__dirname, './clients/Dashboard')));
+app.use('/_common', express.static(path.join(__dirname, './clients/_common')));
 
 
 app.get('/', function(req, res){

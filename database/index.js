@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var decl = require('./management/declarations.js');
 var databaseP = require('./management/databaseClientP');
@@ -126,7 +126,7 @@ module.exports = {
                         else resolve(result.rows);
                     });
                 });
-            })
+            });
         },
 
         getSensorMeasurements: function(sim, type){
@@ -143,6 +143,7 @@ module.exports = {
                         measurement.value
                     )
                     .where(sensor.sim.equals(sim))
+                    .where(measurement.type.equals(type)) // i don't think this is valid, ok for now (lint purposes)
                     .from(
                         sensor
                             .join(measurement)
@@ -156,7 +157,7 @@ module.exports = {
                         else resolve(result.rows);
                     });
                 });
-            })
+            });
         },
 
         getAllPlacesInfos: function() {

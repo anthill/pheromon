@@ -1,10 +1,11 @@
 'use strict';
 
-var React = require("react");
+var React = require('react');
+var Dygraph = require('dygraphs');
 
 /*
 interface LineChart Props{
-    measurements: [{id: 18, value: 18, date: "2015-07-09T12:45:53.629Z"}],
+    measurements: [{id: 18, value: 18, date: '2015-07-09T12:45:53.629Z'}],
     day: string
 }
 interface LineChart State{
@@ -58,13 +59,13 @@ var LineChart = React.createClass({
             React.findDOMNode(this.refs[CHART_DIV_REF]),
             data,
             {
-                labels: [ "time", "Traces wifi" ],
-                legend: "onmouseover",
+                labels: [ 'time', 'Traces wifi' ],
+                legend: 'onmouseover',
                 strokeWidth: 2,
                 dateWindow: [beginDay, endDay]
             }
         );
-        console.log(chart)
+        console.log(chart);
     },
 
 	render: function(){

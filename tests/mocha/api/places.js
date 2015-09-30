@@ -4,8 +4,8 @@ require('es6-shim');
 var database = require('../../../database');
 var sendReq = require('../../../tools/sendNodeReq');
 
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 
@@ -32,7 +32,7 @@ describe('Verify API', function() {
 
         describe('Creation', function(){
 
-            it("/place/create", function () {
+            it('/place/create', function () {
                 
                 var place = {
                     name: 'Place1',
@@ -66,7 +66,7 @@ describe('Verify API', function() {
                 });
             });
 
-            it("/update/place", function () {
+            it('/update/place', function () {
                 this.timeout(2000);
 
                 var delta = {
@@ -107,7 +107,7 @@ describe('Verify API', function() {
                 });
             });
 
-            it("/place/delete", function () {
+            it('/place/delete', function () {
 
                 return api.deletePlace(id)
                 .then(function(deleted){
@@ -140,7 +140,7 @@ describe('Verify API', function() {
             
             });
 
-            it("/place/deleteAll", function () {
+            it('/place/deleteAll', function () {
 
                 return api.deleteAllPlaces()
                 .then(function(deleted){
@@ -169,7 +169,7 @@ describe('Verify API', function() {
                 
             });
 
-            it("/place/get", function () {
+            it('/place/get', function () {
 
                 return api.getPlace(id)
                 .then(function(fetched){
@@ -200,7 +200,7 @@ describe('Verify API', function() {
                 
             });
 
-            it("/place/getAll", function () {
+            it('/place/getAll', function () {
 
                 return api.getAllPlaces()
                 .then(function(fetcheds){

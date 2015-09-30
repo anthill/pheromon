@@ -1,16 +1,16 @@
-"use strict";
+'use strict';
 
 /*
     MQTT Broker initilization
 */
 
 require('es6-shim');
-var makeMqttServer = require("./makeMqttServer.js");
+var makeMqttServer = require('./makeMqttServer.js');
 
 var PRIVATE = require('../PRIVATE.json');
 
 makeMqttServer(PRIVATE.token)
-.then(function(mqttServer){
+.then(function(){
     console.log('MQTT broker ready');
 })
 .catch(function(err){

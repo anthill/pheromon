@@ -1,17 +1,13 @@
 'use strict';
 
 function makeMap(objects, expectedKey){
-	var myMap = new Map();
+    var myMap = new Map();
 
-	// objects.keys().forEach(function(key){
-	// 	myMap.set(objects[key][expectedKey], objects[key]);
-	// })
+    Object.keys(objects).forEach(function(key){
+        myMap.set(objects[key][expectedKey], objects[key]);
+    });
 
-	for (var key in objects){
-		myMap.set(objects[key][expectedKey], objects[key]);
-	}
-
-	return myMap;
+    return myMap;
 }
 
 module.exports = makeMap;

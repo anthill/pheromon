@@ -33,7 +33,7 @@ var PlacePicker = React.createClass({
         props.placeIDMap.forEach(function (value, key) {
 
             var objDb = [{
-                'field': "installed_at",
+                'field': 'installed_at',
                 'id': props.sensorId,
                 'value': value
             }];
@@ -41,7 +41,7 @@ var PlacePicker = React.createClass({
             lis.push(React.DOM.li({
                     key: key,
                     onClick: function(){
-                        props.onChange(objDb)
+                        props.onChange(objDb);
                     }
                 },
                 key

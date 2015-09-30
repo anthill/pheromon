@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 require('es6-shim');
 
 var mqtt = require('mqtt');
 var chai = require('chai');
-var chaiAsPromised = require("chai-as-promised");
+var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 var assert = chai.assert;
@@ -24,7 +24,7 @@ describe('Broker Testing', function() {
     this.timeout(2000);
 
     var fakeSensor;
-    var simId = "simNumber1";
+    var simId = 'simNumber1';
 
     it('Broker should not authenticate sensor with fake token', function () {
 
@@ -32,7 +32,7 @@ describe('Broker Testing', function() {
             fakeSensor = mqtt.connect('mqtt://broker:1883',
                 {
                     username: simId,
-                    password: "dummyCode",
+                    password: 'dummyCode',
                     clientId: simId
                 }
             );

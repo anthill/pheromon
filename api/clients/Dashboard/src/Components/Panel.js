@@ -16,7 +16,7 @@ interface PanelProps{
 var Panel = React.createClass({
 
     getInitialState: function(){
-        return {}
+        return {};
     },
 
     render: function() {
@@ -30,7 +30,7 @@ var Panel = React.createClass({
         var details = [];
 
         var closeButton = React.DOM.div({
-            id: "close-button",
+            id: 'close-button',
             onClick: function(){
                 document.getElementById('panel').classList.toggle('open');
             }

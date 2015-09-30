@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 /*
-    This gulpfile is an "outer" gulpfile that manages starting docker containers and watching/rebuilding files for dev purposes
+    This gulpfile is an 'outer' gulpfile that manages starting docker containers and watching/rebuilding files for dev purposes
     
     
 ```bash
@@ -13,13 +13,13 @@ gulp dev # prepares the dev environment
 require('es6-shim');
 
 var spawn = require('child_process').spawn;
-var fs = require("fs");
+var fs = require('fs');
 var path = require('path'); 
 var join = path.join;
 
 var gulp = require('gulp');
 var browserify = require('browserify');
-var source = require("vinyl-source-stream");
+var source = require('vinyl-source-stream');
 
 
 
@@ -89,8 +89,6 @@ gulp.task('watch-tools', function() {
     });
 });
 
-
-var dockerComposeProcess;
 gulp.task('start-containers-dev', function(){
     
     var adminP;
@@ -103,7 +101,7 @@ gulp.task('start-containers-dev', function(){
 
     Promise.all([adminP, dashboardP])
     .then(function(){
-        dockerComposeProcess = spawn('docker-compose', ['-f', 'compose-dev.yml', 'up'], {stdio: 'inherit'});
+        spawn('docker-compose', ['-f', 'compose-dev.yml', 'up'], {stdio: 'inherit'});
     }); 
 });
 
