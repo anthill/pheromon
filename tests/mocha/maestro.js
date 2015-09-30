@@ -137,7 +137,7 @@ describe('Maestro testing', function(){
 
         it('Maestro should register unknown sensor', function () {
 
-            fakeSensor.publish('init/' + simId, ');
+            fakeSensor.publish('init/' + simId, '');
             
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
@@ -174,7 +174,7 @@ describe('Maestro testing', function(){
                     }
                 });
 
-                fakeSensor.publish('init/' + simId, ');
+                fakeSensor.publish('init/' + simId, '');
             });
         });
 
@@ -250,6 +250,5 @@ describe('Maestro testing', function(){
         });
 
     });
-    
 });
 
