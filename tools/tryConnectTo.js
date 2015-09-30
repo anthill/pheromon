@@ -26,10 +26,10 @@ module.exports = function(origin){
                     }
                     else if(response.statusCode === 200){
                         console.log('Connected to', origin);
-                        resolve()
+                        resolve();
                     }
                 });
             }, time);
-        })(INITIAL_TIMEOUT_TIME)
+        })(INITIAL_TIMEOUT_TIME);
     });
 };
