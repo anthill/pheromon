@@ -73,7 +73,7 @@ We don't want sensors to have a manually hard-coded id (for deployment's simplic
 - [broker] authenticates sensor.
 - [sensor] when authenticated, sensor subscribes to `mySensorSimId` and `all` topics, then sends an empty message on `init/mySensorSimId` topic.
 - [maestro] receives message, checks `mySensorSimId` in DB, creates Sensor if needed, and sends back [`init`, `parameters`] on `simId` topic.
-- [sensor] receives message, initializes its `parameters` and sends back `initialized` on `status/mySensorSimId/statusType` topic for status update.
+- [sensor] receives message, initializes its `parameters` and routines.
 
 ## Status update sequence
 
