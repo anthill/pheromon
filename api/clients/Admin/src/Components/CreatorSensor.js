@@ -53,7 +53,7 @@ var CreatorSensor = React.createClass({
         // console.log('CreatorSensor state', state);
 
         return React.DOM.div({className: 'creator'},
-            // React.DOM.div({}, "New sensor"),
+            // React.DOM.div({}, 'New sensor'),
             React.DOM.form({
                 onSubmit: function(e){
                     e.preventDefault();
@@ -73,19 +73,19 @@ var CreatorSensor = React.createClass({
                     type: 'text',
                     ref: 'myNameInput',
                     name: 'sensorName',
-                    placeholder: "Name"//,
+                    placeholder: 'Name'//,
                 }),
                 React.DOM.input({
                     type: 'text',
                     ref: 'myPhoneInput',
                     name: 'Phone',
-                    placeholder: "Phone"
+                    placeholder: 'Phone'
                 }),
                 React.DOM.input({
                     type: 'submit',
                     ref: 'mySubmitInput',
                     name: 'submit',
-                    value: "Add"
+                    value: 'Add'
                 })
             ),
             React.DOM.div({

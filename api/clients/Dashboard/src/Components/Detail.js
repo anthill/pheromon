@@ -13,7 +13,7 @@ interface DetailProps{
 var Detail = React.createClass({
 
     getInitialState: function(){
-        return {}
+        return {};
     },
 
     render: function() {

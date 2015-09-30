@@ -71,7 +71,7 @@ var Ant = React.createClass({
                 onClick: function(){
                     props.onSelectedAnts(props.ant.id);
                 },
-                type: "checkbox",
+                type: 'checkbox',
                 checked: props.isSelected
             }),
             React.DOM.ul({},

@@ -57,7 +57,7 @@ var CreatorPlace = React.createClass({
         // console.log('CreatorPlace state', state);
 
         return React.DOM.div({className: 'creator'},
-            // React.DOM.div({}, "New place"),
+            // React.DOM.div({}, 'New place'),
             React.DOM.form({
                     onSubmit: function(e){
                         e.preventDefault();
@@ -79,27 +79,27 @@ var CreatorPlace = React.createClass({
                     ref: 'myNameInput',
                     name: 'placeName',
                     // value: self.state.placeNameInput,
-                    placeholder: "Name"//,
+                    placeholder: 'Name'//,
                 }),
                 React.DOM.input({
                     type: 'text',
                     ref: 'myLatInput',
                     name: 'latitude',
                     // value: self.state.latitudeInput,
-                    placeholder: "Latitude"
+                    placeholder: 'Latitude'
                 }),
                 React.DOM.input({
                     type: 'text',
                     ref: 'myLongInput',
                     name: 'longitude',
                     // value: self.state.longitudeInput,
-                    placeholder: "longitude"
+                    placeholder: 'longitude'
                 }),
                 React.DOM.input({
                     type: 'submit',
                     ref: 'mySubmitButton',
                     name: 'submit',
-                    value: "Add"
+                    value: 'Add'
                 })
             ),
             React.DOM.div({

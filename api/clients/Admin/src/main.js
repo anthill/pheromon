@@ -124,7 +124,7 @@ function deletePlaceFromDb(data) {
 
     queryP
     .then(function() {
-        console.log("Ants uninstall successfull");
+        console.log('Ants uninstall successfull');
         return api.deletePlace({
             id: data.placeId
         });
@@ -198,7 +198,7 @@ function refreshView(){
                 if (place.sensor_ids[0] !== null)
                     place.sensor_ids = new Set(place.sensor_ids);
                 else
-                    place.sensor_ids = new Set()
+                    place.sensor_ids = new Set();
             });
 
             topLevelStore.placeMap = placeMap;
@@ -229,8 +229,8 @@ function refreshView(){
             sensorMap.forEach(function (sensor){
                 var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR ||
                                   new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
-                sensor.quipu_status = isConnected ? dbStatusMap.get(sensor.quipu_status) : "DISCONNECTED";
-                sensor.signal = isConnected ? sensor.signal : "";
+                sensor.quipu_status = isConnected ? dbStatusMap.get(sensor.quipu_status) : 'DISCONNECTED';
+                sensor.signal = isConnected ? sensor.signal : '';
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
@@ -242,12 +242,12 @@ function refreshView(){
                             resolve();
                         })
                         .catch(function (err) {
-                            console.log('error :', err)
+                            console.log('error :', err);
                             resolve(); // We can't just call reject and stop the refreshing of the page
-                        })
+                        });
                     }));
                 }
-            })
+            });
 
             Promise.all(measurementsPs)
             .then(function () {
@@ -258,7 +258,7 @@ function refreshView(){
                     updatingAnt.isUpdating = true;
 
                     updatingID = undefined;
-                    console.log('updatingAnt', updatingAnt.isUpdating)
+                    console.log('updatingAnt', updatingAnt.isUpdating);
 
                     setTimeout(function(){
                         resetUpdate(updatingAnt);
@@ -269,24 +269,24 @@ function refreshView(){
 
             })
             .catch(function (err) {
-                console.log('An error happened :', err)
-            })
+                console.log('An error happened :', err);
+            });
         }
     })
     .catch(errlog);
 }
 
 function sendCommand(command, selectedAntSet){
-    var antNames = [];
+    var antSims = [];
     selectedAntSet.forEach(function(id){
-        antNames.push(topLevelStore.sensorMap.get(id).phone_number);
+        antSims.push(topLevelStore.sensorMap.get(id).sim);
     });
 
     socket.emit('cmd', {
         command: command,
-        to: antNames
+        to: antSims
     });
-    console.log('Sending command', command, ' to ', antNames.join(' '));
+    console.log('Sending command', command, ' to ', antSims.join(' '));
 }
 
 

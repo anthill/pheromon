@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var sendReq = require('../../_common/js/sendReq.js');
 

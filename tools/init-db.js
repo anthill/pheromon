@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 require('es6-shim');
 
@@ -15,15 +15,15 @@ var createTables = require('../database/management/createTables.js');
 
 
 var conString = [
-    "postgres://",
+    'postgres://',
     process.env.POSTGRES_USER,
-    ":", 
+    ':', 
     process.env.POSTGRES_PASSWORD,
-    "@",
+    '@',
     process.env.DB_PORT_5432_TCP_ADDR,
-    ":",
+    ':',
     process.env.DB_PORT_5432_TCP_PORT,
-    "/postgres"
+    '/postgres'
 ].join('');
 
 console.log('Init-db connection string', conString);
@@ -37,26 +37,26 @@ function generateDefinitions() {
                 console.error(err);
                 reject(err);
             }
-            fs.writeFileSync(path.join(__dirname, "../database/management/declarations.js"), definitions.buffer);
+            fs.writeFileSync(path.join(__dirname, '../database/management/declarations.js'), definitions.buffer);
             resolve();
         });
     });
 }
 
 (function tryRebuildDatabase(){
-    console.log("Trying to rebuild database...");
+    console.log('Trying to rebuild database...');
     
     setTimeout(function(){
         databaseClientP
         .then(function(){
             dropAllTables()
             .catch(function(err){
-                console.error("Couldn't drop tables", err);
+                console.error('Couldn\'t drop tables', err);
                 process.exit();
             })
             .then(createTables)
             .catch(function(err){
-                console.error("Couldn't create tables", err);
+                console.error('Couldn\'t create tables', err);
                 process.exit();
             })
             .then(function(){   
@@ -64,11 +64,11 @@ function generateDefinitions() {
                     console.log('no backup file');
                     generateDefinitions()
                     .then(function(){
-                        console.log("Dropped and created the tables.");
+                        console.log('Dropped and created the tables.');
                         process.exit();
                     })
                     .catch(function(err){
-                        console.error("Couldn't write the schema", err);
+                        console.error('Couldn\'t write the schema', err);
                         process.exit();
                     });
                 }
@@ -79,17 +79,17 @@ function generateDefinitions() {
                         process.exit();
                     })
                     .catch(function(err){
-                        console.error("Couldn't write the schema", err);
+                        console.error('Couldn\'t write the schema', err);
                         process.exit();
                     });
                 }
             })
-            .catch(function(err){
-                tryRebuildDatabase()
-            })
+            .catch(function(){
+                tryRebuildDatabase();
+            });
         })
         .catch(function(err){
-            console.error("Couldn't connect tables", err);
+            console.error('Couldn\'t connect tables', err);
             tryRebuildDatabase();
         });
     }, 1000);

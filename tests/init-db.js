@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var fs = require('fs');
 var path = require('path');
@@ -13,15 +13,15 @@ var createTables = require('../database/management/createTables.js');
 
 
 var conString = [
-    "postgres://",
+    'postgres://',
     process.env.POSTGRES_USER,
-    ":", 
+    ':', 
     process.env.POSTGRES_PASSWORD,
-    "@",
+    '@',
     process.env.DB_PORT_5432_TCP_ADDR,
-    ":",
+    ':',
     process.env.DB_PORT_5432_TCP_PORT,
-    "/postgres"
+    '/postgres'
 ].join('');
 
 console.log('Init-db connection string', conString);
@@ -35,7 +35,7 @@ function generateDefinitions() {
                 console.error(err);
                 reject(err);
             }
-            fs.writeFileSync(path.join(__dirname, "../database/management/declarations.js"), definitions.buffer);
+            fs.writeFileSync(path.join(__dirname, '../database/management/declarations.js'), definitions.buffer);
             resolve();
         });
     });
@@ -46,20 +46,20 @@ module.exports = function(){
     return new Promise(function(resolve, reject){
         // wait database to be created
         (function tryRebuildDatabase(){
-            console.log("Trying to rebuild database...");
+            console.log('Trying to rebuild database...');
             
             setTimeout(function(){
                 databaseClientP
                 .then(function(){
                     dropAllTables()
                     .catch(function(err){
-                        console.error("Couldn't drop tables", err);
+                        console.error('Couldn\'t drop tables', err);
                     
                         reject(err);
                     })
                     .then(createTables)
                     .catch(function(err){
-                        console.error("Couldn't create tables", err);
+                        console.error('Couldn\'t create tables', err);
                     
                         reject(err);
                     })
@@ -68,12 +68,12 @@ module.exports = function(){
                             console.log('no backup file');
                             generateDefinitions()
                             .then(function(){
-                                console.log("Dropped and created the tables.");
+                                console.log('Dropped and created the tables.');
                             
                                 resolve();
                             })
                             .catch(function(err){
-                                console.error("Couldn't write the schema", err);
+                                console.error('Couldn\'t write the schema', err);
                             
                                 reject();
                             });
@@ -86,7 +86,7 @@ module.exports = function(){
                                 resolve();
                             })
                             .catch(function(err){
-                                console.error("Couldn't write the schema", err);
+                                console.error('Couldn\'t write the schema', err);
                             
                                 reject(err);
                             });
@@ -97,7 +97,7 @@ module.exports = function(){
                     })
                 })
                 .catch(function(err){
-                    console.error("Couldn't connect tables", err);
+                    console.error('Couldn\'t connect tables', err);
                     tryRebuildDatabase();
                 });
             }, 1000);

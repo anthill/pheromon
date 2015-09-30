@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var React = require('react');
 
@@ -44,7 +44,7 @@ module.exports = React.createClass({
         if(state.pendingConfirmation){
             children.push(React.DOM.div({className: 'confirmation-box', key: 1},
                 React.DOM.h1({}, 'Confirm ?'),
-                React.DOM.div({className: "button-group"},
+                React.DOM.div({className: 'button-group'},
                     React.DOM.button({
                         className: 'cancel',
                         onClick: function(){
@@ -65,8 +65,8 @@ module.exports = React.createClass({
         
         
         return React.DOM.div({
-            className: "delete",
-            title: "delete"
+            className: 'delete',
+            title: 'delete'
         }, children);
     }
 });

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var mosca = require('mosca');
 
@@ -65,10 +65,8 @@ module.exports = function(authToken){
         });
 
         setTimeout(function(){
-            reject("error: couldn't spawn mqttServer");
+            reject('error: couldn\'t spawn mqttServer');
         }, 3000);
 
     });
-}
-
-
+};

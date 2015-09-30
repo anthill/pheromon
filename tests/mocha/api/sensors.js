@@ -4,8 +4,8 @@ require('es6-shim');
 var database = require('../../../database');
 var sendReq = require('../../../tools/sendNodeReq');
 
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
+var chai = require('chai');
+var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 
@@ -33,7 +33,7 @@ describe('Verify API', function() {
 
         describe('Creation', function(){
 
-            it("/sensor/create", function () {
+            it('/sensor/create', function () {
 
                 var sensor = {
                     name: 'Sensor1',
@@ -59,7 +59,7 @@ describe('Verify API', function() {
                 return api.createSensor(sensor);
             });
 
-            it("/sensor/update", function () {
+            it('/sensor/update', function () {
 
                 var delta = {
                     name: 'Pikachu'
@@ -89,7 +89,7 @@ describe('Verify API', function() {
                 return api.createSensor(sensor)
             });
 
-            it("/sensor/delete", function () {
+            it('/sensor/delete', function () {
 
                 var deleteData = {
                     sim: sensor.sim
@@ -122,7 +122,7 @@ describe('Verify API', function() {
                 
             });
 
-            it("/sensor/deleteAll", function () {
+            it('/sensor/deleteAll', function () {
 
                 return api.deleteAllSensors()
                 .then(function(deleted){
@@ -142,7 +142,7 @@ describe('Verify API', function() {
                 return api.createSensor(sensor)
             });
 
-            it("/sensor/get", function () {
+            it('/sensor/get', function () {
 
                 return api.getSensor(sensor.sim)
                 .then(function(fetched){
@@ -171,7 +171,7 @@ describe('Verify API', function() {
                 
             });
 
-            it("/sensor/getAll", function () {
+            it('/sensor/getAll', function () {
 
                 return api.getAllSensors()
                 .then(function(fetcheds){

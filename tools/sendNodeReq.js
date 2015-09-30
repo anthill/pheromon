@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var request = require('request');
 
@@ -8,7 +8,7 @@ module.exports = function (method, url, data){
         var headers;
 
         if (data !== undefined && typeof data !== 'string' /* && !(data instanceof FormData)*/){
-            headers = {"Content-Type": "application/json;charset=UTF-8"};
+            headers = {'Content-Type': 'application/json;charset=UTF-8'};
             data = JSON.stringify(data);
         }
 
@@ -55,6 +55,5 @@ module.exports = function (method, url, data){
                 break;
 
         }
-        
     });
 };

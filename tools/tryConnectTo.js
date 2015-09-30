@@ -13,11 +13,11 @@ module.exports = function(origin){
         (function tryingAfter(time){
             setTimeout(function(){
 
-                request(origin, function(error,response,body){
+                request(origin, function(error, response){
 
                     if (error) {
                         if (attempts >= MAX_ATTEMPTS)
-                            reject(err); 
+                            reject(error); 
                         else {
                             console.log('server not up yet, trying again');
                             // wait twice more to give time and not overwhelm the server 
@@ -25,11 +25,11 @@ module.exports = function(origin){
                         }  
                     }
                     else if(response.statusCode === 200){
-                        console.log("Connected to", origin);
+                        console.log('Connected to', origin);
                         resolve();
                     }
                 });
             }, time);
-        })(INITIAL_TIMEOUT_TIME)
+        })(INITIAL_TIMEOUT_TIME);
     });
 };

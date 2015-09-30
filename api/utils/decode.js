@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var sixSenseDecoder = require('6sense/src/codec/decodeFromSMS.js');
 var genericCodec = require('quipu/parser.js');
@@ -8,7 +8,7 @@ require('es6-shim');
 function getDataType(data) {
 	if (data.toString().match(/^net(NODATA|GPRS|EDGE|3G|H\/H+)$/))
 		return 'network';
-	else if (data.toString().match("init *"))
+	else if (data.toString().match('init *'))
 		return 'request';
 	else if (data.toString().slice(0, 1) === '0')
 		return 'message';
@@ -26,22 +26,22 @@ function printMsg(msg, sim) {
 		var type = getDataType(msg);
 		switch (type) {
 			case 'network':
-				console.log('['+sim+']'+"[NETWORK]>" + decoded.toString());
+				console.log('['+sim+']'+'[NETWORK]>' + decoded.toString());
 				break;
 			case 'request':
-				console.log('['+sim+']'+"[REQUEST]>" + decoded.toString());
+				console.log('['+sim+']'+'[REQUEST]>' + decoded.toString());
 				break;
 			case 'message':
-				console.log('['+sim+']'+"[MESSAGE]>" + decoded.toString());
+				console.log('['+sim+']'+'[MESSAGE]>' + decoded.toString());
 				break;
 			case 'data':
-				console.log('['+sim+']'+"[DATA]   >" + decoded.toString());
+				console.log('['+sim+']'+'[DATA]   >' + decoded.toString());
 				break;
 			case 'status':
-				console.log('['+sim+']'+"[STATUS] >" + decoded.toString());
+				console.log('['+sim+']'+'[STATUS] >' + decoded.toString());
 				break;
 			default:
-				console.log('['+sim+']'+"[OTHER]  >" + decoded.toString());
+				console.log('['+sim+']'+'[OTHER]  >' + decoded.toString());
 				break;
 		}
 
@@ -59,7 +59,6 @@ function decode(message) {
 	switch (message[0]) {
 		case '0': // message : not encoded
 			return Promise.resolve(message.slice(1));
-			break;
 
 		case '1': // data : 6sense_encoded
 			return sixSenseDecoder(message.slice(1).toString())
@@ -67,10 +66,9 @@ function decode(message) {
 					return(JSON.stringify(decodedMessage));
 				})
 				.catch(function(err){
-					console.log("error in case 1 ", err);
+					console.log('error in case 1 ', err);
 					throw err;
-				})
-			break;
+				});
 
 		case '2': // status : generic_encoded
 			return genericCodec.decode(message.slice(1).toString())
@@ -78,14 +76,12 @@ function decode(message) {
 					return(JSON.stringify(decodedMessage));
 				})
 				.catch(function(err){
-					console.log("error in case 2 ", err);
+					console.log('error in case 2 ', err);
 					throw err;
-				})
-			break;
+				});
 			
 		default :
 			return Promise.resolve(message); // not a message, data or status (can be a network, sim, etc...)
-			break;
 	}
 }
 

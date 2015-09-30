@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 var pg = require('pg');
 
-var conString = "postgres://postgres:" + process.env.POSTGRES_PASSWORD + "@" + process.env.DB_PORT_5432_TCP_ADDR + ":5432/postgres";
+var conString = 'postgres://postgres:' + process.env.POSTGRES_PASSWORD + '@' + process.env.DB_PORT_5432_TCP_ADDR + ':5432/postgres';
 
 console.log('conString', conString);
 
@@ -16,7 +16,7 @@ module.exports = function(){
         
         (function tryConnect(time){
             setTimeout(function(){
-            	
+                
                 var client = new pg.Client(conString);
 
                 client.connect(function(err) {
@@ -35,7 +35,7 @@ module.exports = function(){
                 });
 
             }, time);
-        })(INITIAL_TIMEOUT_TIME)
+        })(INITIAL_TIMEOUT_TIME);
         
     });
 };

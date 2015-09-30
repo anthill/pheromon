@@ -65,7 +65,7 @@ var Place = React.createClass({
 
         var ants = props.mySensors.map(function (ant) {
             return {
-                'field': "installed_at",
+                'field': 'installed_at',
                 'id': ant.id,
                 'value': null
             };

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 module.exports = function (method, url, data){
     return new Promise(function(resolve, reject){
@@ -6,7 +6,7 @@ module.exports = function (method, url, data){
 
         xhr.open(method, url);
         if(data !== undefined && typeof data !== 'string' && !(data instanceof FormData))
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
         xhr.responseType = 'json';
 

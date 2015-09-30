@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var sql = require('sql');
 sql.setDialect('postgres');
@@ -35,7 +35,7 @@ module.exports = {
             var query = places
                 .update(delta)
                 .where(places.id.equals(id))
-                .returning("*")
+                .returning('*')
                 .toQuery();
 
             //console.log('sensors findByPhoneNumber query', query);
@@ -55,7 +55,7 @@ module.exports = {
         return databaseP.then(function (db) {
             
             var query = places
-                .select("*")
+                .select('*')
                 .where(places.id.equals(id))
                 .from(places)
                 .toQuery();
@@ -77,7 +77,7 @@ module.exports = {
         return databaseP.then(function (db) {
             
             var query = places
-                .select("*")
+                .select('*')
                 .from(places)
                 .toQuery();
 

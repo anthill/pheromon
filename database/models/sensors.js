@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var sql = require('sql');
 sql.setDialect('postgres');
@@ -34,7 +34,7 @@ module.exports = {
             var query = sensors
                 .update(delta)
                 .where(sensors.sim.equals(sim))
-                .returning("*")
+                .returning('*')
                 .toQuery();
 
             //console.log('sensors findBySIMid query', query);
@@ -56,7 +56,7 @@ module.exports = {
         return databaseP.then(function (db) {
             
             var query = sensors
-                .select("*")
+                .select('*')
                 .where(sensors.sim.equals(sim))
                 .from(sensors)
                 .toQuery();
@@ -78,7 +78,7 @@ module.exports = {
         return databaseP.then(function (db) {
             
             var query = sensors
-                .select("*")
+                .select('*')
                 .from(sensors)
                 .toQuery();
 

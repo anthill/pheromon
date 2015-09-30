@@ -38,8 +38,8 @@ var topLevelStore = {
                 
                 // sort by asc time in case it's not already thus sorted
                 measurements.sort(function(m1, m2){
-                    return new Date(m1.date).getTime() - new Date(m2.date).getTime()
-                })
+                    return new Date(m1.date).getTime() - new Date(m2.date).getTime();
+                });
             
                 place.measurements = measurements;
                 topLevelStore.selectedPlaceMap.set(place.id, place);
@@ -93,7 +93,7 @@ socket.on('data', function (results) {
             });
 
         topLevelStore.updatingIDs.push(id);
-    })
+    });
 
     render();
 

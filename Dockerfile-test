@@ -20,7 +20,3 @@ RUN npm install mocha -g
 
 RUN mkdir /pheromon
 WORKDIR /pheromon
-
-COPY ./package.json /pheromon/package.json
-
-RUN npm install

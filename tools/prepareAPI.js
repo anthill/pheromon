@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 module.exports = function(request, origin){
 
-    var origin = origin || '';
+    origin = origin || '';
 
     return {
         // SENSORS
