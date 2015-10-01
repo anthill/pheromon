@@ -34,18 +34,18 @@ var CreatorSensor = React.createClass({
 
     clearInputs: function(){
         var nameInput = React.findDOMNode(this.refs.myNameInput);
-        var phoneInput = React.findDOMNode(this.refs.myPhoneInput);
-        var submitButton = React.findDOMNode(this.refs.mySubmitButton);
+        var simInput = React.findDOMNode(this.refs.mySimInput);
+        var submitInput = React.findDOMNode(this.refs.mySubmitInput);
         
         nameInput.blur();
-        phoneInput.blur();
-        submitButton.blur();
+        simInput.blur();
+        submitInput.blur();
         nameInput.value = ''; 
-        phoneInput.value = '';
+        simInput.value = '';
     },
 
     render: function() {
-        // var self = this;
+        var self = this;
         var props = this.props;
         // var state = this.state;
 
@@ -62,7 +62,7 @@ var CreatorSensor = React.createClass({
 
                     props.onCreateSensor({
                         'name': e.target.sensorName.value,
-                        'phone_number': e.target.Phone.value
+                        'sim': e.target.sim.value
                     });
 
                     self.clearInputs();
@@ -77,9 +77,9 @@ var CreatorSensor = React.createClass({
                 }),
                 React.DOM.input({
                     type: 'text',
-                    ref: 'myPhoneInput',
-                    name: 'Phone',
-                    placeholder: 'Phone'
+                    ref: 'mySimInput',
+                    name: 'sim',
+                    placeholder: 'sim'
                 }),
                 React.DOM.input({
                     type: 'submit',

@@ -9,7 +9,7 @@
 */
 
 #placePanel{
-    display: inline-block; position: relative; width: 78vw;
+    display: inline-block; position: relative; width: 78vw; height: 100vh;
     background-color: #cbc6e1;
 }
 

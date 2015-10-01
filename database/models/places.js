@@ -106,7 +106,8 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0]);
+                    else
+                        resolve(result.rows[0]);
                 });
             });
         })

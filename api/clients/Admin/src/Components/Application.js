@@ -91,7 +91,7 @@ var App = React.createClass({
         var tempMap = new Map();
 
         props.sensorMap.forEach(function(sensor){
-            tempMap.set(sensor.name, sensor.id);
+            tempMap.set(sensor.name, sensor.sim);
         });
 
         var antFromNameMap = new Immutable.OrderedMap(tempMap);
@@ -106,7 +106,6 @@ var App = React.createClass({
 
             placeIDList.push({'id' : place.id, 'name' : place.name}); // for allSensors
             var mySensors = [];
-            // console.log("place", place);
 
             var placeProps = {
                 key: place.id,

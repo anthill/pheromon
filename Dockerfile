@@ -14,6 +14,6 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y postgresql-9.4 
 
-COPY ./package.json /pheromon/package.json
+#COPY ./package.json /pheromon/package.json
 
-RUN npm install
+#RUN npm install

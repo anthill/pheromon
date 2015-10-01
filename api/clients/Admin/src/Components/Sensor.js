@@ -15,9 +15,10 @@ interface SensorProps{
         latest_input: string,
         latest_output: string,
         name: string,
-        phone_number: string,
+        sim: string,
         quipu_status: string,
-        sense_status: string,
+        wifi_status: string,
+        blue_status: string,
         updated_at: string
     },
     placeIDMap: Map(),
@@ -51,7 +52,7 @@ var Sensor = React.createClass({
     removeSensor: function(){
         var props = this.props;
         var dbData = {
-            sensorId: props.sensor.id 
+            sim: props.sensor.sim
         };
 
         props.onRemoveSensor(dbData);
@@ -77,7 +78,7 @@ var Sensor = React.createClass({
                 isUpdating: false,
                 text: props.sensor.name,
                 dbLink: {
-                    id: props.sensor.id,
+                    sim: props.sensor.sim,
                     field: 'name'
                 },
                 onChange: props.onChangeSensor
@@ -95,7 +96,7 @@ var Sensor = React.createClass({
             state.isListOpen ? new PlacePicker({
                 placeIDMap: props.placeIDMap,
                 placeId: props.placeId,
-                sensorId: props.sensor.id,
+                sensorSim: props.sensor.sim,
                 isOpen: state.isListOpen,
                 onChange: function(data){
                     self.toggleList();
@@ -104,14 +105,14 @@ var Sensor = React.createClass({
             }) : undefined
         );
 
-        var sensorPhoneNumber = React.DOM.li({}, 
+        var sensorSim = React.DOM.li({}, 
             new Modifiable({
-                className: 'sensorPhoneNumber',
+                className: 'sensorSim',
                 isUpdating: false,
-                text: props.sensor.phone_number,
+                text: props.sensor.sim,
                 dbLink: {
-                    id: props.sensor.id,
-                    field: 'phone_number'
+                    sim: props.sensor.sim,
+                    field: 'sim'
                 },
             onChange: props.onChangeSensor
             })
@@ -125,7 +126,7 @@ var Sensor = React.createClass({
             React.DOM.ul({},
                 sensorName,
                 sensorPlace,
-                sensorPhoneNumber    
+                sensorSim    
             )
         );
     }

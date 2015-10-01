@@ -27,34 +27,15 @@ var AntPicker = React.createClass({
         // console.log('AntPicker state', state);
 
         var lis = [];
-        props.antFromNameMap.forEach(function (antId, antName) {
-            var objDb;
-            // To build different database request
-            // If currentSensorId is NULL ==> Add a sensor to an orphan Place
-            // If currentSensorId is not NULL ==> Add a sensor to a place (who had already a sensor)
-            //                                    Transform a place to an orphan plance (with no sensor)
-            if (props.currentSensorId) {
-                objDb = [{
-                        'field': 'installed_at',
-                        'id': antId,
-                        'value': props.currentPlaceId
-                    },
-                    {
-                        'field': 'installed_at',
-                        'id': props.currentSensorId,
-                        'value': null
-                    }];
-            }
-            else {
-                objDb = [{
-                    'field': 'installed_at',
-                    'id': antId,
-                    'value': props.currentPlaceId
-                }];
-            }
+        props.antFromNameMap.forEach(function (antSim, antName) {
+            var objDb = [{
+                'field': 'installed_at',
+                'sim': antSim,
+                'value': props.currentPlaceId
+            }];
 
             lis.push(React.DOM.li({
-                    key: antId,
+                    key: antSim,
                     className: 'clickable',
                     onClick: function(){
                         props.onChange(objDb);
