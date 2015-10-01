@@ -66,7 +66,7 @@ var Place = React.createClass({
         var ants = props.mySensors.map(function (ant) {
             return {
                 'field': 'installed_at',
-                'id': ant.id,
+                'sim': ant.sim,
                 'value': null
             };
         });
@@ -136,19 +136,22 @@ var Place = React.createClass({
         // List of installed Sensors
         var availableSensorMap = props.antFromNameMap;
 
-        var installedSensors = props.mySensors.map(function (ant){
+        if (props.mySensors.length > 0){
+            var installedSensors = props.mySensors.map(function (ant){
 
-            availableSensorMap = availableSensorMap.delete(ant.name);
+                availableSensorMap = availableSensorMap.delete(ant.name);
 
-            return new Ant({
-                key: ant.id,
-                ant: ant,
-                isSelected: props.selectedAntSet.has(ant.id),
-                currentPlaceId: props.place.id,
-                onChangeSensor: props.onChangeSensor,
-                onSelectedAnts: props.onSelectedAnts
-            });
-        });
+                return new Ant({
+                    key: ant.id,
+                    ant: ant,
+                    isSelected: props.selectedAntSet.has(ant.id),
+                    currentPlaceId: props.place.id,
+                    onChangeSensor: props.onChangeSensor,
+                    onSelectedAnts: props.onSelectedAnts
+                });
+            });   
+        }
+        
 
         // Button to install Sensor
         var antPicker = state.isListOpen ? new AntPicker({

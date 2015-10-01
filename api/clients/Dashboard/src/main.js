@@ -68,32 +68,30 @@ api.getLiveAffluence()
 
 var socket = io();
 
-socket.on('data', function (results) {
+socket.on('data', function (measurement) {
+    // For now, this is only capable of treating measurements of type signal_strength
+    // We need to implement differents measurement types push
 
-    results.forEach(function(result){
-        // GET DATA
-        var id = result.data.measurement.installed_at;
+    // GET DATA
+    var id = measurement.installed_at;
 
-        var value = result.data.measurement.value.length;
-        var date = result.data.measurement.date;
+    var value = measurement.value;
+    var date = measurement.date;
+    
+    // GET PLACE
+    var place = topLevelStore.placeMap.get(id);
+    
+    place.max = Math.max(place.max, value);
+    place.latest = value;
 
-        // console.log('results', value);
-        
-        // GET PLACE
-        var place = topLevelStore.placeMap.get(id);
-        
-        place.max = Math.max(place.max, value);
-        place.latest = value;
+    if (place.measurements)
+    // UPDATE CURVE
+        place.measurements.push({
+            date: date,
+            value: value
+        });
 
-        if (place.measurements)
-        // UPDATE CURVE
-            place.measurements.push({
-                date: date,
-                value: value
-            });
-
-        topLevelStore.updatingIDs.push(id);
-    });
+    topLevelStore.updatingIDs.push(id);
 
     render();
 

@@ -7,7 +7,7 @@ var React = require('react');
 interface PlacePickerProps{
     placeIDMap: Map(),
     placeId: int,
-    sensorId: int,
+    sensorSim: int,
     currentPlaceId: int
     onChange: function()
 }
@@ -34,13 +34,14 @@ var PlacePicker = React.createClass({
 
             var objDb = [{
                 'field': 'installed_at',
-                'id': props.sensorId,
+                'sim': props.sensorSim,
                 'value': value
             }];
             
             lis.push(React.DOM.li({
                     key: key,
                     onClick: function(){
+                        console.log('ID', value);
                         props.onChange(objDb);
                     }
                 },

@@ -16,7 +16,7 @@ interface AntProps{
         latest_input: string,
         latest_output: string,
         name: string,
-        phone_number: string,
+        sim: string,
         quipu_status: string,
         signal: string,
         wifi_status: string,
@@ -83,21 +83,21 @@ var Ant = React.createClass({
                             isUpdating: false,
                             text: props.ant.name,
                             dbLink: {
-                                id: props.ant.id,
+                                sim: props.ant.sim,
                                 field: 'name'
                             },
                             onChange: props.onChangeSensor
                         })
                     ),
                     React.DOM.div({},
-                        React.DOM.div({}, 'Phone'),
+                        React.DOM.div({}, 'Sim'),
                         new Modifiable({
-                            className: 'phone-number',
+                            className: 'sim',
                             isUpdating: false,
-                            text: props.ant.phone_number,
+                            text: props.ant.sim,
                             dbLink: {
-                                id: props.ant.id,
-                                field: 'phone_number'
+                                sim: props.ant.sim,
+                                field: 'sim'
                             },
                             onChange: props.onChangeSensor
                         })
@@ -149,7 +149,7 @@ var Ant = React.createClass({
                         console.log('Uninstalling');
                         var dbData = {
                             'field': 'installed_at',
-                            'id': props.ant.id,
+                            'sim': props.ant.sim,
                             'value': null
                         };
                         props.onChangeSensor([dbData]);

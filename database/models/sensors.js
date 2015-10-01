@@ -21,6 +21,7 @@ module.exports = {
                     if (err) reject(err);
                     else
                         resolve(result.rows[0]);
+                        
                 });
             });
         })
@@ -42,8 +43,11 @@ module.exports = {
                 db.query(query, function (err, result) {
                     if (err)
                         reject(err);
-                    else 
+                    else {
+                        console.log('UPDATED', result.rows[0]);
                         resolve(result.rows[0]);
+                    }
+                        
                 });
             });
         })

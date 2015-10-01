@@ -1,6 +1,8 @@
 'use strict';
 require('es6-shim');
 
+var sigCodec = require('pheromon-codecs').signalStrengths;
+
 /* TODO
     - Sensor latest measurement update changes when measurement is registered in DB
 */
@@ -199,34 +201,49 @@ describe('Maestro testing', function(){
 
         it('Pushing wifi measurements should register measurements in DB', function () {
 
-            var measurement = {
-                datetime: new Date(),
-                signal_strength: [-10, -9, -99]
-            };
+            var measurement = [{
+                date: new Date(),
+                devices: [{
+                    signal_strength: -10,
+                    ID: 'myID1'
+                },
+                {
+                    signal_strength: -19,
+                    ID: 'myID2'
+                },
+                {
+                    signal_strength: -39,
+                    ID: 'myID3'
+                }]
+            }];
 
-            fakeSensor.publish('measurement/' + simId + '/wifi', JSON.stringify(measurement));
+            return sigCodec.encode(measurement)
+            .then(function(encoded){
+                fakeSensor.publish('measurement/' + simId + '/wifi', encoded);
 
-            var data = {
-                sim: simId,
-                type: 'wifi'
-            };
+                var data = {
+                    sim: simId,
+                    type: 'wifi'
+                };
 
-            return new Promise(function(resolve, reject){
-                setTimeout(function(){
+                return new Promise(function(resolve, reject){
+                    setTimeout(function(){
 
-                    api.getMeasurements(data)
-                    .then(function(measurements){
-                    //     // console.log('THEN');
-                        expect(measurements[0].value).to.deep.equal([-10, -9, -99]);
-                        expect(measurements[0].entry).to.equal(3);
-                        expect(Date.parse(measurements[0].date)).to.be.a('number');
-                        resolve();
-                    })
-                    .catch(function(err){
-                        reject(err);
-                    });
+                        api.getMeasurements(data)
+                        .then(function(measurements){
+                        //     // console.log('THEN');
+                            console.log('measurements', measurements);
+                            expect(measurements[0].value[0].signal_strength).to.deep.equal(-10);
+                            expect(measurements[0].entry).to.equal(3);
+                            expect(Date.parse(measurements[0].date)).to.be.a('number');
+                            resolve();
+                        })
+                        .catch(function(err){
+                            reject(err);
+                        });
 
-                }, 200);
+                    }, 200);
+                });
             });
         });
 

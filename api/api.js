@@ -20,22 +20,14 @@ var routes = require('./routes.js');
 
 var PRIVATE = require('../PRIVATE.json');
 
-// Creating API-side MQTT client: maestro !
-var maestro = require('./maestro')(PRIVATE.token);
-
 var server = new http.Server(app);
 var io = require('socket.io')(server);
-
-var PORT = 4000;
-
 io.set('origins', '*:*');
 
-io.on('connection', function(socket) {
-    socket.on('cmd', function(cmd) {
-        console.log('admin client data received');
-        maestro.distribute(cmd);
-    });
-});
+// Creating API-side MQTT client: maestro !
+var maestro = require('./maestro')(PRIVATE.token, io);
+
+var PORT = 4000;
 
 
 // Backup database everyday at 3AM

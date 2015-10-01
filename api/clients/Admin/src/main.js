@@ -80,7 +80,7 @@ function updateSensorInDb(datas) {
         delta[data.field] = data.value;
 
         var obj = {
-            id: data.id,
+            sim: data.sim,
             delta: delta
         };
         return obj;
@@ -93,11 +93,11 @@ function updateSensorInDb(datas) {
     return Promise.all(queryPs)
     .then(function() {
         // console.log("results", results);
-        console.log('Places database updated successfully (updateSensorDb)');
+        console.log('Sensor database updated successfully (updateSensorDb)');
         refreshView();
     })
     .catch(function(err){
-        console.log('Places database didn\'t update correctly (updateSensorDb)', err);
+        console.log('Sensor database didn\'t update correctly (updateSensorDb)', err);
         refreshView();
     });
 }
@@ -125,9 +125,7 @@ function deletePlaceFromDb(data) {
     queryP
     .then(function() {
         console.log('Ants uninstall successfull');
-        return api.deletePlace({
-            id: data.placeId
-        });
+        return api.deletePlace(data.placeId);
     })
     .then(function() {
         console.log('Place deleted successfully');
@@ -143,9 +141,7 @@ function deleteSensorFromDb(data) {
 
     console.log('deleteSensor data', data);
 
-    api.deleteSensor({
-        id: data.sensorId
-    })
+    api.deleteSensor(data.sim)
     .then(function() {
         console.log('Sensor deleted successfully');
         refreshView();
@@ -184,6 +180,9 @@ function refreshView(){
         var places = results[0];
         var sensors = results[1];
 
+        console.log('places', places);
+        console.log('sensors', sensors);
+
         if (places){
             // sorting places alphabetically
             places.sort(function(a, b){
@@ -197,12 +196,12 @@ function refreshView(){
             placeMap.forEach(function(place){
                 if (place.sensor_ids[0] !== null)
                     place.sensor_ids = new Set(place.sensor_ids);
-                else
+                else{
                     place.sensor_ids = new Set();
+                }     
             });
 
             topLevelStore.placeMap = placeMap;
-
         }
         
         if (sensors){
@@ -217,7 +216,7 @@ function refreshView(){
             // transform dbStatus to constants
             sensorMap.forEach(function(sensor){
                 sensor.quipu_status = dbStatusMap.get(sensor.quipu_status);
-                sensor.sense_status = dbStatusMap.get(sensor.sense_status);
+                sensor.wifi_status = dbStatusMap.get(sensor.wifi_status);
             });
 
             topLevelStore.sensorMap = sensorMap;
@@ -234,7 +233,7 @@ function refreshView(){
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
-                        api.getPlaceMeasurements(sensor.installed_at)
+                        api.getPlaceMeasurements({id: sensor.installed_at})
                         .then(function (measurements) {
 
                             if (measurements && measurements.length)
@@ -272,6 +271,7 @@ function refreshView(){
                 console.log('An error happened :', err);
             });
         }
+        render();
     })
     .catch(errlog);
 }

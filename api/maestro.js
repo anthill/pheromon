@@ -2,13 +2,14 @@
 
 // maestro: mqtt client on the API side of Pheromon
 var mqtt = require('mqtt');
+var sigCodec = require('pheromon-codecs').signalStrengths;
 var utils = require('./utils/maestro.js');
 var debug = require('../tools/debug');
 var database = require('../database');
 
 var sim2sensor;
 
-module.exports = function(authToken){    
+module.exports = function(authToken, io){
 
     var maestro = mqtt.connect('mqtt://broker:1883', {
         username: 'maestro',
@@ -36,6 +37,13 @@ module.exports = function(authToken){
                         maestro.publish(sim, message.command);
                     });
             };
+
+            io.on('connection', function(socket) {
+                socket.on('cmd', function(cmd) {
+                    console.log('admin client data received');
+                    maestro.distribute(cmd);
+                });
+            });
 
             maestro.on('message', function(topic, message) {
 
@@ -67,7 +75,7 @@ module.exports = function(authToken){
                             database.Sensors.update(sensor.sim, delta)
                             .then(function(updated) {
                                 sim2sensor[sim] = updated;
-                                // TODO: socket IO emitter
+                                io.emit('status', {sensorId: sensor.id});
                                 console.log(type + 'status data updated for sensor');
                             })
                             .catch(function(err) {
@@ -76,24 +84,61 @@ module.exports = function(authToken){
                             break;
 
                         case 'measurement':
-                            var data = JSON.parse(message);
+                            
+                            sigCodec.decode(message)
+                            .then(function(data){
+                                /*
+                                    {
+                                        date:
+                                        devices: [
+                                            {
+                                                signal_strengh:
+                                                ID:
+                                            }
+                                        ]
+                                    }
+                                */
+                                debug('Measurement to register', data);
 
-                            debug('Measurement to register', data);
+                                database.Measurements.create({
+                                    sensor_sim: sim,
+                                    type: type,
+                                    value: data.devices,
+                                    date: data.date
+                                })
+                                .then(function() {
+                                    socket.emit('data', {
+                                        installed_at: sensor.installed_at,
+                                        type: type,
+                                        value: data.devices.length,
+                                        date: data.date
+                                    });
+                                    console.log('measurement of type', type, 'updated');
+                                })
+                                .catch(function(err) {
+                                    console.log('error : cannot store measurement in DB :', err);
+                                }); 
 
-                            database.Measurements.create({
-                                sensor_sim: sim,
-                                type: type,
-                                value: data.signal_strength,
-                                date: data.datetime 
+                            })
+                            .catch(function(err){
+                                console.log('ERROR in decoding', err);
+                            });
+                                                   
+                            break;
+                        
+                        case 'cmdResult':
+                            database.Sensors.update(sensor.sim, {
+                                latest_output: message,
                             })
                             .then(function() {
-                                // socket IO emitter
-                                console.log('wifi data updated');
+                                io.emit('status', {sensorId: sensor.id});
+                                console.log('latest output updated');
                             })
                             .catch(function(err) {
-                                console.log('error : cannot store measurement in DB :', err);
+                                console.log('error : cannot update sensor in DB :', err);
                             });                        
-                            break; 
+                            break;
+
                     }
                 });          
             });
