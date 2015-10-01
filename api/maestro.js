@@ -107,7 +107,7 @@ module.exports = function(authToken, io){
                                     date: data.date
                                 })
                                 .then(function() {
-                                    socket.emit('data', {
+                                    io.emit('data', {
                                         installed_at: sensor.installed_at,
                                         type: type,
                                         value: data.devices.length,
@@ -128,7 +128,7 @@ module.exports = function(authToken, io){
                         
                         case 'cmdResult':
                             database.Sensors.update(sensor.sim, {
-                                latest_output: message,
+                                latest_output: message
                             })
                             .then(function() {
                                 io.emit('status', {sensorId: sensor.id});

@@ -25,7 +25,7 @@ var io = require('socket.io')(server);
 io.set('origins', '*:*');
 
 // Creating API-side MQTT client: maestro !
-var maestro = require('./maestro')(PRIVATE.token, io);
+require('./maestro')(PRIVATE.token, io);
 
 var PORT = 4000;
 
