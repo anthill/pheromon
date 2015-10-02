@@ -5,9 +5,10 @@ api:
       - db
       - broker
    ports:
-      - "4000:4000"
+      - "3900:3900"
    environment:
-      - VIRTUAL_PORT=4000
+      - VIRTUAL_HOST=pheromon.ants.builders
+      - VIRTUAL_PORT=3900
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
