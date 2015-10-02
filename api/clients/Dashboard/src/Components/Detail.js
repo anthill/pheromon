@@ -24,7 +24,7 @@ var Detail = React.createClass({
 
         return React.DOM.div({id: 'detail'}, 
             React.DOM.h2({}, props.place.name),
-            new LineChart({ measurements: props.place.details, day: props.day })
+            new LineChart({ measurements: props.place.measurements, day: props.day })
         );
     }
 

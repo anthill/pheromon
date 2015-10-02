@@ -201,7 +201,7 @@ describe('Maestro testing', function(){
 
         it('Pushing wifi measurements should register measurements in DB', function () {
 
-            var measurement = [{
+            var measurement = {
                 date: new Date(),
                 devices: [{
                     signal_strength: -10,
@@ -215,7 +215,7 @@ describe('Maestro testing', function(){
                     signal_strength: -39,
                     ID: 'myID3'
                 }]
-            }];
+            };
 
             return sigCodec.encode(measurement)
             .then(function(encoded){
@@ -233,7 +233,7 @@ describe('Maestro testing', function(){
                         .then(function(measurements){
                         //     // console.log('THEN');
                             console.log('measurements', measurements);
-                            expect(measurements[0].value[0].signal_strength).to.deep.equal(-10);
+                            expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);
                             expect(Date.parse(measurements[0].date)).to.be.a('number');
                             resolve();

@@ -40,7 +40,7 @@ var LineChart = React.createClass({
     
         var data = props.measurements.map(function(measurement){
             var date = new Date(measurement.date);
-            return [date, measurement.value];
+            return [date, measurement.value.length];
         });
 
         var beginDay;
@@ -51,7 +51,7 @@ var LineChart = React.createClass({
             endDay = new Date(beginDay.getTime() + (1000 * 60 * 60 * 24 * 2)); // +48h
         } else {
             endDay = new Date(); // Now
-            beginDay = new Date(endDay - (1000 * 60 * 60 * 24 * 2)); // -48h
+            beginDay = new Date(endDay.getTime() - (1000 * 60 * 60 * 24 * 2)); // -48h
         }
 
         // this part is super awkward, not very React-y.
@@ -62,7 +62,7 @@ var LineChart = React.createClass({
                 labels: [ 'time', 'Traces wifi' ],
                 legend: 'onmouseover',
                 strokeWidth: 2,
-                dateWindow: [beginDay, endDay]
+                dateWindow: [beginDay.getTime(), endDay.getTime()]
             }
         );
         console.log(chart);

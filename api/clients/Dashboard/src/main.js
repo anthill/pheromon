@@ -18,7 +18,7 @@ var PRIVATE = require('../../../../PRIVATE.json');
 
 var BORDEAUX_COORDS = [44.84, -0.57];
 
-// Get the day in the URL
+// Get the day in the URL (EU notation)
 var day = location.search.match(/[\? | \?.*&+]day=(\d\d)\/(\d\d)\/(\d\d\d\d)/);
 day = day ? day[2] + '/' + day[1] + '/' + day[3] : undefined;
 day = new Date(day).toString() !== 'Invalid Date' ? day : undefined;
@@ -32,7 +32,7 @@ var topLevelStore = {
     selectedPlaceMap: new Map(),
     updatingIDs: [],
     getPlaceMeasurements: function(place){
-        api.getPlaceMeasurements(place.id)
+        api.getPlaceMeasurements({id: place.id})
             .then(function(measurements){
                 console.log('place measurements', place, measurements);
                 
