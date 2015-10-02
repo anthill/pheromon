@@ -103,14 +103,18 @@ module.exports = function(authToken, io){
                                 database.Measurements.create({
                                     sensor_sim: sim,
                                     type: type,
-                                    value: data.devices,
+                                    value: data.devices.map(function (measurement) {
+                                        return measurement.signal_strength;
+                                    }),
                                     date: data.date
                                 })
                                 .then(function() {
                                     io.emit('data', {
                                         installed_at: sensor.installed_at,
                                         type: type,
-                                        value: data.devices,
+                                        value: data.devices.map(function (measurement) {
+                                            return measurement.signal_strength;
+                                        }),
                                         date: data.date
                                     });
                                     console.log('measurement of type', type, 'updated');
@@ -147,6 +151,7 @@ module.exports = function(authToken, io){
             });
 
             console.log('Maestro ready');
+
         });
     });
 
