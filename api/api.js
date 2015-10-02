@@ -27,7 +27,7 @@ io.set('origins', '*:*');
 // Creating API-side MQTT client: maestro !
 require('./maestro')(PRIVATE.token, io);
 
-var PORT = 4000;
+var PORT = process.env.VIRTUAL_PORT;
 
 
 // Backup database everyday at 3AM
