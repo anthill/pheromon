@@ -103,9 +103,7 @@ module.exports = function(authToken, io){
                                 database.Measurements.create({
                                     sensor_sim: sim,
                                     type: type,
-                                    value: data.devices.map(function (device) {
-                                        return device.signal_strength;
-                                    }),
+                                    value: data.devices,
                                     date: data.date
                                 })
                                 .then(function() {
