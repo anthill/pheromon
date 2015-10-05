@@ -18,6 +18,10 @@ var PRIVATE = require('../../../../PRIVATE.json');
 
 var BORDEAUX_COORDS = [44.84, -0.57];
 
+function safeMax(safeInt, unsafeInt) {
+    return unsafeInt | 0 === unsafeInt ? Math.max(safeInt, unsafeInt) : safeInt;
+}
+
 // Get the day in the URL (EU notation)
 var day = location.search.match(/[\? | \?.*&+]day=(\d\d)\/(\d\d)\/(\d\d\d\d)/);
 day = day ? day[2] + '/' + day[1] + '/' + day[3] : undefined;
@@ -75,13 +79,13 @@ socket.on('data', function (measurement) {
     // GET DATA
     var id = measurement.installed_at;
 
-    var value = measurement.value;
+    var value = measurement.value.length;
     var date = measurement.date;
     
     // GET PLACE
     var place = topLevelStore.placeMap.get(id);
     
-    place.max = Math.max(place.max, value);
+    place.max = safeMax(place.max, value);
     place.latest = value;
 
     if (place.measurements)
