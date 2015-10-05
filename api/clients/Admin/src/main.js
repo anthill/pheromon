@@ -300,17 +300,17 @@ function sendCommand(command, selectedAntSet){
     }
     else if (command.match(/changestarttime (\d{1,2})/)) {
         field = 'start_hour'; // hour, not time ... That's tricky
-        var tmp = parseInt(command.match(/changestarttime (\d{1,2})/)[1]);
+        var tmpStart = parseInt(command.match(/changestarttime (\d{1,2})/)[1]);
 
-        if (tmp >= 0 && tmp < 24)
-            value = tmp;
+        if (tmpStart >= 0 && tmpStart < 24)
+            value = tmpStart;
     }
     else if (command.match(/changestoptime (\d{1,2})/)) {
         field = 'stop_hour';
-        var tmp = parseInt(command.match(/changestoptime (\d{1,2})/)[1]);
+        var tmpStop = parseInt(command.match(/changestoptime (\d{1,2})/)[1]);
 
-        if (tmp >= 0 && tmp < 24)
-            value = tmp;
+        if (tmpStop >= 0 && tmpStop < 24)
+            value = tmpStop;
     }
     else // send to nobody
         sims = [];
@@ -322,7 +322,7 @@ function sendCommand(command, selectedAntSet){
             sim: sim,
             value: value,
             field: field
-        }
+        };
     }));
 
     // sims.forEach(function (sim) {
