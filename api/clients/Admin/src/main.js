@@ -70,7 +70,6 @@ function updatePlaceInDb(datas) {
 }
 
 
-
 function updateSensorInDb(datas) {
 
     console.log('SENSOR datas', datas);
@@ -286,7 +285,52 @@ function sendCommand(command, selectedAntSet){
         command: command,
         to: antSims
     });
+
     console.log('Sending command', command, ' to ', antSims.join(' '));
+
+    // Update DB if needed
+
+    var sims = antSims;
+    var value;
+    var field;
+
+    if (command.match(/changeperiod (\d{1,5})/)) {
+        field = 'period';
+        value = parseInt(command.match(/changeperiod (\d{1,5})/)[1]);
+    }
+    else if (command.match(/changestarttime (\d{1,2})/)) {
+        field = 'start_hour'; // hour, not time ... That's tricky
+        var tmp = parseInt(command.match(/changestarttime (\d{1,2})/)[1]);
+
+        if (tmp >= 0 && tmp < 24)
+            value = tmp;
+    }
+    else if (command.match(/changestoptime (\d{1,2})/)) {
+        field = 'stop_hour';
+        var tmp = parseInt(command.match(/changestoptime (\d{1,2})/)[1]);
+
+        if (tmp >= 0 && tmp < 24)
+            value = tmp;
+    }
+    else // send to nobody
+        sims = [];
+
+    // update everybody
+
+    updateSensorInDb(sims.map(function (sim) {
+        return {
+            sim: sim,
+            value: value,
+            field: field
+        }
+    }));
+
+    // sims.forEach(function (sim) {
+    //     updateSensorInDb([{
+    //         sim: sim,
+    //         delta: delta
+    //     }]);
+    // });
 }
 
 
