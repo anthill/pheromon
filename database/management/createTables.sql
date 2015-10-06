@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS lifecycle(
 );
 
 CREATE TYPE wifi_status AS ENUM ('sleeping', 'monitoring', 'recording');
-CREATE TYPE blue_status AS ENUM ('sleeping', 'recording');
+CREATE TYPE blue_status AS ENUM ('uninitialized', 'initialized', 'recording');
 CREATE TYPE quipu_status AS ENUM ('NODATA', 'GPRS', 'EDGE', '3G', 'H/H+');
 
 -- http://www.revsys.com/blog/2006/aug/04/automatically-updating-a-timestamp-column-in-postgresql/
