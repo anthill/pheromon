@@ -72,14 +72,14 @@ module.exports = React.createClass({
             selectedPlaceMap: state.selectedPlaceMap,
             updatingIDs: props.updatingIDs,
             onPlaceSelected: function(place){
-                if(place.details){
+                if (place.measurements){
                     console.log('1');
                     if (state.selectedPlaceMap && state.selectedPlaceMap.has(place.id)){
                         state.selectedPlaceMap.delete(place.id);
                         console.log('2');
                         self.setState({
                             selectedPlaceMap: state.selectedPlaceMap
-                        }); 
+                        });
                     } else {
                         console.log('3');
                         state.selectedPlaceMap.set(place.id, place);

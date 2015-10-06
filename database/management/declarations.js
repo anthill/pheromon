@@ -53,7 +53,6 @@ exports.sensors = sql.define({
 		{ name: 'blue_status' },
 		{ name: 'latest_input' },
 		{ name: 'latest_output' },
-		{ name: 'signal' },
 		{ name: 'period' },
 		{ name: 'start_hour' },
 		{ name: 'stop_hour' }

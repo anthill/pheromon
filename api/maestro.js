@@ -26,6 +26,7 @@ module.exports = function(authToken, io){
             maestro.subscribe('init/#');
             maestro.subscribe('status/#');
             maestro.subscribe('measurement/#');
+            maestro.subscribe('cmdResult/#');
 
             // wrapper of the mqtt.publish() function
             maestro.distribute = function(message){
@@ -57,7 +58,10 @@ module.exports = function(authToken, io){
 
                 // maybe add a function to check topics
 
-                utils.checkSensor(sim, sim2sensor)
+                utils.importSensors()
+                .then(function(){
+                    return utils.checkSensor(sim, sim2sensor);
+                })
                 .then(function(){
                     var sensor = sim2sensor[sim];
 
@@ -104,8 +108,8 @@ module.exports = function(authToken, io){
                                 database.Measurements.create({
                                     sensor_sim: sim,
                                     type: type,
-                                    value: data.devices.map(function(device){
-                                        return device.signal_strength;
+                                    value: data.devices.map(function (measurement) {
+                                        return measurement.signal_strength;
                                     }),
                                     date: data.date
                                 })
@@ -113,7 +117,9 @@ module.exports = function(authToken, io){
                                     io.emit('data', {
                                         installed_at: sensor.installed_at,
                                         type: type,
-                                        value: data.devices.length,
+                                        value: data.devices.map(function (measurement) {
+                                            return measurement.signal_strength;
+                                        }),
                                         date: data.date
                                     });
                                     console.log('measurement of type', type, 'updated');
@@ -130,8 +136,10 @@ module.exports = function(authToken, io){
                             break;
                         
                         case 'cmdResult':
+                            var parsed = JSON.parse(message);
                             database.Sensors.update(sensor.sim, {
-                                latest_output: message
+                                latest_input: parsed.command,
+                                latest_output: parsed.result
                             })
                             .then(function() {
                                 io.emit('status', {sensorId: sensor.id});
@@ -143,10 +151,14 @@ module.exports = function(authToken, io){
                             break;
 
                     }
-                });          
+                })
+                .catch(function(err) {
+                    console.log('Error in checkSensor :', err.stack);
+                });
             });
 
             console.log('Maestro ready');
+
         });
     });
 

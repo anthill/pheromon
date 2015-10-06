@@ -233,7 +233,7 @@ describe('Maestro testing', function(){
                         api.getMeasurements(data)
                         .then(function(measurements){
                             console.log('measurements', measurements);
-                            expect(measurements[0].value[0].signal_strength).to.deep.equal(-10);
+                            expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);
                             expect(Date.parse(measurements[0].date)).to.be.a('number');
                             resolve();

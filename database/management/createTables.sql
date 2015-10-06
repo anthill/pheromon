@@ -5,10 +5,9 @@ CREATE TABLE IF NOT EXISTS lifecycle(
     updated_at  timestamp without time zone DEFAULT current_timestamp
 );
 
-CREATE TYPE quipu_status AS ENUM ('uninitialized', 'initialized', '3G_connected', 'tunnelling');
 CREATE TYPE wifi_status AS ENUM ('sleeping', 'monitoring', 'recording');
 CREATE TYPE blue_status AS ENUM ('sleeping', 'recording');
-CREATE TYPE network_signal AS ENUM ('NODATA', 'GPRS', 'EDGE', '3G', 'H/H+');
+CREATE TYPE quipu_status AS ENUM ('NODATA', 'GPRS', 'EDGE', '3G', 'H/H+');
 
 -- http://www.revsys.com/blog/2006/aug/04/automatically-updating-a-timestamp-column-in-postgresql/
 CREATE OR REPLACE FUNCTION update_updated_at_column()	
@@ -42,12 +41,11 @@ CREATE TABLE IF NOT EXISTS sensors (
     quipu_status    quipu_status DEFAULT NULL, 
     wifi_status     wifi_status DEFAULT NULL,
     blue_status     blue_status DEFAULT NULL,
-    latest_input    text DEFAULT NULL,
-    latest_output   text DEFAULT NULL,
-    signal          network_signal DEFAULT NULL,
+    latest_input    text DEFAULT NULL, --Command
+    latest_output   text DEFAULT NULL, --Result
     period          real DEFAULT 300, --One measurement every 300 seconds
-    start_hour      real DEFAULT 7,
-    stop_hour       real DEFAULT 16
+    start_hour      real DEFAULT 7, --Start at 7h UTC
+    stop_hour       real DEFAULT 16 --End at 16h UTC
 ) INHERITS(lifecycle);
 CREATE TRIGGER updated_at_sensors BEFORE UPDATE ON sensors FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
