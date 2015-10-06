@@ -44,8 +44,13 @@ var topLevelStore = {
                 measurements.sort(function(m1, m2){
                     return new Date(m1.date).getTime() - new Date(m2.date).getTime();
                 });
-            
-                place.measurements = measurements;
+                // place.measurements format is : [{date: Date, value: Int}, {date: Date, value: Int}, ...]
+                place.measurements = measurements.map(function (measurement) {
+                    return ({
+                        date: measurement.date,
+                        value: measurement.value.length
+                    });
+                });
                 topLevelStore.selectedPlaceMap.set(place.id, place);
                 render();
             })
@@ -88,12 +93,14 @@ socket.on('data', function (measurement) {
     place.max = safeMax(place.max, value);
     place.latest = value;
 
-    if (place.measurements)
+    // place.measurements format is : [{date: Date, value: Int}, {date: Date, value: Int}, ...]
+    if (place.measurements) {
     // UPDATE CURVE
         place.measurements.push({
             date: date,
             value: value
         });
+    }
 
     topLevelStore.updatingIDs.push(id);
 
