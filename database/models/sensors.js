@@ -4,6 +4,8 @@ var sql = require('sql');
 sql.setDialect('postgres');
 var databaseP = require('../management/databaseClientP');
 
+var databaseMeasurements = require('./measurements.js');
+
 var sensors = require('../management/declarations.js').sensors;
 
 module.exports = {
@@ -103,16 +105,21 @@ module.exports = {
     delete: function(id) {
         return databaseP.then(function (db) {
             
-            var query = sensors
-                .delete()
-                .where(sensors.sim.equals(id))
-                .returning('*')
-                .toQuery();
+            // Delete related measurements
+            databaseMeasurements.deleteById(id)
+            .then(function() {
 
-            return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
-                    if (err) reject(err);
-                    else resolve(result.rows[0]);
+                var query = sensors
+                    .delete()
+                    .where(sensors.sim.equals(id))
+                    .returning('*')
+                    .toQuery();
+
+                return new Promise(function (resolve, reject) {
+                    db.query(query, function (err, result) {
+                        if (err) reject(err);
+                        else resolve(result.rows[0]);
+                    });
                 });
             });
         })
@@ -122,17 +129,23 @@ module.exports = {
     },
 
     deleteAll: function() {
-        return databaseP.then(function (db) {
+        return databaseP
+        .then(function (db) {
             
-            var query = sensors
-                .delete()
-                .returning('*')
-                .toQuery();
+            // Delete all measurements too (no sensors = no measurements)
+            databaseMeasurements.deleteAll()
+            .then(function() {
 
-            return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
-                    if (err) reject(err);
-                    else resolve(result.rows);
+                var query = sensors
+                    .delete()
+                    .returning('*')
+                    .toQuery();
+
+                return new Promise(function (resolve, reject) {
+                    db.query(query, function (err, result) {
+                        if (err) reject(err);
+                        else resolve(result.rows);
+                    });
                 });
             });
         })
