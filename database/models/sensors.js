@@ -13,7 +13,7 @@ module.exports = {
     create: function (data) {
         return databaseP.then(function (db) {
 
-            if (!data.sim) {
+            if (data.sim === undefined || (typeof(data.sim) === 'string' && !data.sim.length)) {
                 throw 'Cannot create sensor : no SIM';
             }
             if (!data.name)
