@@ -84,6 +84,7 @@ module.exports = function(authToken, io){
                             break;
 
                         case 'measurement':
+                            console.log('RECEIVED', message);
                             
                             sigCodec.decode(message)
                             .then(function(data){
@@ -103,7 +104,9 @@ module.exports = function(authToken, io){
                                 database.Measurements.create({
                                     sensor_sim: sim,
                                     type: type,
-                                    value: data.devices,
+                                    value: data.devices.map(function(device){
+                                        return device.signal_strength;
+                                    }),
                                     date: data.date
                                 })
                                 .then(function() {

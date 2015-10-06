@@ -201,7 +201,7 @@ describe('Maestro testing', function(){
 
         it('Pushing wifi measurements should register measurements in DB', function () {
 
-            var measurement = [{
+            var measurement = {
                 date: new Date(),
                 devices: [{
                     signal_strength: -10,
@@ -215,10 +215,11 @@ describe('Maestro testing', function(){
                     signal_strength: -39,
                     ID: 'myID3'
                 }]
-            }];
+            };
 
             return sigCodec.encode(measurement)
             .then(function(encoded){
+                console.log('SENT', encoded);
                 fakeSensor.publish('measurement/' + simId + '/wifi', encoded);
 
                 var data = {
@@ -231,7 +232,6 @@ describe('Maestro testing', function(){
 
                         api.getMeasurements(data)
                         .then(function(measurements){
-                        //     // console.log('THEN');
                             console.log('measurements', measurements);
                             expect(measurements[0].value[0].signal_strength).to.deep.equal(-10);
                             expect(measurements[0].entry).to.equal(3);

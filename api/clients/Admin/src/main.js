@@ -196,9 +196,8 @@ function refreshView(){
             placeMap.forEach(function(place){
                 if (place.sensor_ids[0] !== null)
                     place.sensor_ids = new Set(place.sensor_ids);
-                else{
+                else
                     place.sensor_ids = new Set();
-                }     
             });
 
             topLevelStore.placeMap = placeMap;

@@ -106,6 +106,7 @@ gulp.task('start-containers-dev', function(){
 });
 
 gulp.task('watch', ['watch-dashboard', 'watch-admin', 'watch-tools']);
+gulp.task('build', ['build-dashboard', 'build-admin']);
 
 /*
     Top-level tasks
