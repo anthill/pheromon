@@ -3,6 +3,7 @@
 var sql = require('sql');
 sql.setDialect('postgres');
 var databaseP = require('../management/databaseClientP');
+var getRandomName = require('pokemon-names').random;
 
 var databaseMeasurements = require('./measurements.js');
 
@@ -12,6 +13,11 @@ module.exports = {
     create: function (data) {
         return databaseP.then(function (db) {
 
+            if (!data.sim) {
+                throw 'Cannot create sensor : no SIM';
+            }
+            if (!data.name)
+                data.name = getRandomName();
             var query = sensors
                 .insert(data)
                 .returning('*')
