@@ -106,8 +106,7 @@ var Ant = React.createClass({
                 React.DOM.li({className: 'quipu dark'},
                     React.DOM.div({},
                         React.DOM.div({}, 'Quipu Status'),
-                        React.DOM.div({}, props.ant.quipu_status),
-                        React.DOM.div({}, props.ant.signal) // Pas de signal ???
+                        React.DOM.div({}, props.ant.quipu_status)
                     )
                 ),
                 React.DOM.li({className: 'sense light'},

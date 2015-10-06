@@ -223,12 +223,11 @@ function refreshView(){
             console.log('sensorMap', sensorMap);
 
             var measurementsPs = [];
-            // transform dbStatus to constants
+
             sensorMap.forEach(function (sensor){
                 var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR ||
                                   new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
-                sensor.quipu_status = isConnected ? dbStatusMap.get(sensor.quipu_status) : 'DISCONNECTED';
-                sensor.signal = isConnected ? sensor.signal : '';
+                sensor.quipu_status = isConnected ? sensor.quipu_status : 'DISCONNECTED';
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
@@ -288,7 +287,26 @@ function sendCommand(command, selectedAntSet){
 
     console.log('Sending command', command, ' to ', antSims.join(' '));
 
-    // Update DB if needed
+    // Update last command
+
+    updateSensorInDb(antSims.map(function (sim) {
+        return {
+            sim: sim,
+            field: 'latest_input',
+            value: command.split(' ')[0]
+        };
+    }));
+
+    updateSensorInDb(antSims.map(function (sim) {
+        return {
+            sim: sim,
+            field: 'latest_output',
+            value: '  '
+        };
+    }));
+
+
+    // Update sensor's config if needed
 
     var sims = antSims;
     var value;

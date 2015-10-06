@@ -9,7 +9,7 @@ var sensors = require('../management/declarations.js').sensors;
 module.exports = {
     create: function (data) {
         return databaseP.then(function (db) {
-            
+
             var query = sensors
                 .insert(data)
                 .returning('*')
