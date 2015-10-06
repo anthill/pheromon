@@ -103,10 +103,11 @@ module.exports = {
     },
 
     delete: function(id) {
-        return databaseP.then(function (db) {
+        return databaseP
+        .then(function (db) {
             
             // Delete related measurements
-            databaseMeasurements.deleteById(id)
+            return databaseMeasurements.deleteById(id)
             .then(function() {
 
                 var query = sensors
@@ -133,7 +134,7 @@ module.exports = {
         .then(function (db) {
             
             // Delete all measurements too (no sensors = no measurements)
-            databaseMeasurements.deleteAll()
+            return databaseMeasurements.deleteAll()
             .then(function() {
 
                 var query = sensors
