@@ -70,7 +70,6 @@ function updatePlaceInDb(datas) {
 }
 
 
-
 function updateSensorInDb(datas) {
 
     console.log('SENSOR datas', datas);
@@ -196,9 +195,8 @@ function refreshView(){
             placeMap.forEach(function(place){
                 if (place.sensor_ids[0] !== null)
                     place.sensor_ids = new Set(place.sensor_ids);
-                else{
+                else
                     place.sensor_ids = new Set();
-                }     
             });
 
             topLevelStore.placeMap = placeMap;
@@ -215,8 +213,9 @@ function refreshView(){
 
             // transform dbStatus to constants
             sensorMap.forEach(function(sensor){
-                sensor.quipu_status = dbStatusMap.get(sensor.quipu_status);
-                sensor.wifi_status = dbStatusMap.get(sensor.wifi_status);
+                sensor.quipu_status = sensor.quipu_status ? dbStatusMap.get(sensor.quipu_status.toLowerCase()) : '';
+                sensor.wifi_status = sensor.wifi_status ? dbStatusMap.get(sensor.wifi_status) : '';
+                sensor.blue_status = sensor.blue_status ? dbStatusMap.get(sensor.blue_status) : '';
             });
 
             topLevelStore.sensorMap = sensorMap;
@@ -224,12 +223,11 @@ function refreshView(){
             console.log('sensorMap', sensorMap);
 
             var measurementsPs = [];
-            // transform dbStatus to constants
+
             sensorMap.forEach(function (sensor){
                 var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR ||
                                   new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
-                sensor.quipu_status = isConnected ? dbStatusMap.get(sensor.quipu_status) : 'DISCONNECTED';
-                sensor.signal = isConnected ? sensor.signal : '';
+                sensor.quipu_status = isConnected ? sensor.quipu_status : 'DISCONNECTED';
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
@@ -286,7 +284,71 @@ function sendCommand(command, selectedAntSet){
         command: command,
         to: antSims
     });
+
     console.log('Sending command', command, ' to ', antSims.join(' '));
+
+    // Update last command
+
+    updateSensorInDb(antSims.map(function (sim) {
+        return {
+            sim: sim,
+            field: 'latest_input',
+            value: command.split(' ')[0]
+        };
+    }));
+
+    updateSensorInDb(antSims.map(function (sim) {
+        return {
+            sim: sim,
+            field: 'latest_output',
+            value: '  '
+        };
+    }));
+
+
+    // Update sensor's config if needed
+
+    var sims = antSims;
+    var value;
+    var field;
+
+    if (command.match(/changeperiod (\d{1,5})/)) {
+        field = 'period';
+        value = parseInt(command.match(/changeperiod (\d{1,5})/)[1]);
+    }
+    else if (command.match(/changestarttime (\d{1,2})/)) {
+        field = 'start_hour'; // hour, not time ... That's tricky
+        var tmpStart = parseInt(command.match(/changestarttime (\d{1,2})/)[1]);
+
+        if (tmpStart >= 0 && tmpStart < 24)
+            value = tmpStart;
+    }
+    else if (command.match(/changestoptime (\d{1,2})/)) {
+        field = 'stop_hour';
+        var tmpStop = parseInt(command.match(/changestoptime (\d{1,2})/)[1]);
+
+        if (tmpStop >= 0 && tmpStop < 24)
+            value = tmpStop;
+    }
+    else // send to nobody
+        sims = [];
+
+    // update everybody
+
+    updateSensorInDb(sims.map(function (sim) {
+        return {
+            sim: sim,
+            value: value,
+            field: field
+        };
+    }));
+
+    // sims.forEach(function (sim) {
+    //     updateSensorInDb([{
+    //         sim: sim,
+    //         delta: delta
+    //     }]);
+    // });
 }
 
 

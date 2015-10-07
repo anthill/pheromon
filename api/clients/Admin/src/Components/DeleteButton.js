@@ -6,7 +6,8 @@ var React = require('react');
     A delete button asking for confirmation
     
 interface DeleteButtonProps{
-    askForConfirmation: boolean // (defaults to true)
+    askForConfirmation: boolean // (defaults to true),
+    warning: string,
     onConfirm: () => void
 }
 interface DeleteButtonState{
@@ -44,6 +45,7 @@ module.exports = React.createClass({
         if(state.pendingConfirmation){
             children.push(React.DOM.div({className: 'confirmation-box', key: 1},
                 React.DOM.h1({}, 'Confirm ?'),
+                React.DOM.div({}, props.warning ? props.warning : ''),
                 React.DOM.div({className: 'button-group'},
                     React.DOM.button({
                         className: 'cancel',

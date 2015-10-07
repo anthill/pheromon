@@ -3,13 +3,25 @@
 var sql = require('sql');
 sql.setDialect('postgres');
 var databaseP = require('../management/databaseClientP');
+var getRandomName = require('pokemon-names').random;
 
 var sensors = require('../management/declarations.js').sensors;
+var sensorCache = 'RIEN';
 
 module.exports = {
+    cache: function(){
+        return sensorCache;
+    },
     create: function (data) {
+        sensorCache = 'TEST';
+
         return databaseP.then(function (db) {
-            
+
+            if (data.sim === undefined || (typeof(data.sim) === 'string' && !data.sim.length)) {
+                throw 'Cannot create sensor : no SIM';
+            }
+            if (!data.name)
+                data.name = getRandomName();
             var query = sensors
                 .insert(data)
                 .returning('*')
@@ -19,15 +31,18 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else
+                    else{
+                        sensorCache = 'QUELQUE CHOSE';
                         resolve(result.rows[0]);
+                    }
+                        
                         
                 });
             });
         })
         .catch(function(err){
             console.log('ERROR in create', err);
-        });  
+        });
     },
     
     update: function(sim, delta) {
@@ -101,7 +116,8 @@ module.exports = {
     },
 
     delete: function(id) {
-        return databaseP.then(function (db) {
+        return databaseP
+        .then(function (db) {
             
             var query = sensors
                 .delete()
@@ -112,7 +128,8 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows[0]);
+                    else
+                        resolve(result.rows[0]);
                 });
             });
         })
@@ -122,7 +139,8 @@ module.exports = {
     },
 
     deleteAll: function() {
-        return databaseP.then(function (db) {
+        return databaseP
+        .then(function (db) {
             
             var query = sensors
                 .delete()
@@ -132,7 +150,8 @@ module.exports = {
             return new Promise(function (resolve, reject) {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
-                    else resolve(result.rows);
+                    else
+                        resolve(result.rows);
                 });
             });
         })
@@ -140,5 +159,4 @@ module.exports = {
             console.log('ERROR in deleteAll sensors', err);
         });        
     }
-
 };

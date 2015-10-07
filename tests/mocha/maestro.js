@@ -28,7 +28,7 @@ var api = prepareAPI(sendReq, apiOrigin);
 
 var socket = io(apiOrigin);
 
-var maestroUtils = require('../../api/utils/maestro.js');
+var checkSensor = require('../../api/utils/checkSensor.js');
 
 function createFakeSensor(simId){
     return new Promise(function(resolve, reject){
@@ -83,41 +83,22 @@ describe('Maestro testing', function(){
             var sim2sensor = {};
 
             it('checkSensor should register unknown sensor', function () {
-                return maestroUtils.checkSensor(sensor.sim, sim2sensor)
-                .then(function(wasSensorCreated){
-                    expect(Object.keys(sim2sensor).length).to.deep.equal(1);
-                    expect(wasSensorCreated).to.be.true;
+                return checkSensor(sensor.sim)
+                .then(function(){
+                    database.Sensors.getAll()
+                    .then(function(sensors){
+                        expect(sensors.length).to.equal(1);
+                    });
                 });
             });
 
             it('checkSensor should not register known sensor', function () {
-                return maestroUtils.checkSensor(sensor.sim, sim2sensor)
-                .then(function(wasSensorCreated){
-                    expect(wasSensorCreated).to.be.false;
-                });
-            });
-        });
-
-        describe('importSensor utils', function() {
-
-            before('Creating sensors in DB', function(){
-                var creationPs = [0, 1, 2, 3].map(function(item){
-
-                    var sensor = {
-                        name: 'Sensor' + item,
-                        sim: item * 10
-                    };
-
-                    return api.createSensor(sensor);
-                });
-
-                return Promise.all(creationPs);    
-            });
-
-            it('importSensor should return an object with all sensors in DB', function () {
-                return maestroUtils.importSensors()
-                .then(function(sim2sensor){
-                    expect(Object.keys(sim2sensor).length).to.deep.equal(4);
+                return checkSensor(sensor.sim)
+                .then(function(){
+                    database.Sensors.getAll()
+                    .then(function(sensors){
+                        expect(sensors.length).to.equal(1);
+                    });
                 });
             });
         });
@@ -219,6 +200,7 @@ describe('Maestro testing', function(){
 
             return sigCodec.encode(measurement)
             .then(function(encoded){
+                console.log('SENT', encoded);
                 fakeSensor.publish('measurement/' + simId + '/wifi', encoded);
 
                 var data = {
@@ -231,7 +213,6 @@ describe('Maestro testing', function(){
 
                         api.getMeasurements(data)
                         .then(function(measurements){
-                        //     // console.log('THEN');
                             console.log('measurements', measurements);
                             expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);

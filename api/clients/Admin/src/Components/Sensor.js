@@ -4,6 +4,7 @@ var React = require('react');
 var Modifiable = React.createFactory(require('./Modifiable.js'));
 var PlacePicker = React.createFactory(require('./PlacePicker.js'));
 var DeleteButton = React.createFactory(require('./DeleteButton.js'));
+var pokemonNames = require('pokemon-names').all();
 
 /*
 interface SensorProps{   
@@ -118,16 +119,29 @@ var Sensor = React.createClass({
             })
         );
 
+        var pokeNumber = pokemonNames.indexOf(props.sensor.name);
+        console.log('POKE', pokeNumber);
+
+        var h = Math.floor((pokeNumber + 1) / 100);
+        var d = Math.floor((pokeNumber + 1) % 100 / 10);
+        var u = Math.floor((pokeNumber + 1) % 10);
+
+        var img = pokeNumber > 0 ?
+            React.DOM.img({src: 'http://assets22.pokemon.com/assets/cms2/img/pokedex/full/' + h + d + u +'.png', alt:'poke'})
+            : undefined;
+
         return React.DOM.div({className: classes.join(' ')},
             new DeleteButton({
                 askForConfirmation: true,
-                onConfirm: this.removeSensor
+                onConfirm: this.removeSensor,
+                warning: 'This will remove all related measurements'
             }),
             React.DOM.ul({},
                 sensorName,
                 sensorPlace,
                 sensorSim    
-            )
+            ),
+            img
         );
     }
 });

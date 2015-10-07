@@ -106,12 +106,13 @@ gulp.task('start-containers-dev', function(){
 });
 
 gulp.task('watch', ['watch-dashboard', 'watch-admin', 'watch-tools']);
+gulp.task('build', ['build-dashboard', 'build-admin']);
 
 /*
     Top-level tasks
 */
 
-gulp.task('dev', ['start-containers-dev', 'watch']);
+gulp.task('dev', ['build', 'start-containers-dev', 'watch']);
 
 gulp.task('prod', function(){
     spawn('docker-compose', ['-f', 'compose-prod.yml', 'up', '-d'], {stdio: 'inherit'});
