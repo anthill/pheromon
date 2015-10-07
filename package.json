@@ -8,6 +8,7 @@
     "init-db-dev": "node_modules/gulp/bin/gulp.js init-db-dev",
     "init-db-prod": "node_modules/gulp/bin/gulp.js init-db-prod",
     "dev": "node_modules/gulp/bin/gulp.js dev",
+    "prod": "node_modules/gulp/bin/gulp.js prod", 
     "lint": "eslint ./",
     "test": "docker-compose -f compose-test.yml up",
     "validate": "npm ls"

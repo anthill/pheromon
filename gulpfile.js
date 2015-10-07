@@ -105,6 +105,22 @@ gulp.task('start-containers-dev', function(){
     }); 
 });
 
+gulp.task('start-containers-prod', function(){
+    
+    var adminP;
+    if (!fs.existsSync('./api/clients/Admin-browserify-bundle.js'))
+        adminP = gulp.run('build-admin');
+
+    var dashboardP;
+    if (!fs.existsSync('./api/clients/Dashboard-browserify-bundle.js'))
+        dashboardP = gulp.run('build-dashboard');
+
+    Promise.all([adminP, dashboardP])
+    .then(function(){
+        spawn('docker-compose', ['-f', 'compose-prod.yml', 'up'], {stdio: 'inherit'});
+    }); 
+});
+
 gulp.task('watch', ['watch-dashboard', 'watch-admin', 'watch-tools']);
 gulp.task('build', ['build-dashboard', 'build-admin']);
 
@@ -113,10 +129,8 @@ gulp.task('build', ['build-dashboard', 'build-admin']);
 */
 
 gulp.task('dev', ['build', 'start-containers-dev', 'watch']);
+gulp.task('prod', ['build', 'start-containers-prod']);
 
-gulp.task('prod', function(){
-    spawn('docker-compose', ['-f', 'compose-prod.yml', 'up', '-d'], {stdio: 'inherit'});
-});
 
 gulp.task('init-db-dev', function(){
     spawn('docker-compose', ['-f', 'compose-init-db-dev.yml', 'up'], {stdio: 'inherit'});
