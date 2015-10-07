@@ -18,6 +18,10 @@
 	background-color: white;
 }
 
+.sensor ul {
+	display: inline-block;
+}
+
 .sensor li {
 	margin: 0 1em;
 	text-align: left;
@@ -39,6 +43,10 @@
 	font-weight: bold;
     color: white;
     background-color: orange;
+}
+
+.sensor img{
+	display: inline-block; position: absolute; width: 3em; right: 20px; top: 7px;
 }
 
 /* Place Selector */
