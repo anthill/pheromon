@@ -4,7 +4,9 @@
 
 ## Overview
 
-**Pheromon is a open innovation project to deploy, administrate and harvest data from a swarm of sensors**. It has been developed in the scope of project 6element dedicated to waste optimisation **Learn more about 6element in our [dedicated page](http://ants.builders/pages/6element.html) or in [this Medium article](https://medium.com/ants-blog/6element-534ffbe2a60f)**.
+**Pheromon is a open innovation project to deploy, administrate and harvest data from a swarm of sensors**. It has been developed in the scope of project 6element dedicated to waste optimisation.
+
+**Learn more about 6element in our [dedicated page](http://ants.builders/pages/6element.html) or in [this Medium article](https://medium.com/ants-blog/6element-534ffbe2a60f)**.
 
 ![Image Alt](https://docs.google.com/drawings/d/1a-9oJr7eGid59iTj12dici8-Qb83j9Y7QbTz34jCo_M/pub?w=960&h=720)
 
@@ -13,7 +15,14 @@ More on the topics later on.
 
 All the messages are persisted in a database that can be queried by a API able to answer queries like "give me all mesaurements of sensor X since Y".
 
-*You can find the source code for sensors in [6brain](https://github.com/anthill/6brain)*
+## 6brain
+
+**[6brain](https://github.com/anthill/6brain)** is the sensor counterpart of Pheromon. It is the code you need to have on your sensors so that they can communicate with Pheromon.
+
+## Clients
+
+Two clients are available for now. The **Dashboard** is useful to visualize the measurements on a map, while you can administrate your sensors with the **Admin**.
+More on those clients later.
 
 ## Quick start :
 
