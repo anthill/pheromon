@@ -4,14 +4,17 @@ language: node_js
 node_js:
   - "0.10"
 
+env:
+  COMPOSE_VERSION: 1.2.0
+
 services:
   - docker
 
 before_install:
-  - curl -L https://github.com/docker/compose/releases/download/1.4.0/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - sudo iptables -N DOCKER
+ - curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose-bin
+ - chmod +x docker-compose-bin
+ - sudo mv docker-compose-bin /usr/local/bin/docker-compose
+ - sudo service docker restart ; sleep 10
 
 script:
 - npm run test
