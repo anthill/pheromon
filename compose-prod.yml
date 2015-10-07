@@ -22,10 +22,11 @@ broker:
    command: nodemon broker/index.js
    links:
       - db
+      - redis
    ports:
-      - "5100:5100"
+      - "1883:1883"
    environment:
-      - VIRTUAL_PORT=5100
+      - VIRTUAL_PORT=1883
       - NODE_ENV=production
       - POSTGRES_PASSWORD=elements
    volumes:
@@ -38,6 +39,10 @@ db:
       - POSTGRES_PASSWORD=elements
       - NODE_ENV=production
    volumes:
-      - /data/pheromon:/var/lib/postgresql
+      - /data/pheromon/db:/var/lib/postgresql/data
    tty: true
+   restart: always
+redis:
+   image: redis:3
+   log_driver: "none" 
    restart: always
