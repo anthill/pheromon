@@ -89,47 +89,23 @@ gulp.task('watch-tools', function() {
     });
 });
 
-gulp.task('start-containers-dev', function(){
-    
-    var adminP;
-    if (!fs.existsSync('./api/clients/Admin-browserify-bundle.js'))
-        adminP = gulp.run('build-admin');
-
-    var dashboardP;
-    if (!fs.existsSync('./api/clients/Dashboard-browserify-bundle.js'))
-        dashboardP = gulp.run('build-dashboard');
-
-    Promise.all([adminP, dashboardP])
-    .then(function(){
-        spawn('docker-compose', ['-f', 'compose-dev.yml', 'up'], {stdio: 'inherit'});
-    }); 
-});
-
-gulp.task('start-containers-prod', function(){
-    
-    var adminP;
-    if (!fs.existsSync('./api/clients/Admin-browserify-bundle.js'))
-        adminP = gulp.run('build-admin');
-
-    var dashboardP;
-    if (!fs.existsSync('./api/clients/Dashboard-browserify-bundle.js'))
-        dashboardP = gulp.run('build-dashboard');
-
-    Promise.all([adminP, dashboardP])
-    .then(function(){
-        spawn('docker-compose', ['-f', 'compose-prod.yml', 'up'], {stdio: 'inherit'});
-    }); 
-});
-
 gulp.task('watch', ['watch-dashboard', 'watch-admin', 'watch-tools']);
 gulp.task('build', ['build-dashboard', 'build-admin']);
+
+gulp.task('start-containers-dev', ['build'], function(){
+    spawn('docker-compose', ['-f', 'compose-dev.yml', 'up'], {stdio: 'inherit'});
+});
+
+gulp.task('start-containers-prod', ['build'], function(){
+    spawn('docker-compose', ['-f', 'compose-prod.yml', 'up'], {stdio: 'inherit'});
+});
 
 /*
     Top-level tasks
 */
 
-gulp.task('dev', ['build', 'start-containers-dev', 'watch']);
-gulp.task('prod', ['build', 'start-containers-prod']);
+gulp.task('dev', ['start-containers-dev', 'watch']);
+gulp.task('prod', ['start-containers-prod']);
 
 
 gulp.task('init-db-dev', function(){
