@@ -36,7 +36,7 @@ dbtest:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
-   log_driver: "none" 
+   # log_driver: "none" 
 redis:
    image: redis:3
    # log_driver: "none" 
