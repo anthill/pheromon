@@ -147,8 +147,8 @@ You can send [commands](https://github.com/anthill/pheromon/blob/master/api/clie
 
 - [some admin client] sends a `command` to `[mySensorSimId]` through socketIO.
 - [maestro] receives `command` from client, and forwards it to the corresponding sensors through MQTT.
-- [sensor] receives message, execute `command`.
-
+- [sensor] receives message, execute `command`, and sends back the result of the command on the topic `cmdResult/mySensorSimId`
+- [maestro] receives message, check `mySensorSimId` in DB, creates Sensor if needed, and then updates Sensor in DB.
 
 ## Unitary tests
 
