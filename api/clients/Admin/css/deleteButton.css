@@ -18,11 +18,15 @@
     top: 0.2em;
     right: -5em;
     width: 10em;
-    
+
     border: 1px solid red;
     background-color: white;
 
     z-index: 11;
+}
+
+.delete .confirmation-box div:nth-child(2) {
+    font-size: .7em;
 }
 
 .delete .confirmation-box h1{
