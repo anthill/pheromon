@@ -19,5 +19,5 @@ db:
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
    volumes:
-      - /data/pheromon:/var/lib/postgresql
+      - /data/pheromon/db:/var/lib/postgresql/data
    tty: true

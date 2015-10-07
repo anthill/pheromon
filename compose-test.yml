@@ -14,7 +14,7 @@ api:
       - NODE_ENV=development
    volumes:
       - ./:/pheromon
-   #log_driver: "none" 
+   log_driver: "none" 
 broker:
    build: .
    command: nodemon --watch broker broker/index.js
@@ -42,6 +42,7 @@ redis:
    log_driver: "none" 
 tests:
    build: .
+   command: node ./tests/index.js
    dockerfile: Dockerfile-test
    links:
       - api
@@ -51,7 +52,6 @@ tests:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
-   command: node ./tests/index.js
    volumes:
       - ./:/pheromon/
    tty: true
