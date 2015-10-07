@@ -59,8 +59,6 @@ npm run init-db-prod
 // or if you want to dev
 npm run init-db-dev
 ```
-    *When it says you that the database has been reseted, you can stop it.*
-
 
 * Launch the containers and the 
 
