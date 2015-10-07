@@ -29,7 +29,7 @@ broker:
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
-   log_driver: "none" 
+   # log_driver: "none" 
 dbtest:
    image: postgres:9.4
    environment:
@@ -39,7 +39,7 @@ dbtest:
    log_driver: "none" 
 redis:
    image: redis:3
-   log_driver: "none" 
+   # log_driver: "none" 
 tests:
    build: .
    dockerfile: Dockerfile-test
