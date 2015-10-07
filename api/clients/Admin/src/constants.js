@@ -2,20 +2,30 @@
 
 var keyMirror = require('keymirror');
 
-var senseStatus = keyMirror({
+var wifiStatus = keyMirror({
     SLEEPING: null,
     MONITORING: null,
     RECORDING: null
 });
 
-var quipuStatus = keyMirror({
-    UNINITIALIZED: null,
-    INITIALIZED: null,
-    CONNECTED3G: null,
-    TUNNELLING: null
+var quipuKeys = {};
+
+quipuKeys['NODATA'] = null;
+quipuKeys['GPRS'] = null;
+quipuKeys['EDGE'] = null;
+quipuKeys['3G'] = null;
+quipuKeys['H/H+'] = null;
+
+var quipuStatus = keyMirror(quipuKeys);
+
+var bluetoothStatus = keyMirror({
+    uninitialized: null,
+     initialized: null,
+     recording: null
 });
 
 module.exports = {
-    senseStatus: senseStatus,
-    quipuStatus: quipuStatus
+    wifiStatus: wifiStatus,
+    quipuStatus: quipuStatus,
+    bluetoothStatus: bluetoothStatus
 };

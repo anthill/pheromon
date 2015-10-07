@@ -40,7 +40,7 @@ var LineChart = React.createClass({
     
         var data = props.measurements.map(function(measurement){
             var date = new Date(measurement.date);
-            return [date, measurement.value.length];
+            return [date, measurement.value];
         });
 
         var beginDay;

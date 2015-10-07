@@ -3,6 +3,7 @@
 var sql = require('sql');
 sql.setDialect('postgres');
 var databaseP = require('../management/databaseClientP');
+var getRandomName = require('pokemon-names').random;
 
 var sensors = require('../management/declarations.js').sensors;
 var sensorCache = 'RIEN';
@@ -16,6 +17,11 @@ module.exports = {
 
         return databaseP.then(function (db) {
 
+            if (data.sim === undefined || (typeof(data.sim) === 'string' && !data.sim.length)) {
+                throw 'Cannot create sensor : no SIM';
+            }
+            if (!data.name)
+                data.name = getRandomName();
             var query = sensors
                 .insert(data)
                 .returning('*')
@@ -110,7 +116,8 @@ module.exports = {
     },
 
     delete: function(id) {
-        return databaseP.then(function (db) {
+        return databaseP
+        .then(function (db) {
             
             var query = sensors
                 .delete()
@@ -132,7 +139,8 @@ module.exports = {
     },
 
     deleteAll: function() {
-        return databaseP.then(function (db) {
+        return databaseP
+        .then(function (db) {
             
             var query = sensors
                 .delete()

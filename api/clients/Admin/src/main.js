@@ -213,8 +213,9 @@ function refreshView(){
 
             // transform dbStatus to constants
             sensorMap.forEach(function(sensor){
-                sensor.quipu_status = dbStatusMap.get(sensor.quipu_status);
-                sensor.wifi_status = dbStatusMap.get(sensor.wifi_status);
+                sensor.quipu_status = sensor.quipu_status ? dbStatusMap.get(sensor.quipu_status.toLowerCase()) : '';
+                sensor.wifi_status = sensor.wifi_status ? dbStatusMap.get(sensor.wifi_status) : '';
+                sensor.blue_status = sensor.blue_status ? dbStatusMap.get(sensor.blue_status) : '';
             });
 
             topLevelStore.sensorMap = sensorMap;
