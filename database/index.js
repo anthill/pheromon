@@ -7,7 +7,7 @@ var places = decl.places;
 var sensor = decl.sensors;
 var measurement = decl.measurements;
 
-module.exports = {
+var toExport = {
     Places: require('./models/places.js'),
     Sensors: require('./models/sensors.js'),
     Measurements: require('./models/measurements.js'),
@@ -31,7 +31,7 @@ module.exports = {
                             .on(places.id.equals(sensor.installed_at))
                     )
                     .group(places.id, sensor.sim);
-                
+
                 /*
                     For each recycling center, get the measurement value associated to the last measurement date
                 */
@@ -54,7 +54,7 @@ module.exports = {
                                 latestPlaceMeasurementDate.last_date.equals(measurement.date)
                             ))
                     );
-                
+
                 /*
                     For each recycling center, get the maximum measurement (and recycling center infos)
                     TODO restrict maximum to the last few months
@@ -73,7 +73,7 @@ module.exports = {
                             .on(places.id.equals(sensor.installed_at))
                     )
                     .group(places.id, sensor.sim);
-                
+
                 /*
                     For each recycling center, get
                     * recycling center infos (long lat)
@@ -87,7 +87,7 @@ module.exports = {
                         .on(maxMeasurementPerPlace.id.equals(latestPlaceMeasurementValue.id))
                     )
                     .toQuery();
-                
+
                 // console.log('currentPlaceAffluences query', query);
 
                 return new Promise(function (resolve, reject) {
@@ -97,9 +97,9 @@ module.exports = {
                     });
                 });
             });
-            
+
         },
-        
+
         getPlaceMeasurements: function(placeId){
             return databaseP.then(function(db){
 
@@ -119,7 +119,7 @@ module.exports = {
                     )
                     .where(sensor.installed_at.equals(placeId))
                     .toQuery();
-                
+
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
                         if (err) reject(err);
@@ -150,7 +150,7 @@ module.exports = {
                             .on(sensor.sim.equals(measurement.sensor_sim))
                     )
                     .toQuery();
-                
+
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
                         if (err) reject(err);
@@ -162,10 +162,10 @@ module.exports = {
 
         getAllPlacesInfos: function() {
             return databaseP.then(function (db) {
-            
+
                 var query = places
                     .select(
-                        sensor.literal('array_agg(sensors.id)').as('sensor_ids'), 
+                        sensor.literal('array_agg(sensors.id)').as('sensor_ids'),
                         places.star()
                     )
                     .from(
@@ -186,7 +186,35 @@ module.exports = {
             })
             .catch(function(err){
                 console.log('ERROR in getAllPlacesInfos', err);
-            });        
+            });
+        },
+
+        // Delete a sensor a its measurements
+        deleteSensorAndMeasurement: function(id) {
+
+            return toExport.Measurements.deleteBySim(id)
+            .then(function() {
+
+                return toExport.Sensors.delete(id);
+            })
+            .catch(function(err){
+                console.log('ERROR in deleteSensorAndMeasurement', err);
+            });
+        },
+
+        // Delete every sensors and measurements
+        deleteAllSensorsAndMeasurements: function() {
+
+            return toExport.Measurements.deleteAll()
+            .then(function() {
+
+                return toExport.Sensors.deleteAll();
+            })
+            .catch(function(err){
+                console.log('ERROR in deleteAllSensorsAndMeasurements', err);
+            });
         }
     }
 };
+
+module.exports = toExport;

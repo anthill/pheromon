@@ -5,8 +5,6 @@ sql.setDialect('postgres');
 var databaseP = require('../management/databaseClientP');
 var getRandomName = require('pokemon-names').random;
 
-var databaseMeasurements = require('./measurements.js');
-
 var sensors = require('../management/declarations.js').sensors;
 
 module.exports = {
@@ -112,21 +110,16 @@ module.exports = {
         return databaseP
         .then(function (db) {
             
-            // Delete related measurements
-            return databaseMeasurements.deleteById(id)
-            .then(function() {
+            var query = sensors
+                .delete()
+                .where(sensors.sim.equals(id))
+                .returning('*')
+                .toQuery();
 
-                var query = sensors
-                    .delete()
-                    .where(sensors.sim.equals(id))
-                    .returning('*')
-                    .toQuery();
-
-                return new Promise(function (resolve, reject) {
-                    db.query(query, function (err, result) {
-                        if (err) reject(err);
-                        else resolve(result.rows[0]);
-                    });
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+                    else resolve(result.rows[0]);
                 });
             });
         })
@@ -139,20 +132,15 @@ module.exports = {
         return databaseP
         .then(function (db) {
             
-            // Delete all measurements too (no sensors = no measurements)
-            return databaseMeasurements.deleteAll()
-            .then(function() {
+            var query = sensors
+                .delete()
+                .returning('*')
+                .toQuery();
 
-                var query = sensors
-                    .delete()
-                    .returning('*')
-                    .toQuery();
-
-                return new Promise(function (resolve, reject) {
-                    db.query(query, function (err, result) {
-                        if (err) reject(err);
-                        else resolve(result.rows);
-                    });
+            return new Promise(function (resolve, reject) {
+                db.query(query, function (err, result) {
+                    if (err) reject(err);
+                    else resolve(result.rows);
                 });
             });
         })

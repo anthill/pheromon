@@ -28,12 +28,13 @@ module.exports = {
         });
     },
 
-    deleteById: function(id) {
+    // Delete all measurements of a sensor.
+    deleteBySim: function(sim) {
         return databaseP.then(function (db) {
 
             var query = measurements
                 .delete()
-                .where(measurements.sensor_sim.equals(id))
+                .where(measurements.sensor_sim.equals(sim))
                 .returning('*')
                 .toQuery();
 
