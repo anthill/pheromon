@@ -24,10 +24,10 @@ All the messages are persisted in a database that can be queried by a API able t
 Two clients are available for now.
 
 The **Dashboard** is useful to visualize the measurements on a map.
-![Dashboard](https://docs.google.com/drawings/d/15e3pNNdNSJg61KrjDVDR1zNUwxQwabhA4rs4NJAqo9A/pub?w=960&h=720)
+![Dashboard](https://docs.google.com/drawings/d/15e3pNNdNSJg61KrjDVDR1zNUwxQwabhA4rs4NJAqo9A/pub?w=960&h=540)
 
 You can also administrate your sensors with the **Admin**.
-![Admin](https://docs.google.com/drawings/d/1vV2AWF36vDeI0nxXbfTBlMmFX7O1Y_bWcNblKMaAq7I/pub?w=960&h=720)
+![Admin](https://docs.google.com/drawings/d/1vV2AWF36vDeI0nxXbfTBlMmFX7O1Y_bWcNblKMaAq7I/pub?w=960&h=540)
 
 More on those clients later.
 
