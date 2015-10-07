@@ -3,7 +3,7 @@
 
 20 tests are available for now.
 
-  ## Database API
+## Database API
   
 1. Place creation
 2. Place update
