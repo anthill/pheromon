@@ -15,6 +15,7 @@ before_install:
  - chmod +x docker-compose-bin
  - sudo mv docker-compose-bin /usr/local/bin/docker-compose
  - sudo service docker restart ; sleep 10
+ - echo '{"mapbox_token": "","map_id": "","secret": "fake","token": "fake"}' > PRIVATE.json
 
 script:
 - npm run test
