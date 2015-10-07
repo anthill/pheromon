@@ -97,7 +97,7 @@ gulp.task('start-containers-dev', ['build'], function(){
 });
 
 gulp.task('start-containers-prod', ['build'], function(){
-    spawn('docker-compose', ['-f', 'compose-prod.yml', 'up'], {stdio: 'inherit'});
+    spawn('docker-compose', ['-f', 'compose-prod.yml', 'up', '-d'], {stdio: 'inherit'});
 });
 
 /*
