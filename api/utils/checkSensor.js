@@ -23,13 +23,13 @@ module.exports = function(sim){
                 'start_hour': CONF.start_hour,
                 'stop_hour': CONF.stop_hour
             })
-            .then(function(sensor){
+            .then(function(created){
                 debug('SENSOR NOT IN DB, CREATING');
-                return sensor;
+                return created;
             })
             .catch(function(err){
                 console.log('Error in sensor check', err);
             });
         }  
-    })
-}
+    });
+};

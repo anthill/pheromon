@@ -71,7 +71,7 @@ module.exports = function(authToken, io){
                         delta[type + '_status'] = message;
 
                         database.Sensors.update(sensor.sim, delta)
-                        .then(function(updated) {
+                        .then(function() {
                             io.emit('status', {sensorId: sensor.id});
                             console.log(type + 'status data updated for sensor');
                         })
