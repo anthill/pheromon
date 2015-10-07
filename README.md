@@ -82,6 +82,7 @@ The communication protocol is composed of 3 elements:
 - `init/mySensorSimId`, when sensor needs to initialize. There is no content.
 - `status/mySensorSimId/type`, when a sensor status updates. The content is a string describing the actual status.
 - `measurement/mySensorSimId/type`, when a measurement is sent from sensor. The content is an array of measurements.
+- `cmdResult/mySensorSimId`, when a sensor processed a command sent from maestro. The content is a string describing the output of the command.
 
 *From* **maestro** *to* **sensor**:
 - `mySensorSimId`, when maestro sends command to sensor. The content is a string of the command.
@@ -124,7 +125,7 @@ By default, sensor has measurement capabilities (for wifi and bluetooth). Every 
 
 ### Command sending sequence
 
-You can send [commands](https://github.com/anthill/pheromon/api/clients/Admin/ReadMe.md) to the sensors.
+You can send [commands](https://github.com/anthill/pheromon/blob/master/api/clients/Admin/ReadMe.md) to the sensors.
 
 **Sequence**
 
@@ -135,7 +136,7 @@ You can send [commands](https://github.com/anthill/pheromon/api/clients/Admin/Re
 
 ## Unitary tests
 
-You can run [Pheromon tests](https://github.com/anthill/pheromon/tests/ReadMe.md) in a dedicated docker.
+You can run [Pheromon tests](https://github.com/anthill/pheromon/blob/master/tests/ReadMe.md) in a dedicated docker.
 
 First build the container:
 ````
