@@ -61,7 +61,7 @@ describe('Broker Testing', function() {
                 setTimeout(function(){
                     api.getSensor(simId)
                     .then(function(sensor){
-                        expect(sensor.client_status).to.deep.equal('DISCONNECTED');
+                        expect(sensor.client_status).to.deep.equal('disconnected');
                         resolve();
                     })
                     .catch(function(err){
