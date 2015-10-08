@@ -211,7 +211,7 @@ function refreshView(){
 
             // transform dbStatus to constants
             sensorMap.forEach(function(sensor){
-                sensor.client_status = sensor.client_status ? dbStatusMap.get(sensor.client_status) : 'CONNECTED';
+                sensor.client_status = sensor.client_status ? dbStatusMap.get(sensor.client_status) : '';
                 sensor.wifi_status = sensor.wifi_status ? dbStatusMap.get(sensor.wifi_status) : '';
                 sensor.signal_status = sensor.signal_status ? dbStatusMap.get(sensor.signal_status.toLowerCase()) : '';
                 sensor.blue_status = sensor.blue_status ? dbStatusMap.get(sensor.blue_status) : '';
