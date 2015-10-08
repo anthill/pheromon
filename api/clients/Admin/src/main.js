@@ -21,8 +21,6 @@ var socket = io();
 
 var errlog = console.error.bind(console);
 
-var HOUR = 1000 * 60 * 60;
-
 var topLevelStore = {
     sensorMap: undefined,
     placeMap: undefined,
@@ -226,9 +224,6 @@ function refreshView(){
             var measurementsPs = [];
 
             sensorMap.forEach(function (sensor){
-                // var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR ||
-                //                   new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
-                // sensor.client_status = isConnected ? sensor.client_status : 'DISCONNECTED';
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
