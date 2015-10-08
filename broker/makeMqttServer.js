@@ -33,8 +33,8 @@ module.exports = function(authToken){
             if (client.id !== 'maestro'){
 
                 var message = {
-                    topic: 'status/' + client.id + '/quipu',
-                    payload: 'DISCONNECTED',
+                    topic: 'status/' + client.id + '/client',
+                    payload: 'disconnected',
                     qos: 2, // 2 because it doesn't cost anything when publishing to maestro from broker
                     retain: false
                 };

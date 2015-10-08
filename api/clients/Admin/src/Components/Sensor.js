@@ -17,7 +17,8 @@ interface SensorProps{
         latest_output: string,
         name: string,
         sim: string,
-        quipu_status: string,
+        client_status: string,
+        signal_status: string,
         wifi_status: string,
         blue_status: string,
         updated_at: string

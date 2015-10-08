@@ -213,8 +213,9 @@ function refreshView(){
 
             // transform dbStatus to constants
             sensorMap.forEach(function(sensor){
-                sensor.quipu_status = sensor.quipu_status ? dbStatusMap.get(sensor.quipu_status.toLowerCase()) : '';
+                sensor.client_status = sensor.client_status ? dbStatusMap.get(sensor.client_status) : 'CONNECTED';
                 sensor.wifi_status = sensor.wifi_status ? dbStatusMap.get(sensor.wifi_status) : '';
+                sensor.signal_status = sensor.signal_status ? dbStatusMap.get(sensor.signal_status.toLowerCase()) : '';
                 sensor.blue_status = sensor.blue_status ? dbStatusMap.get(sensor.blue_status) : '';
             });
 
@@ -225,9 +226,9 @@ function refreshView(){
             var measurementsPs = [];
 
             sensorMap.forEach(function (sensor){
-                var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR ||
-                                  new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
-                sensor.quipu_status = isConnected ? sensor.quipu_status : 'DISCONNECTED';
+                // var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR ||
+                //                   new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
+                // sensor.client_status = isConnected ? sensor.client_status : 'DISCONNECTED';
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
@@ -355,17 +356,6 @@ function sendCommand(command, selectedAntSet){
 
 // Initial rendering
 refreshView();
-
-// THIS WILL BE NEEDED WHEN QUIPU SIGNAL IS INCORPORATED INTO DATA MSGS
-// socket.on('data', function (msg){
-//     var id = msg.socketMessage.sensor_id;
-//     var signal = msg.socketMessage.quipu.signal;
-
-//     var updatingAnt = topLevelStore.ants.get(id);
-//     updatingAnt.signal = signal;
-
-//     render();
-// });
 
 socket.on('status', function (msg) {
 

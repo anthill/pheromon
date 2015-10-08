@@ -119,7 +119,8 @@ We don't want sensors to have a manually hard-coded id (for deployment's simplic
 ### Status update sequence
 
 Each time the sensor's status changes, a message is sent to the maestro to update the DB and react accordingly depending on the situation. Status can be of 3 types:
-- `quipu`: state of communication between sensor and kerrigan server
+- `client`: state of communication between sensor and kerrigan server
+- `signal`: power of signal between sensor and kerrigan server
 - `wifi`: wifi monitoring state of sensor 
 - `blue`: bluetooth monitoring state of sensor
 
