@@ -62,8 +62,18 @@ module.exports = function(authToken, io){
                 switch(main){
                     case 'init':
                         var date = new Date();
-                        var cmd = ['init', sensor.period, sensor.start_hour, sensor.stop_hour, date.toISOString()].join(' ');
-                        maestro.publish(sim, cmd);
+
+                        database.Sensors.update(sensor.sim, {client_status: 'connected'}) // this is to set the sensor to 'CONNECTED' in D
+                        .then(function() {
+                            io.emit('status', {sensorId: sensor.id});
+                            var cmd = ['init', sensor.period, sensor.start_hour, sensor.stop_hour, date.toISOString()].join(' ');
+                            maestro.publish(sim, cmd);
+
+                            console.log(type + 'status data updated for sensor');
+                        })
+                        .catch(function(err) {
+                            console.log('error : cannot update sensor in DB :', err);
+                        });
                         break;
 
                     case 'status':
