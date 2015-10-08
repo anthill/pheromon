@@ -95,16 +95,17 @@ var Ant = React.createClass({
                     ),
                     React.DOM.div({},
                         React.DOM.div({}, 'Sim'),
-                        new Modifiable({
-                            className: 'sim',
-                            isUpdating: false,
-                            text: props.ant.sim,
-                            dbLink: {
-                                sim: props.ant.sim,
-                                field: 'sim'
-                            },
-                            onChange: props.onChangeSensor
-                        })
+                        React.DOM.div({}, props.ant.sim)
+                        // new Modifiable({
+                        //     className: 'sim',
+                        //     isUpdating: false,
+                        //     text: props.ant.sim,
+                        //     dbLink: {
+                        //         sim: props.ant.sim,
+                        //         field: 'sim'
+                        //     },
+                        //     onChange: props.onChangeSensor
+                        // })
                     )
                 ),
                 React.DOM.li({className: 'client dark'},

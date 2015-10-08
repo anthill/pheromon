@@ -107,18 +107,19 @@ var Sensor = React.createClass({
             }) : undefined
         );
 
-        var sensorSim = React.DOM.li({}, 
-            new Modifiable({
-                className: 'sensorSim',
-                isUpdating: false,
-                text: props.sensor.sim,
-                dbLink: {
-                    sim: props.sensor.sim,
-                    field: 'sim'
-                },
-            onChange: props.onChangeSensor
-            })
-        );
+        var sensorSim = React.DOM.li({}, props.sensor.sim);
+
+        //     new Modifiable({
+        //         className: 'sensorSim',
+        //         isUpdating: false,
+        //         text: props.sensor.sim,
+        //         dbLink: {
+        //             sim: props.sensor.sim,
+        //             field: 'sim'
+        //         },
+        //     onChange: props.onChangeSensor
+        //     })
+        // );
 
         var pokeNumber = pokemonNames.indexOf(props.sensor.name);
         console.log('POKE', pokeNumber);
