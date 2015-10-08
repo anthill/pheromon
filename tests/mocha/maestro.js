@@ -110,10 +110,12 @@ describe('Maestro testing', function(){
         var fakeSensor;
         var simId = 'simNumber1';
 
+        // This is mainly to override the 'onMessage' event handler.
         beforeEach('Creating Fake Sensor', function(){
             console.log('Before: creating fake sensor');
             return createFakeSensor(simId)
             .then(function(sensor){
+                console.log('SENSOR', simId);
                 fakeSensor = sensor;
             });
         });

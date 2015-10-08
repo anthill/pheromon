@@ -10,6 +10,7 @@ var wifiStatus = keyMirror({
 
 var quipuKeys = {};
 
+quipuKeys['DISCONNECTED'] = null;
 quipuKeys['NODATA'] = null;
 quipuKeys['GPRS'] = null;
 quipuKeys['EDGE'] = null;
@@ -20,8 +21,8 @@ var quipuStatus = keyMirror(quipuKeys);
 
 var bluetoothStatus = keyMirror({
     uninitialized: null,
-     initialized: null,
-     recording: null
+    initialized: null,
+    recording: null
 });
 
 module.exports = {
