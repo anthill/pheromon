@@ -8,24 +8,31 @@ var wifiStatus = keyMirror({
     RECORDING: null
 });
 
-var quipuKeys = {};
+var signalKeys = {};
 
-quipuKeys['NODATA'] = null;
-quipuKeys['GPRS'] = null;
-quipuKeys['EDGE'] = null;
-quipuKeys['3G'] = null;
-quipuKeys['H/H+'] = null;
+signalKeys['NODATA'] = null;
+signalKeys['GPRS'] = null;
+signalKeys['EDGE'] = null;
+signalKeys['3G'] = null;
+signalKeys['H/H+'] = null;
 
-var quipuStatus = keyMirror(quipuKeys);
+var signalStatus = keyMirror(signalKeys);
 
-var bluetoothStatus = keyMirror({
-    uninitialized: null,
-     initialized: null,
-     recording: null
+var clientStatus = keyMirror({
+    DISCONNECTED: null,
+    CONNECTED: null,
+    TUNNELLING: null
+});
+
+var blueStatus = keyMirror({
+    UNINITIALIZED: null,
+    INITIALIZED: null,
+    RECORDING: null
 });
 
 module.exports = {
     wifiStatus: wifiStatus,
-    quipuStatus: quipuStatus,
-    bluetoothStatus: bluetoothStatus
+    clientStatus: clientStatus,
+    signalStatus: signalStatus,
+    blueStatus: blueStatus
 };

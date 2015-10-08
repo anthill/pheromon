@@ -64,6 +64,10 @@
 	font-weight: 600;
 }
 
+.ant li div div div:first-child{
+	font-weight: normal;
+}
+
 .ant .sense > *{
 	display: block;
 }
@@ -97,43 +101,71 @@
     margin-top: 0.5rem;
 }
 
-/* quipu status */
-
-.ant.uninitialized .quipu {
-	color: orange;
+/* client status */
+.client {
+	position: relative;
+	text-align: center;
 }
 
-.ant.initialized .quipu {
-	color: black;
+.status div div:first-child{
+	font-weight: 600;
 }
 
-.ant.connected3g .quipu {
-	color: #0B0;
+.client div div:last-child{
+	position: absolute; top: 0; right: 0; border: 1px solid black; padding: .1em;
+	font-size: 0.6em; color: black;
 }
 
-.ant.tunnelling .quipu {
+.ant.disconnected .client {
+	color: red;
+}
+
+.ant.connected .client {
+	color: green;
+}
+
+.ant.tunnelling .client {
 	color: blue;
 }
 
-.ant.disconnected .quipu {
-	color: #B00
+
+/* sensors status */
+
+.ant .sense div.sensors,  .ant .sense div.settings{
+	display: block;
 }
 
-/* 6sense status */
-
-.ant .sense div.status,  .ant .sense div.settings{
-	display: block; margin: 0 2rem;
+.sensors {
+	margin: .5rem .5rem;
+	font-size: .8em;
 }
 
-.ant.sleeping .sense {
+.settings {
+	margin: 0 1rem;
+	text-align: center;
+}
+
+.wifi.sleeping{
 	color: #CCC;
 }
 
-.ant.monitoring .sense {
+.wifi.monitoring {
 	color: #888;
 }
 
-.ant.recording .sense {
+.wifi.recording {
+	color: black;
+}
+
+.blue.uninitialized{
+	color: #CCC;
+}
+
+.blue.initialized {
+	color: #888;
+}
+
+.blue.recording {
 	color: black;
 }
 

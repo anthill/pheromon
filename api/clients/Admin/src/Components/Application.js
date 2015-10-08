@@ -22,15 +22,16 @@ interface AppProps{
         updated_at, string
     })
     sensorMap: Map (id => sensor{
-        created_at: string,
+        created_at : string,
         id: int,
         installed_at: int,
-        isUpdating: bool,
+        isUpdating: boolean,
         latest_input: string,
-        latest_output: string
+        latest_output: string,
         name: string,
         sim: string,
-        quipu_status: string,
+        client_status: string,
+        signal_status: string,
         wifi_status: string,
         blue_status: string,
         updated_at: string

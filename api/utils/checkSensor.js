@@ -10,11 +10,11 @@ module.exports = function(sim){
     return database.Sensors.get(sim)
     .then(function(sensor){
         if (sensor){
-            debug('SENSOR IN DB, YAY', sensor);
+            debug('SENSOR IN DB, YAY', sim);
             return sensor;
         }
         else {
-            debug('SENSOR NOT IN DB, CREATING');
+            debug('SENSOR NOT IN DB, CREATING', sim);
 
             return database.Sensors.create({
                 'name': pokemon.random(),
@@ -24,7 +24,6 @@ module.exports = function(sim){
                 'stop_hour': CONF.stop_hour
             })
             .then(function(created){
-                debug('SENSOR NOT IN DB, CREATING');
                 return created;
             })
             .catch(function(err){
