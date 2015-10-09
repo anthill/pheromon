@@ -1,7 +1,7 @@
 
 # Unitary Tests for Pheromon
 
-20 tests are available for now.
+21 tests are available for now.
 
 ## Database API
   
