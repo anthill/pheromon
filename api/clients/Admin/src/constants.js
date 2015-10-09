@@ -3,6 +3,7 @@
 var keyMirror = require('keymirror');
 
 var wifiStatus = keyMirror({
+    NODATA: null,
     SLEEPING: null,
     MONITORING: null,
     RECORDING: null
@@ -25,6 +26,7 @@ var clientStatus = keyMirror({
 });
 
 var blueStatus = keyMirror({
+    NODATA: null,
     UNINITIALIZED: null,
     INITIALIZED: null,
     RECORDING: null

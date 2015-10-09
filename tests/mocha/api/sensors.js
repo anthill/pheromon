@@ -42,7 +42,6 @@ describe('Verify API', function() {
 
                 return api.createSensor(sensor)
                 .then(function(created){
-                    console.log('========================DATABASE Cache', database.Sensors.cache())
                     expect(created.name).to.deep.equal('Sensor1');
                     expect(created.sim).to.deep.equal('290');
                 });

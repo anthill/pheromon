@@ -32,7 +32,7 @@ module.exports = {
                 db.query(query, function (err, result) {
                     if (err) reject(err);
                     else{
-                        sensorCache = 'QUELQUE CHOSE';
+                        sensorCache = 'QUELQUE CHOSE'; // need to ask David about that
                         resolve(result.rows[0]);
                     }
                         

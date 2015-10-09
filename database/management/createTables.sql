@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS lifecycle(
     updated_at  timestamp without time zone DEFAULT current_timestamp
 );
 
-CREATE TYPE wifi_status AS ENUM ('sleeping', 'monitoring', 'recording');
-CREATE TYPE blue_status AS ENUM ('uninitialized', 'initialized', 'recording');
+CREATE TYPE wifi_status AS ENUM ('NODATA', 'sleeping', 'monitoring', 'recording');
+CREATE TYPE blue_status AS ENUM ('NODATA', 'uninitialized', 'initialized', 'recording');
 CREATE TYPE signal_status AS ENUM ('NODATA', 'GPRS', 'EDGE', '3G', 'H/H+');
 CREATE TYPE client_status AS ENUM ('disconnected', 'connected', 'tunnelling');
 
