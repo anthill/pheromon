@@ -18,6 +18,7 @@ module.exports = function(authToken, io){
     maestro.on('connect', function () {
 
         maestro.subscribe('init/#');
+        maestro.subscribe('disconnection/#');
         maestro.subscribe('status/#');
         maestro.subscribe('measurement/#');
         maestro.subscribe('cmdResult/#');
@@ -57,20 +58,49 @@ module.exports = function(authToken, io){
 
             checkSensor(sim)
             .then(function(sensor){
-                console.log('AFTER CHECK', sensor);
+                debug('AFTER CHECK', sensor);
 
                 switch(main){
                     case 'init':
                         var date = new Date();
-                        var cmd = ['init', sensor.period, sensor.start_hour, sensor.stop_hour, date.toISOString()].join(' ');
-                        maestro.publish(sim, cmd);
+
+                        database.Sensors.update(sensor.sim, {client_status: 'connected'}) // this is to set the sensor to 'CONNECTED' in D
+                        .then(function() {
+                            io.emit('status', {sensorId: sensor.id});
+                            var cmd = ['init', sensor.period, sensor.start_hour, sensor.stop_hour, date.toISOString()].join(' ');
+                            maestro.publish(sim, cmd);
+
+                            console.log(type + 'status data updated for sensor');
+                        })
+                        .catch(function(err) {
+                            console.log('error : cannot update sensor in DB :', err);
+                        });
                         break;
 
-                    case 'status':
-                        var delta = {};
-                        delta[type + '_status'] = message;
+                    case 'disconnection':
+                        var deltaDisc = {
+                            client_status: 'disconnected',
+                            signal_status: 'NODATA',
+                            wifi_status: 'NODATA',
+                            blue_status: 'NODATA'
+                        };
 
-                        database.Sensors.update(sensor.sim, delta)
+                        database.Sensors.update(sensor.sim, deltaDisc)
+                        .then(function() {
+                            io.emit('status', {sensorId: sensor.id});
+                            console.log('Sensor', sensor.sim, 'disconnected');
+                        })
+                        .catch(function(err) {
+                            console.log('error : cannot store measurement in DB :', err);
+                        });
+                        break;
+
+
+                    case 'status':
+                        var deltaStatus = {};
+                        deltaStatus[type + '_status'] = message;
+
+                        database.Sensors.update(sensor.sim, deltaStatus)
                         .then(function() {
                             io.emit('status', {sensorId: sensor.id});
                             console.log(type + 'status data updated for sensor');
@@ -81,7 +111,6 @@ module.exports = function(authToken, io){
                         break;
 
                     case 'measurement':
-                        console.log('RECEIVED', message);
                         
                         sigCodec.decode(message)
                         .then(function(data){

@@ -37,14 +37,46 @@ describe('Broker Testing', function() {
                 }
             );
 
-            fakeSensor.on('connect', function () {
-                reject();
-            });
-
             setTimeout(function(){
                 resolve();
             }, 500);
 
         });
     });
+
+    it('Broker should send message on status/ topic when a client disconnects', function () {
+
+        return new Promise(function(resolve, reject){
+            fakeSensor = mqtt.connect('mqtt://broker:1883',
+                {
+                    username: simId,
+                    password: PRIVATE.token,
+                    clientId: simId
+                }
+            );
+
+            fakeSensor.on('connect', function () {
+                fakeSensor.end();
+
+                setTimeout(function(){
+                    api.getSensor(simId)
+                    .then(function(sensor){
+                        expect(sensor.client_status).to.deep.equal('disconnected');
+                        expect(sensor.signal_status).to.deep.equal('NODATA');
+                        expect(sensor.blue_status).to.deep.equal('NODATA');
+                        expect(sensor.wifi_status).to.deep.equal('NODATA');
+                        resolve();
+                    })
+                    .catch(function(err){
+                        reject(err);
+                    });
+
+                }, 500);
+
+            });
+
+        });
+    });
+
+
 });

@@ -17,16 +17,18 @@ interface placeProps{
         sensor_ids: array
     },  
     mySensors: [{
-        create_at : string,
+        created_at : string,
         id: int,
         installed_at: int,
         isUpdating: boolean,
         latest_input: string,
         latest_output: string,
         name: string,
-        phone_number: string,
-        quipu_status: string,
-        sense_status: string,
+        sim: string,
+        client_status: string,
+        signal_status: string,
+        wifi_status: string,
+        blue_status: string,
         updated_at: string
     }],
     antFromNameMap: Immutable Map,

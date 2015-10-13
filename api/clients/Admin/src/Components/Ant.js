@@ -17,8 +17,8 @@ interface AntProps{
         latest_output: string,
         name: string,
         sim: string,
-        quipu_status: string,
-        signal: string,
+        client_status: string,
+        signal_status: string,
         wifi_status: string,
         blue_status: string,
         updated_at: string,
@@ -59,11 +59,15 @@ var Ant = React.createClass({
 
         var classes = [
             'ant',
-            props.ant.quipu_status ? props.ant.quipu_status.toLowerCase() : '',
-            props.ant.wifi_status ? props.ant.wifi_status.toLowerCase() : '',
+            props.ant.client_status ? props.ant.client_status.toLowerCase() : '',
+            
+            props.ant.blue_status ? props.ant.blue_status.toLowerCase() : '',
             props.isSelected ? 'selected' : '',
             props.ant.isUpdating ? 'updating' : ''
         ];
+
+        var wifiClasses = ['wifi', props.ant.wifi_status ? props.ant.wifi_status.toLowerCase() : ''];
+        var blueClasses = ['blue', props.ant.blue_status ? props.ant.blue_status.toLowerCase() : ''];
 
         return React.DOM.div({className: classes.join(' ')},
             React.DOM.input({
@@ -91,30 +95,38 @@ var Ant = React.createClass({
                     ),
                     React.DOM.div({},
                         React.DOM.div({}, 'Sim'),
-                        new Modifiable({
-                            className: 'sim',
-                            isUpdating: false,
-                            text: props.ant.sim,
-                            dbLink: {
-                                sim: props.ant.sim,
-                                field: 'sim'
-                            },
-                            onChange: props.onChangeSensor
-                        })
+                        React.DOM.div({}, props.ant.sim)
+                        // new Modifiable({
+                        //     className: 'sim',
+                        //     isUpdating: false,
+                        //     text: props.ant.sim,
+                        //     dbLink: {
+                        //         sim: props.ant.sim,
+                        //         field: 'sim'
+                        //     },
+                        //     onChange: props.onChangeSensor
+                        // })
                     )
                 ),
-                React.DOM.li({className: 'quipu dark'},
+                React.DOM.li({className: 'client dark'},
                     React.DOM.div({},
-                        React.DOM.div({}, 'Quipu Status'),
-                        React.DOM.div({}, props.ant.quipu_status)
+                        // React.DOM.div({}, 'Client Status'),
+                        React.DOM.div({}, props.ant.client_status),
+                        React.DOM.div({}, props.ant.signal_status)
                     )
                 ),
                 React.DOM.li({className: 'sense light'},
                     React.DOM.div({},
-                        React.DOM.div({}, 'Wifi'),
-                        React.DOM.div({className: 'status'},
-                            React.DOM.div({}, 'Status: '),
-                            React.DOM.div({}, props.ant.wifi_status)
+                        React.DOM.div({}, 'Sensors'),
+                        React.DOM.div({className: 'sensors'},
+                            React.DOM.div({className: wifiClasses.join(' ')}, 
+                                React.DOM.i({className: 'flaticon-wifi74'}),
+                                React.DOM.div({}, props.ant.wifi_status)
+                            ),
+                            React.DOM.div({className: blueClasses.join(' ')}, 
+                                React.DOM.i({className: 'flaticon-logotype56'}),
+                                React.DOM.div({}, props.ant.blue_status)
+                            )
                         ),
                         React.DOM.div({className: 'settings'},
                             React.DOM.div({}, 'Settings: '),
