@@ -61,7 +61,7 @@ module.exports = function(authToken){
                     authorized = (token.toString() === authToken);
                 }
                 catch(err) {
-                    console.log("Error in broker authenticator:", err);
+                    console.log('Error in broker authenticator:', err);
                     authorized = false;
                     callback(err, false);
                 }
