@@ -1,7 +1,7 @@
 
 # Unitary Tests for Pheromon
 
-20 tests are available for now.
+21 tests are available for now.
 
 ## Database API
   
@@ -22,20 +22,21 @@
   ## Broker
   
 13. Broker should not authenticate sensor with fake token
+14. Broker should send message on status/ topic when a client disconnects
 
   ## Maestro utils
   
   `checkSensor` is a utility function of maestro. `checkSensor` checks if the sensor that sent a message is known in the database, and if not, creates it.
 
-14. `checkSensor` should register unknown sensor
-15. `checkSensor` should not register known sensor
+15. `checkSensor` should register unknown sensor
+16. `checkSensor` should not register known sensor
 
   ## Maestro
   
   Tests to verify complete maestro functionality, from sensor message to maestro response.
 
-16. Maestro should register unknown sensor
-17. Maestro should send back init command when asked
-18. Maestro should register sensor status update in DB
-19. Pushing wifi measurements
-20. Emitting commands through socket should send command to sensors
+17. Maestro should register unknown sensor
+18. Maestro should send back init command when asked
+19. Maestro should register sensor status update in DB
+20. Pushing wifi measurements
+21. Emitting commands through socket should send command to sensors
