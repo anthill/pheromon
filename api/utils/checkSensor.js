@@ -3,10 +3,19 @@
 var pokemon = require('pokemon-names');
 var database = require('../../database');
 var debug = require('../../tools/debug');
+var makeMap = require('../../tools/makeMap');
 
 var CONF = require('../../CONF.json');
 
-module.exports = function(sim){
+/*
+    checkSensors' role is to:
+    - verify sensor exists in DB
+        - if not, create it
+    - if a measurement type is provided, verify that the sensor has it registered
+        - if not, create it
+*/
+
+module.exports = function(sim, type){
     return database.Sensors.get(sim)
     .then(function(sensor){
         if (sensor){
@@ -25,10 +34,21 @@ module.exports = function(sim){
             })
             .then(function(created){
                 return created;
-            })
-            .catch(function(err){
-                console.log('Error in sensor check', err);
             });
         }  
+    })
+    .then(function(sensor){
+        var outputs = makeMap(sensor.outputs);
+
+        if (type && !outputs.has(type)){ // if type exists and was not referenced in DB, create it
+            console.log('SIM', sim);
+            return database.Sensors.addOutput(sim, type);
+        }
+        else // do nothing
+            return sensor;
+
+    })
+    .catch(function(err){
+        console.log('Error in sensor check', err);
     });
 };

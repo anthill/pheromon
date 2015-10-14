@@ -57,7 +57,6 @@ module.exports = {
             var query = places
                 .select('*')
                 .where(places.id.equals(id))
-                .from(places)
                 .toQuery();
 
             return new Promise(function (resolve, reject) {
@@ -78,7 +77,6 @@ module.exports = {
             
             var query = places
                 .select('*')
-                .from(places)
                 .toQuery();
 
             return new Promise(function (resolve, reject) {

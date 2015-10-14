@@ -5,11 +5,11 @@ var io = require('socket.io-client');
 
 var Application = React.createFactory(require('./Components/Application.js'));
 
-var makeMap = require('../../_common/js/makeMap.js');
 var resetUpdate = require('../../_common/js/resetUpdate.js');
 
 var prepareAPI = require('../../../../tools/prepareAPI.js');
 var sendReq = require('../../../../tools/sendReq.js');
+var makeMap = require('../../../../tools/makeMap.js');
 
 var api = prepareAPI(sendReq);
 
