@@ -18,8 +18,6 @@ module.exports = {
             return acc;
         }, {});
 
-        console.log('BLA======', sensorData.sim, types);
-
         // first create the sensor
         return databaseP.then(function (db) {
 
