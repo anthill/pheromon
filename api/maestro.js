@@ -5,7 +5,11 @@ var mqtt = require('mqtt');
 var sigCodec = require('pheromon-codecs').signalStrengths;
 var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
+var makeMap = require('../tools/makeMap');
 var database = require('../database');
+
+var CLIENT = 'client';
+var SIGNAL = 'signal';
 
 module.exports = function(authToken, io){
 
@@ -56,7 +60,7 @@ module.exports = function(authToken, io){
 
             // maybe add a function to check topics
 
-            checkSensor(sim)
+            checkSensor(sim, type)
             .then(function(sensor){
                 debug('AFTER CHECK', sensor);
 
@@ -77,39 +81,37 @@ module.exports = function(authToken, io){
                         });
                         break;
 
-                    case 'disconnection':
-                        var deltaDisc = {
-                            client_status: 'disconnected',
-                            signal_status: 'NODATA',
-                            wifi_status: 'NODATA',
-                            blue_status: 'NODATA'
-                        };
-
-                        database.Sensors.update(sensor.sim, deltaDisc)
-                        .then(function() {
-                            io.emit('status', {sensorId: sensor.id});
-                            console.log('Sensor', sensor.sim, 'disconnected');
-                        })
-                        .catch(function(err) {
-                            console.log('error : cannot store measurement in DB :', err);
-                        });
-                        break;
-
-
                     case 'status':
                         var deltaStatus = {};
-                        deltaStatus[type + '_status'] = message;
 
-                        database.Sensors.update(sensor.sim, deltaStatus)
-                        .then(function() {
-                            io.emit('status', {sensorId: sensor.id});
-                            console.log(type + 'status data updated for sensor');
-                        })
-                        .catch(function(err) {
-                            console.log('error : cannot store measurement in DB :', err);
-                        });
+                        // update only sensor, client and signal are reserved keywords
+                        if (type === CLIENT || type === SIGNAL){ 
+                            deltaStatus[type + '_status'] = message;
+
+                            database.Sensors.update(sensor.sim, deltaStatus)
+                            .then(function() {
+                                io.emit('status', {sensorId: sensor.id});
+                                console.log(type + 'status data updated for sensor');
+                            })
+                            .catch(function(err) {
+                                console.log('error : cannot store measurement in DB :', err);
+                            });
+                        }
+                        // update only outputs
+                        else {
+                            deltaStatus['status'] = message;
+
+                            database.Sensors.updateOutput(sensor.id, type, deltaStatus) // the output is linked to the id of the sensor, not to the sim
+                            .then(function() {
+                                io.emit('status', {sensorId: sensor.id});
+                                console.log(type + 'status data updated for sensor');
+                            })
+                            .catch(function(err) {
+                                console.log('error : cannot store measurement in DB :', err);
+                            });
+                        }
                         break;
-
+                            
                     case 'measurement':
                         
                         sigCodec.decode(message)
@@ -125,23 +127,23 @@ module.exports = function(authToken, io){
                                     ]
                                 }
                             */
-                            debug('Measurement to register', data);
+                            debug('Measurement to register', data, sensor.outputs);
+
+                            var outputId = makeMap(sensor.outputs, 'type').get(type).id;
+                            var value = data.devices.map(function (measurement) {
+                                return measurement.signal_strength;
+                            });
 
                             database.Measurements.create({
-                                sensor_sim: sim,
-                                type: type,
-                                value: data.devices.map(function (measurement) {
-                                    return measurement.signal_strength;
-                                }),
+                                output_id: outputId,
+                                value: value,
                                 date: data.date
                             })
                             .then(function() {
                                 io.emit('data', {
                                     installed_at: sensor.installed_at,
                                     type: type,
-                                    value: data.devices.map(function (measurement) {
-                                        return measurement.signal_strength;
-                                    }),
+                                    value: value,
                                     date: data.date
                                 });
                                 console.log('measurement of type', type, 'updated');

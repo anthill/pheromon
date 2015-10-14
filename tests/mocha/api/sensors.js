@@ -3,6 +3,7 @@ require('es6-shim');
 
 var database = require('../../../database');
 var sendReq = require('../../../tools/sendNodeReq');
+var makeMap = require('../../../tools/makeMap');
 
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
@@ -37,11 +38,15 @@ describe('Verify API', function() {
 
                 var sensor = {
                     name: 'Sensor1',
-                    sim: '290'
+                    sim: '290',
+                    outputs: ['type1', 'type2']
                 };
 
                 return api.createSensor(sensor)
                 .then(function(created){
+                    var outputs = makeMap(created.outputs, 'type');
+
+                    expect(outputs.size).to.deep.equal(2);
                     expect(created.name).to.deep.equal('Sensor1');
                     expect(created.sim).to.deep.equal('290');
                 });
@@ -135,7 +140,8 @@ describe('Verify API', function() {
         describe('Get Sensor', function(){
             var sensor = {
                 name: 'Sensor1',
-                sim: '290'
+                sim: '290',
+                outputs: ['type1', 'type2']
             };
 
             before('Creating sensor', function(){
@@ -146,8 +152,11 @@ describe('Verify API', function() {
 
                 return api.getSensor(sensor.sim)
                 .then(function(fetched){
+                    var outputs = makeMap(fetched.outputs, 'type');
+
                     expect(fetched.name).to.deep.equal('Sensor1');
                     expect(fetched.sim).to.deep.equal('290');
+                    expect(outputs.size).to.deep.equal(2);
                 });
 
             });
@@ -157,11 +166,12 @@ describe('Verify API', function() {
 
             before('Creating sensors', function(){
 
-                var creationPs = [0, 1, 2, 3].map(function(item){
+                var creationPs = [1, 2, 3, 4].map(function(item){
 
                     var sensor = {
                         name: 'Sensor' + item,
-                        sim: item * 10
+                        sim: item * 10,
+                        outputs: ['type1', 'type2']
                     };
 
                     return api.createSensor(sensor);
@@ -174,7 +184,10 @@ describe('Verify API', function() {
             it('/sensor/getAll', function () {
                 return api.getAllSensors()
                 .then(function(fetcheds){
+                    var outputs = makeMap(fetcheds[0].outputs, 'type');
+
                     expect(fetcheds.length).to.deep.equal(4);
+                    expect(outputs.size).to.deep.equal(2);
                 });
 
             });

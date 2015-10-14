@@ -7,10 +7,9 @@ var Application = React.createFactory(require('./Components/Application.js'));
 
 var prepareAPI = require('../../../../tools/prepareAPI.js');
 var sendReq = require('../../../../tools/sendReq.js');
+var makeMap = require('../../../../tools/makeMap.js');
 
 var api = prepareAPI(sendReq);
-
-var makeMap = require('../../_common/js/makeMap.js');
 
 var errlog = console.error.bind(console);
 
@@ -35,26 +34,26 @@ var topLevelStore = {
     placeMap: undefined,
     selectedPlaceMap: new Map(),
     updatingIDs: [],
-    getPlaceMeasurements: function(place){
-        api.getPlaceMeasurements({id: place.id})
-            .then(function(measurements){
-                console.log('place measurements', place, measurements);
-                
-                // sort by asc time in case it's not already thus sorted
-                measurements.sort(function(m1, m2){
-                    return new Date(m1.date).getTime() - new Date(m2.date).getTime();
+    getPlaceMeasurements: function(place, types){
+        api.getPlaceMeasurements({id: place.id, types: types})
+        .then(function(measurements){
+            console.log('place measurements', place, measurements);
+            
+            // sort by asc time in case it's not already thus sorted
+            measurements.sort(function(m1, m2){
+                return new Date(m1.date).getTime() - new Date(m2.date).getTime();
+            });
+            // place.measurements format is : [{date: Date, value: Int}, {date: Date, value: Int}, ...]
+            place.measurements = measurements.map(function (measurement) {
+                return ({
+                    date: measurement.date,
+                    value: measurement.value.length
                 });
-                // place.measurements format is : [{date: Date, value: Int}, {date: Date, value: Int}, ...]
-                place.measurements = measurements.map(function (measurement) {
-                    return ({
-                        date: measurement.date,
-                        value: measurement.value.length
-                    });
-                });
-                topLevelStore.selectedPlaceMap.set(place.id, place);
-                render();
-            })
-            .catch(errlog);
+            });
+            topLevelStore.selectedPlaceMap.set(place.id, place);
+            render();
+        })
+        .catch(errlog);
     }
 };
 

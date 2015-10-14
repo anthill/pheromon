@@ -6,6 +6,7 @@ var databaseP = require('./management/databaseClientP');
 var places = decl.places;
 var sensor = decl.sensors;
 var measurement = decl.measurements;
+var output = decl.outputs;
 
 var toExport = {
     Places: require('./models/places.js'),
@@ -14,6 +15,16 @@ var toExport = {
     complexQueries: {
         currentPlaceAffluences: function(){
             return databaseP.then(function(db) {
+                var place_sensor_output_measurement = places
+                    .join(sensor
+                        .join(output
+                            .join(measurement)
+                            .on(measurement.output_id.equals(output.id)))
+                        .on(output.sensor_id.equals(sensor.id))
+                    .on(
+                        places.id.equals(sensor.installed_at)
+                    ));
+
                 /*
                     For each place, get the last measurement date
                 */
@@ -24,11 +35,7 @@ var toExport = {
                         measurement.date.max().as('last_date')
                     )
                     .from(
-                        places
-                            .join(sensor
-                                .join(measurement)
-                                .on(sensor.sim.equals(measurement.sensor_sim)))
-                            .on(places.id.equals(sensor.installed_at))
+                        place_sensor_output_measurement
                     )
                     .group(places.id, sensor.sim);
 
@@ -44,16 +51,11 @@ var toExport = {
                             .as('latest')
                     )
                     .from(
-                        places
-                            .join(sensor
-                                .join(measurement)
-                                .on(sensor.sim.equals(measurement.sensor_sim)))
-                            .on(places.id.equals(sensor.installed_at))
+                        place_sensor_output_measurement
                             .join(latestPlaceMeasurementDate)
                             .on(places.id.equals(latestPlaceMeasurementDate.id).and(
                                 latestPlaceMeasurementDate.last_date.equals(measurement.date)
-                            ))
-                    );
+                            )));
 
                 /*
                     For each recycling center, get the maximum measurement (and recycling center infos)
@@ -68,10 +70,11 @@ var toExport = {
                     .from(
                         places
                             .join(sensor
-                                .join(measurement)
-                                .on(sensor.sim.equals(measurement.sensor_sim)))
-                            .on(places.id.equals(sensor.installed_at))
-                    )
+                                .join(output
+                                    .join(measurement)
+                                    .on(measurement.output_id.equals(output.id)))
+                                .on(output.sensor_id.equals(sensor.id))
+                            .on(places.id.equals(sensor.installed_at))))
                     .group(places.id, sensor.sim);
 
                 /*
@@ -97,10 +100,9 @@ var toExport = {
                     });
                 });
             });
-
         },
 
-        getPlaceMeasurements: function(placeId){
+        getPlaceMeasurements: function(placeId, types){
             return databaseP.then(function(db){
 
                 var query = sensor
@@ -110,14 +112,16 @@ var toExport = {
                         measurement
                             .literal('array_length(measurements.value, 1)')
                             .as('entry'),
-                        measurement.value
+                        measurement.value,
+                        output.type
                     )
+                    .where(sensor.installed_at.equals(placeId), output.type.in(types))
                     .from(
                         sensor
-                            .join(measurement)
-                            .on(sensor.sim.equals(measurement.sensor_sim))
-                    )
-                    .where(sensor.installed_at.equals(placeId))
+                            .join(output
+                                .join(measurement)
+                                .on(measurement.output_id.equals(output.id)))
+                            .on(output.sensor_sim.equals(sensor.sim)))
                     .toQuery();
 
                 return new Promise(function (resolve, reject) {
@@ -129,38 +133,39 @@ var toExport = {
             });
         },
 
-        getSensorMeasurements: function(sim, type){
+        getSensorMeasurements: function(sim, types){
             return databaseP.then(function(db){
 
                 var query = sensor
                     .select(
                         sensor.sim,
                         measurement.date,
-                        measurement.type,
+                        output.type,
                         measurement
                             .literal('array_length(measurements.value, 1)')
                             .as('entry'),
                         measurement.value
                     )
-                    .where(sensor.sim.equals(sim))
-                    .where(measurement.type.equals(type)) // i don't think this is valid, ok for now (lint purposes)
+                    .where(sensor.sim.equals(sim), output.type.in(types))
                     .from(
                         sensor
-                            .join(measurement)
-                            .on(sensor.sim.equals(measurement.sensor_sim))
-                    )
+                            .join(output
+                                .join(measurement)
+                                .on(measurement.output_id.equals(output.id)))
+                            .on(output.sensor_id.equals(sensor.id)))
                     .toQuery();
 
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
                         if (err) reject(err);
-                        else resolve(result.rows);
+                        else
+                            resolve(result.rows);
                     });
                 });
             });
         },
 
-        getAllPlacesInfos: function() {
+        getAllPlacesInfos: function() { // gets the place with the installed sensors
             return databaseP.then(function (db) {
 
                 var query = places
@@ -179,39 +184,12 @@ var toExport = {
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
                         if (err) reject(err);
-
                         else resolve(result.rows);
                     });
                 });
             })
             .catch(function(err){
                 console.log('ERROR in getAllPlacesInfos', err);
-            });
-        },
-
-        // Delete a sensor a its measurements
-        deleteSensorAndMeasurement: function(id) {
-
-            return toExport.Measurements.deleteBySim(id)
-            .then(function() {
-
-                return toExport.Sensors.delete(id);
-            })
-            .catch(function(err){
-                console.log('ERROR in deleteSensorAndMeasurement', err);
-            });
-        },
-
-        // Delete every sensors and measurements
-        deleteAllSensorsAndMeasurements: function() {
-
-            return toExport.Measurements.deleteAll()
-            .then(function() {
-
-                return toExport.Sensors.deleteAll();
-            })
-            .catch(function(err){
-                console.log('ERROR in deleteAllSensorsAndMeasurements', err);
             });
         }
     }

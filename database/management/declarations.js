@@ -16,10 +16,22 @@ exports.measurements = sql.define({
 		{ name: 'created_at' },
 		{ name: 'updated_at' },
 		{ name: 'id' },
-		{ name: 'sensor_sim' },
-		{ name: 'type' },
+		{ name: 'output_id' },
 		{ name: 'value' },
 		{ name: 'date' }
+	]
+});
+
+
+exports.outputs = sql.define({
+	name: 'outputs',
+	columns: [
+		{ name: 'created_at' },
+		{ name: 'updated_at' },
+		{ name: 'id' },
+		{ name: 'sensor_id' },
+		{ name: 'type' },
+		{ name: 'status' }
 	]
 });
 
@@ -49,8 +61,6 @@ exports.sensors = sql.define({
 		{ name: 'project' },
 		{ name: 'sim' },
 		{ name: 'client_status' },
-		{ name: 'wifi_status' },
-		{ name: 'blue_status' },
 		{ name: 'signal_status' },
 		{ name: 'latest_input' },
 		{ name: 'latest_output' },

@@ -2,13 +2,6 @@
 
 var keyMirror = require('keymirror');
 
-var wifiStatus = keyMirror({
-    NODATA: null,
-    SLEEPING: null,
-    MONITORING: null,
-    RECORDING: null
-});
-
 var signalKeys = {};
 
 signalKeys['NODATA'] = null;
@@ -23,6 +16,14 @@ var clientStatus = keyMirror({
     DISCONNECTED: null,
     CONNECTED: null,
     TUNNELLING: null
+});
+
+// Is it still relevant to impose these values when other types of measurements might be added ?
+var wifiStatus = keyMirror({
+    NODATA: null,
+    SLEEPING: null,
+    MONITORING: null,
+    RECORDING: null
 });
 
 var blueStatus = keyMirror({

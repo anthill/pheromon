@@ -21,6 +21,7 @@ var PRIVATE = require('../../PRIVATE.json');
 
 var database = require('../../database');
 var sendReq = require('../../tools/sendNodeReq');
+var makeMap = require('../../tools/makeMap');
 
 var prepareAPI = require('../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
@@ -108,14 +109,16 @@ describe('Maestro testing', function(){
     describe('Fake Sensor', function() {
 
         var fakeSensor;
-        var simId = 'simNumber1';
+        var i = 0;
+        var simId;
 
         // This is mainly to override the 'onMessage' event handler.
         beforeEach('Creating Fake Sensor', function(){
+            i++;
+            simId = 'simNumber' + i;
             console.log('Before: creating fake sensor');
             return createFakeSensor(simId)
             .then(function(sensor){
-                console.log('SENSOR', simId);
                 fakeSensor = sensor;
             });
         });
@@ -163,7 +166,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should register sensor status update in DB', function () {
+        it('Maestro should register output status update in DB', function () {
 
             fakeSensor.publish('status/' + simId + '/wifi', 'recording');
             
@@ -171,7 +174,8 @@ describe('Maestro testing', function(){
                 setTimeout(function(){
                     api.getSensor(simId)
                     .then(function(sensor){
-                        expect(sensor.wifi_status).to.deep.equal('recording');
+                        var outputs = makeMap(sensor.outputs, 'type');
+                        expect(outputs.get('wifi').status).to.deep.equal('recording');
                         resolve();
                     })
                     .catch(function(err){
@@ -181,6 +185,8 @@ describe('Maestro testing', function(){
                 }, 200);
             });
         });
+
+        // add test for client status
 
         it('Pushing wifi measurements should register measurements in DB', function () {
 
@@ -207,7 +213,7 @@ describe('Maestro testing', function(){
 
                 var data = {
                     sim: simId,
-                    type: 'wifi'
+                    types: ['wifi']
                 };
 
                 return new Promise(function(resolve, reject){

@@ -30,19 +30,6 @@ module.exports = function(authToken){
 
         server.on('clientDisconnected', function(client) {
             debug('Client', client.id, 'disconnected');
-            if (client.id !== 'maestro'){
-
-                var message = {
-                    topic: 'disconnection/' + client.id,
-                    payload: '',
-                    qos: 2, // 2 because it doesn't cost anything when publishing to maestro from broker
-                    retain: false
-                };
-                
-                server.publish(message, function() {
-                    debug('Disconnection of', client.id, 'notified to maestro');
-                });
-            }
         });
 
         server.on('published', function(packet, client) {

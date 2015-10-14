@@ -63,7 +63,7 @@ module.exports = function(app, debug){
         var sim = req.params.sim;
         console.log('deleting', sim);
 
-        database.complexQueries.deleteSensorAndMeasurement(sim)
+        database.Sensors.delete(sim)
         .then(function(data){
             res.status(200).send(data);
         })
@@ -76,7 +76,7 @@ module.exports = function(app, debug){
     app.delete('/sensor/deleteAll', function(req, res){    
         console.log('deleting all sensors');
 
-        database.complexQueries.deleteAllSensorsAndMeasurements()
+        database.Sensors.deleteAll()
         .then(function(data){
             res.status(200).send(data);
         })
@@ -183,9 +183,10 @@ module.exports = function(app, debug){
 
     app.post('/measurements/place', function(req, res){
         var placeId = req.body.id;
-        console.log('requesting place id', placeId);
+        var types = req.body.types;
+        console.log('requesting place id', placeId, types);
         
-        database.complexQueries.getPlaceMeasurements(placeId)
+        database.complexQueries.getPlaceMeasurements(placeId, types)
         .then(function(data){
             res.status(200).send(data);
         })
@@ -198,10 +199,10 @@ module.exports = function(app, debug){
     app.post('/measurements/sensor', function(req, res){
 
         var sim = req.body.sim;
-        var type = req.body.type;
+        var types = req.body.types;
 
         console.log('requesting sensor measurements for sensor', sim);
-        database.complexQueries.getSensorMeasurements(sim, type)
+        database.complexQueries.getSensorMeasurements(sim, types)
         .then(function(data){
             console.log('data', data);
             res.status(200).send(data);
