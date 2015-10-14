@@ -13,13 +13,13 @@ var makeMap = require('../../../../tools/makeMap.js');
 
 var api = prepareAPI(sendReq);
 
-console.log('api', api);
-
 var dbStatusMap = require('./dbStatusMap.js');
 
 var socket = io();
 
 var errlog = console.error.bind(console);
+
+var HOUR = 1000 * 60 * 60;
 
 var topLevelStore = {
     sensorMap: undefined,
@@ -207,19 +207,8 @@ function refreshView(){
             });
             
             var sensorMap = makeMap(sensors, 'id');
-            console.log('sensorMap', sensorMap);
-
-            // transform dbStatus to constants
-            sensorMap.forEach(function(sensor){
-                sensor.client_status = sensor.client_status ? dbStatusMap.get(sensor.client_status) : '';
-                sensor.wifi_status = sensor.wifi_status ? dbStatusMap.get(sensor.wifi_status) : '';
-                sensor.signal_status = sensor.signal_status ? dbStatusMap.get(sensor.signal_status.toLowerCase()) : '';
-                sensor.blue_status = sensor.blue_status ? dbStatusMap.get(sensor.blue_status) : '';
-            });
-
+            
             topLevelStore.sensorMap = sensorMap;
-
-            console.log('sensorMap', sensorMap);
 
             var measurementsPs = [];
 
@@ -227,11 +216,29 @@ function refreshView(){
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
-                        api.getPlaceMeasurements({id: sensor.installed_at})
+                        api.getPlaceMeasurements({id: sensor.installed_at, types: ['wifi']})
                         .then(function (measurements) {
 
-                            if (measurements && measurements.length)
+                            // check last time the sensor was active
+                            if (measurements && measurements.length){
+
                                 sensor.lastMeasurementDate = measurements[measurements.length - 1].measurement_date;
+
+                                var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR || 
+                                new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
+                
+                                if (isConnected){
+                                    sensor.client_status = dbStatusMap.get(sensor.client_status);
+                                    sensor.signal_status = dbStatusMap.get(sensor.signal_status.toLowerCase());
+                                }
+                                else{
+                                    sensor.client_status = 'DISCONNECTED';
+                                    sensor.signal_status = 'NODATA';
+                                    sensor.outputs.forEach(function(output){
+                                        output.status = 'NODATA';
+                                    });
+                                }
+                            }
                             resolve();
                         })
                         .catch(function (err) {

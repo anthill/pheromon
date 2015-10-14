@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS sensors (
     installed_at    integer REFERENCES places (id) DEFAULT NULL,
     project         text DEFAULT NULL,
     sim             text UNIQUE NOT NULL,
-    client_status   client_status DEFAULT NULL,
-    signal_status   signal_status DEFAULT NULL,
+    client_status   client_status DEFAULT 'disconnected' NOT NULL,
+    signal_status   signal_status DEFAULT 'NODATA' NOT NULL,
     latest_input    text DEFAULT NULL, --Command
     latest_output   text DEFAULT NULL, --Result
     period          real DEFAULT 300, --One measurement every 300 seconds

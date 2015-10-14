@@ -15,6 +15,16 @@ var toExport = {
     complexQueries: {
         currentPlaceAffluences: function(){
             return databaseP.then(function(db) {
+                var place_sensor_output_measurement = places
+                    .join(sensor
+                        .join(output
+                            .join(measurement)
+                            .on(measurement.output_id.equals(output.id)))
+                        .on(output.sensor_id.equals(sensor.id))
+                    .on(
+                        places.id.equals(sensor.installed_at)
+                    ));
+
                 /*
                     For each place, get the last measurement date
                 */
@@ -25,13 +35,8 @@ var toExport = {
                         measurement.date.max().as('last_date')
                     )
                     .from(
-                        places
-                            .join(sensor
-                                .join(output
-                                    .join(measurement)
-                                    .on(measurement.output_id.equals(output.id)))
-                                .on(output.sensor_id.equals(sensor.id))
-                            .on(places.id.equals(sensor.installed_at))))
+                        place_sensor_output_measurement
+                    )
                     .group(places.id, sensor.sim);
 
                 /*
@@ -46,17 +51,11 @@ var toExport = {
                             .as('latest')
                     )
                     .from(
-                        places
-                            .join(sensor
-                                .join(output
-                                    .join(measurement)
-                                    .on(measurement.output_id.equals(output.id)))
-                                .on(output.sensor_id.equals(sensor.id))
-                            .on(places.id.equals(sensor.installed_at))
+                        place_sensor_output_measurement
                             .join(latestPlaceMeasurementDate)
                             .on(places.id.equals(latestPlaceMeasurementDate.id).and(
                                 latestPlaceMeasurementDate.last_date.equals(measurement.date)
-                            ))));
+                            )));
 
                 /*
                     For each recycling center, get the maximum measurement (and recycling center infos)
@@ -192,7 +191,7 @@ var toExport = {
             .catch(function(err){
                 console.log('ERROR in getAllPlacesInfos', err);
             });
-        },
+        }
     }
 };
 

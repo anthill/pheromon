@@ -29,7 +29,6 @@ var CreatorPlace = React.createClass({
     toggleOpen: function(){
         console.log('click');
         var panel = React.findDOMNode(this);
-        console.log('panel', panel);
         panel.classList.toggle('open');
     },
 
