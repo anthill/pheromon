@@ -11,20 +11,19 @@ var outputTable = require('../management/declarations.js').outputs;
 module.exports = {
     create: function (data) {
 
-        var sensorData = {};
-        var types = [];
+        var types = data.outputs ||[];
+        var sensorData = Object.keys(sensorTable).reduce(function(acc, k){
+            if (data[k])
+                acc[k] = data[k];
+            return acc;
+        }, {});
 
-        Object.keys(data).forEach(function(key){
-            if (key === 'outputs')
-                types = data[key];
-            else
-                sensorData[key] = data[key];     
-        });
+        console.log('BLA======', sensorData.sim, types);
 
         // first create the sensor
         return databaseP.then(function (db) {
 
-            if (sensorData.sim === undefined || (typeof(sensorData.sim) === 'string' && !sensorData.sim.length)) {
+            if (typeof(sensorData.sim) !== 'string' && sensorData.sim.length === 0) {
                 throw 'Cannot create sensor : no SIM';
             }
             if (!sensorData.name)
@@ -43,13 +42,16 @@ module.exports = {
             })
             // then create the corresponding inputs
             .then(function(sensor){
+                if (types.length !== 0){
+                    var insertData = types.map(function(type){
+                        return {
+                            sensor_id: sensor.id,
+                            type: type
+                        };
+                    });
 
-                var outputPs = types.map(function(type){
                     var query = outputTable
-                    .insert({
-                        sensor_id: sensor.id,
-                        type: type
-                    })
+                    .insert(insertData)
                     .returning('*')
                     .toQuery();
 
@@ -57,16 +59,20 @@ module.exports = {
                         db.query(query, function (err, result) {
                             if (err) reject(err);
                             else
-                                resolve(result.rows[0]);        
+                                resolve(result.rows);        
                         });
+                    })
+                    // finally return the sensor augmented with output status
+                    .then(function(outputs){
+                        sensor.outputs = outputs;
+                        return sensor;
                     });
-                });
-
-                // finally return the sensor augmented with output status
-                return Promise.all(outputPs).then(function(outputs){
-                    sensor.outputs = outputs;
+                }
+                else {
+                    sensor.outputs = [];
                     return sensor;
-                });
+                }
+                
             });
         })
         .catch(function(err){
@@ -186,32 +192,29 @@ module.exports = {
             // then get the corresponding inputs for each sensor
             .then(function(sensors){
 
-                var sensorPs = sensors.map(function(sensor){
-                    var query = outputTable
+                var query = outputTable
                     .select('*')
-                    .where(outputTable.sensor_id.equals(sensor.id))
+                    .where(outputTable.sensor_id.in(sensors.map(function(s){ return s.id; })))
                     .toQuery();
 
-                    return new Promise(function (resolve, reject) {
-                        db.query(query, function (err, result) {
-                            if (err) reject(err);
-                            else
-                                resolve(result.rows);        
-                        });
-                    })
-
-                    // finally return the sensor augmented with output status
-                    .then(function(outputs){
-                        sensor.outputs = outputs;
-                        return sensor;
+                return new Promise(function (resolve, reject) {
+                    db.query(query, function (err, result) {
+                        if (err) reject(err);
+                        else
+                            resolve(result.rows);        
                     });
-                });
-                
-                // return all sensors
-                return Promise.all(sensorPs).then(function(sensors){
+                })
+                // finally return the sensor augmented with output status
+                .then(function(outputs){
+                    sensors.forEach(function(sensor){
+                        sensor.outputs = [];
+                        outputs.forEach(function(output){
+                            if (output.sensor_id === sensor.id)
+                                sensor.outputs.push(output);
+                        });
+                    });
                     return sensors;
                 });
-            
             });
         })
         .catch(function(err){

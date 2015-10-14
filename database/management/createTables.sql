@@ -54,14 +54,14 @@ CREATE TABLE IF NOT EXISTS outputs (
     id                  SERIAL PRIMARY KEY,
     sensor_id           integer REFERENCES sensors (id) ON DELETE CASCADE NOT NULL,
     type                text NOT NULL, -- This can be signal_strength, temperature, pressure, ... but we can't presuppose it in an enum.
-    status              text DEFAULT 'NODATA'
+    status              text DEFAULT 'NODATA' NOT NULL
 ) INHERITS(lifecycle);
 CREATE TRIGGER updated_at_outputs BEFORE UPDATE ON outputs FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 
 CREATE TABLE IF NOT EXISTS measurements (
     id                  SERIAL PRIMARY KEY,
-    output              integer REFERENCES outputs (id) NOT NULL,
+    output_id           integer REFERENCES outputs (id) NOT NULL,
     "value"             real[] NOT NULL,
     "date"              timestamp without time zone NOT NULL
 ) INHERITS(lifecycle);

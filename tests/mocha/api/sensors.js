@@ -166,7 +166,7 @@ describe('Verify API', function() {
 
             before('Creating sensors', function(){
 
-                var creationPs = [0, 1, 2, 3].map(function(item){
+                var creationPs = [1, 2, 3, 4].map(function(item){
 
                     var sensor = {
                         name: 'Sensor' + item,

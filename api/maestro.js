@@ -135,7 +135,7 @@ module.exports = function(authToken, io){
                             });
 
                             database.Measurements.create({
-                                output: outputId,
+                                output_id: outputId,
                                 value: value,
                                 date: data.date
                             })

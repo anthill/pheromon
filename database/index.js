@@ -29,7 +29,7 @@ var toExport = {
                             .join(sensor
                                 .join(output
                                     .join(measurement)
-                                    .on(measurement.output.equals(output.id)))
+                                    .on(measurement.output_id.equals(output.id)))
                                 .on(output.sensor_id.equals(sensor.id))
                             .on(places.id.equals(sensor.installed_at))))
                     .group(places.id, sensor.sim);
@@ -50,7 +50,7 @@ var toExport = {
                             .join(sensor
                                 .join(output
                                     .join(measurement)
-                                    .on(measurement.output.equals(output.id)))
+                                    .on(measurement.output_id.equals(output.id)))
                                 .on(output.sensor_id.equals(sensor.id))
                             .on(places.id.equals(sensor.installed_at))
                             .join(latestPlaceMeasurementDate)
@@ -73,7 +73,7 @@ var toExport = {
                             .join(sensor
                                 .join(output
                                     .join(measurement)
-                                    .on(measurement.output.equals(output.id)))
+                                    .on(measurement.output_id.equals(output.id)))
                                 .on(output.sensor_id.equals(sensor.id))
                             .on(places.id.equals(sensor.installed_at))))
                     .group(places.id, sensor.sim);
@@ -121,7 +121,7 @@ var toExport = {
                         sensor
                             .join(output
                                 .join(measurement)
-                                .on(measurement.output.equals(output.id)))
+                                .on(measurement.output_id.equals(output.id)))
                             .on(output.sensor_sim.equals(sensor.sim)))
                     .toQuery();
 
@@ -152,7 +152,7 @@ var toExport = {
                         sensor
                             .join(output
                                 .join(measurement)
-                                .on(measurement.output.equals(output.id)))
+                                .on(measurement.output_id.equals(output.id)))
                             .on(output.sensor_id.equals(sensor.id)))
                     .toQuery();
 

@@ -16,7 +16,7 @@ exports.measurements = sql.define({
 		{ name: 'created_at' },
 		{ name: 'updated_at' },
 		{ name: 'id' },
-		{ name: 'output' },
+		{ name: 'output_id' },
 		{ name: 'value' },
 		{ name: 'date' }
 	]
