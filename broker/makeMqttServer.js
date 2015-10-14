@@ -69,7 +69,15 @@ module.exports = function(authToken){
 
         server.on('ready', function(){
             server.authenticate = function (client, username, token, callback) {
-                var authorized = (token.toString() === authToken);
+                var authorized;
+                try {
+                    authorized = (token.toString() === authToken);
+                }
+                catch(err) {
+                    console.log('Error in broker authenticator:', err);
+                    authorized = false;
+                    callback(err);
+                }
 
                 if (authorized)
                     callback(null, authorized);
