@@ -63,7 +63,7 @@ module.exports = function(app, debug){
         var sim = req.params.sim;
         console.log('deleting', sim);
 
-        database.complexQueries.deleteSensorAndMeasurement(sim)
+        database.Sensors.delete(sim)
         .then(function(data){
             res.status(200).send(data);
         })
@@ -76,7 +76,7 @@ module.exports = function(app, debug){
     app.delete('/sensor/deleteAll', function(req, res){    
         console.log('deleting all sensors');
 
-        database.complexQueries.deleteAllSensorsAndMeasurements()
+        database.Sensors.deleteAll()
         .then(function(data){
             res.status(200).send(data);
         })

@@ -193,31 +193,6 @@ var toExport = {
                 console.log('ERROR in getAllPlacesInfos', err);
             });
         },
-
-        // Delete a sensor a its measurements
-        deleteSensorAndMeasurement: function(id) {
-
-            return toExport.Measurements.deleteBySim(id)
-            .then(function() {
-                return toExport.Sensors.delete(id);
-            })
-            .catch(function(err){
-                console.log('ERROR in deleteSensorAndMeasurement', err);
-            });
-        },
-
-        // Delete every sensors and measurements
-        deleteAllSensorsAndMeasurements: function() {
-
-            return toExport.Measurements.deleteAll()
-            .then(function() {
-
-                return toExport.Sensors.deleteAll();
-            })
-            .catch(function(err){
-                console.log('ERROR in deleteAllSensorsAndMeasurements', err);
-            });
-        }
     }
 };
 
