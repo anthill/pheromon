@@ -5,6 +5,7 @@ var database = require('../../database');
 var debug = require('../../tools/debug');
 var makeMap = require('../../tools/makeMap');
 
+var RESERVED = require('./reserved.js');
 var CONF = require('../../CONF.json');
 
 /*
@@ -40,7 +41,7 @@ module.exports = function(sim, type){
     .then(function(sensor){
         var outputs = makeMap(sensor.outputs);
 
-        if (type && !outputs.has(type)){ // if type exists and was not referenced in DB, create it
+        if (type && !outputs.has(type) && !RESERVED.has(type)){ // if type exists and was not referenced in DB, create it
             console.log('SIM', sim);
             return database.Sensors.addOutput(sim, type);
         }
