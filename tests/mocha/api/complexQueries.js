@@ -13,7 +13,6 @@ var assert = chai.assert;
 var io = require('socket.io-client');
 
 var request = require('request');
-var PRIVATE = require('../../../PRIVATE.json');
 
 var database = require('../../../database');
 var sendReq = require('../../../tools/sendNodeReq');

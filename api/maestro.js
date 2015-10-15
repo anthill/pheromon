@@ -8,7 +8,7 @@ var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
 var database = require('../database');
 
-var RESERVED = require('./utils/reserved.js');
+var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
 module.exports = function(authToken, io){
 
@@ -84,7 +84,7 @@ module.exports = function(authToken, io){
                         var deltaStatus = {};
 
                         // update only sensor, client and signal are reserved keywords
-                        if (RESERVED.has(type)){ 
+                        if (SENSOR_STATUS.has(type)){ 
                             deltaStatus[type + '_status'] = message;
 
                             database.Sensors.update(sensor.sim, deltaStatus)
