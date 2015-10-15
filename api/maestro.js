@@ -8,8 +8,7 @@ var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
 var database = require('../database');
 
-var CLIENT = 'client';
-var SIGNAL = 'signal';
+var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
 module.exports = function(authToken, io){
 
@@ -74,7 +73,7 @@ module.exports = function(authToken, io){
                             var cmd = ['init', sensor.period, sensor.start_hour, sensor.stop_hour, date.toISOString()].join(' ');
                             maestro.publish(sim, cmd);
 
-                            console.log(type + 'status data updated for sensor');
+                            console.log('sensor init');
                         })
                         .catch(function(err) {
                             console.log('error : cannot update sensor in DB :', err);
@@ -85,13 +84,13 @@ module.exports = function(authToken, io){
                         var deltaStatus = {};
 
                         // update only sensor, client and signal are reserved keywords
-                        if (type === CLIENT || type === SIGNAL){ 
+                        if (SENSOR_STATUS.has(type)){ 
                             deltaStatus[type + '_status'] = message;
 
                             database.Sensors.update(sensor.sim, deltaStatus)
                             .then(function() {
                                 io.emit('status', {sensorId: sensor.id});
-                                console.log(type + 'status data updated for sensor');
+                                console.log(type, 'status data updated for sensor');
                             })
                             .catch(function(err) {
                                 console.log('error : cannot store measurement in DB :', err);
@@ -104,7 +103,7 @@ module.exports = function(authToken, io){
                             database.Sensors.updateOutput(sensor.id, type, deltaStatus) // the output is linked to the id of the sensor, not to the sim
                             .then(function() {
                                 io.emit('status', {sensorId: sensor.id});
-                                console.log(type + 'status data updated for sensor');
+                                console.log(type, 'status data updated for sensor');
                             })
                             .catch(function(err) {
                                 console.log('error : cannot store measurement in DB :', err);
@@ -122,7 +121,6 @@ module.exports = function(authToken, io){
                                     devices: [
                                         {
                                             signal_strengh:
-                                            ID:
                                         }
                                     ]
                                 }

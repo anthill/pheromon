@@ -3,10 +3,6 @@ require('es6-shim');
 
 var sigCodec = require('pheromon-codecs').signalStrengths;
 
-/* TODO
-    - Sensor latest measurement update changes when measurement is registered in DB
-*/
-
 var mqtt = require('mqtt');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
@@ -129,15 +125,10 @@ describe('Maestro testing', function(){
             
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
-                    api.getAllSensors()
+                    resolve(api.getAllSensors()
                     .then(function(sensors){
                         expect(sensors[0].sim).to.deep.equal('simNumber1');
-                        resolve();
-                    })
-                    .catch(function(err){
-                        reject(err);
-                    });
-
+                    }));
                 }, 200);
             });
         });
@@ -172,15 +163,11 @@ describe('Maestro testing', function(){
             
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
-                    api.getSensor(simId)
+                    resolve(api.getSensor(simId)
                     .then(function(sensor){
                         var outputs = makeMap(sensor.outputs, 'type');
                         expect(outputs.get('wifi').status).to.deep.equal('recording');
-                        resolve();
-                    })
-                    .catch(function(err){
-                        reject(err);
-                    });
+                    }));
 
                 }, 200);
             });
@@ -219,17 +206,13 @@ describe('Maestro testing', function(){
                 return new Promise(function(resolve, reject){
                     setTimeout(function(){
 
-                        api.getMeasurements(data)
+                        resolve(api.getMeasurements(data)
                         .then(function(measurements){
                             console.log('measurements', measurements);
                             expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);
                             expect(Date.parse(measurements[0].date)).to.be.a('number');
-                            resolve();
-                        })
-                        .catch(function(err){
-                            reject(err);
-                        });
+                        }));
 
                     }, 200);
                 });

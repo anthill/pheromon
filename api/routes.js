@@ -170,13 +170,15 @@ module.exports = function(app, debug){
 
     // complex queries
 
-    app.get('/currentAffluence', function(req, res){
-        database.complexQueries.currentPlaceAffluences()
+    app.get('/currentPlaceMeasurements/:type', function(req, res){
+        var type = req.params.type;
+
+        database.complexQueries.currentPlaceMeasurements(type)
         .then(function(data){
             res.status(200).send(data);
         })
         .catch(function(error){
-            console.log('error in /currentAffluence', error);
+            console.log('error in /currentPlaceMeasurements', error);
             res.status(500).send('Couldn\'t get current live affluence database');
         });
     });

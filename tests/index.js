@@ -14,6 +14,7 @@ Promise.all([dbInitP, apiConnectP])
     console.log('Running tests');
 
     var mochaTests = spawn('mocha', ['--recursive', 'tests/mocha/'], {stdio: 'inherit'});
+    // var mochaTests = spawn('mocha', ['--recursive', 'tests/mocha/api/complexQueries.js'], {stdio: 'inherit'});
 
     mochaTests.on('exit', process.exit);
 });

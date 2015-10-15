@@ -65,7 +65,7 @@ function render(){
 render();
 
 // Render again when receiving recyclingCenters from API
-api.getLiveAffluence()
+api.getCurrentPlaceMeasurements('wifi')
     .then(function(places){
         console.log('places', places);
 

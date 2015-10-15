@@ -3,7 +3,7 @@
 var decl = require('./management/declarations.js');
 var databaseP = require('./management/databaseClientP');
 
-var places = decl.places;
+var place = decl.places;
 var sensor = decl.sensors;
 var measurement = decl.measurements;
 var output = decl.outputs;
@@ -13,69 +13,62 @@ var toExport = {
     Sensors: require('./models/sensors.js'),
     Measurements: require('./models/measurements.js'),
     complexQueries: {
-        currentPlaceAffluences: function(){
+        currentPlaceMeasurements: function(type){
             return databaseP.then(function(db) {
-                var place_sensor_output_measurement = places
+
+                var fullJoin = place
                     .join(sensor
                         .join(output
                             .join(measurement)
-                            .on(measurement.output_id.equals(output.id)))
-                        .on(output.sensor_id.equals(sensor.id))
-                    .on(
-                        places.id.equals(sensor.installed_at)
-                    ));
-
+                            .on(measurement.output_id.equals(output.id))
+                        )
+                        .on(output.sensor_id.equals(sensor.id).and(
+                            output.type.equals(type)
+                        )))
+                    .on(place.id.equals(sensor.installed_at));
                 /*
                     For each place, get the last measurement date
                 */
-                var latestPlaceMeasurementDate = places
+                var latestPlaceMeasurementDate = place
                     .subQuery('latest_recycling_center_measurement_date')
                     .select(
-                        places.id,
+                        place.id,
                         measurement.date.max().as('last_date')
                     )
-                    .from(
-                        place_sensor_output_measurement
-                    )
-                    .group(places.id, sensor.sim);
+                    .from(fullJoin)
+                    .group(place.id);
 
                 /*
                     For each recycling center, get the measurement value associated to the last measurement date
                 */
-                var latestPlaceMeasurementValue = places
+                
+                var latestPlaceMeasurementValue = place
                     .subQuery('latest_recycling_center_measurement_value')
                     .select(
-                        places.id,
+                        place.id,
+                        output.type,
                         measurement
                             .literal('array_length(measurements.value, 1)')
                             .as('latest')
                     )
-                    .from(
-                        place_sensor_output_measurement
-                            .join(latestPlaceMeasurementDate)
-                            .on(places.id.equals(latestPlaceMeasurementDate.id).and(
-                                latestPlaceMeasurementDate.last_date.equals(measurement.date)
-                            )));
+                    .from(fullJoin
+                        .join(latestPlaceMeasurementDate)
+                        .on(place.id.equals(latestPlaceMeasurementDate.id).and(
+                            latestPlaceMeasurementDate.last_date.equals(measurement.date)
+                        )));
 
                 /*
                     For each recycling center, get the maximum measurement (and recycling center infos)
                     TODO restrict maximum to the last few months
                 */
-                var maxMeasurementPerPlace = places
+                var maxMeasurementPerPlace = place
                     .subQuery('max_measurement_per_recycling_center')
                     .select(
-                        places.id, places.name, places.lat, places.lon,
+                        place.id, place.name, place.lat, place.lon,
                         'max(array_length(measurements.value, 1))'
                     )
-                    .from(
-                        places
-                            .join(sensor
-                                .join(output
-                                    .join(measurement)
-                                    .on(measurement.output_id.equals(output.id)))
-                                .on(output.sensor_id.equals(sensor.id))
-                            .on(places.id.equals(sensor.installed_at))))
-                    .group(places.id, sensor.sim);
+                    .from(fullJoin)
+                    .group(place.id);
 
                 /*
                     For each recycling center, get
@@ -83,7 +76,7 @@ var toExport = {
                     * maximum number of signals
                     * latest measured number of signals
                 */
-                var query = places
+                var query = place
                     .select('*')
                     .from(maxMeasurementPerPlace
                         .join(latestPlaceMeasurementValue)
@@ -121,7 +114,7 @@ var toExport = {
                             .join(output
                                 .join(measurement)
                                 .on(measurement.output_id.equals(output.id)))
-                            .on(output.sensor_sim.equals(sensor.sim)))
+                            .on(output.sensor_id.equals(sensor.id)))
                     .toQuery();
 
                 return new Promise(function (resolve, reject) {
@@ -168,17 +161,17 @@ var toExport = {
         getAllPlacesInfos: function() { // gets the place with the installed sensors
             return databaseP.then(function (db) {
 
-                var query = places
+                var query = place
                     .select(
                         sensor.literal('array_agg(sensors.id)').as('sensor_ids'),
-                        places.star()
+                        place.star()
                     )
                     .from(
-                        places
+                        place
                         .leftJoin(sensor)
-                        .on(places.id.equals(sensor.installed_at))
+                        .on(place.id.equals(sensor.installed_at))
                     )
-                    .group(places.id)
+                    .group(place.id)
                     .toQuery();
 
                 return new Promise(function (resolve, reject) {

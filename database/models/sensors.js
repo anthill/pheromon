@@ -94,6 +94,7 @@ module.exports = {
                         reject(err);
                     else
                         resolve(result.rows[0]);
+                        
                 });
             });
         })

@@ -35,7 +35,6 @@ CREATE TRIGGER updated_at_places BEFORE UPDATE ON places FOR EACH ROW EXECUTE PR
 CREATE TABLE IF NOT EXISTS sensors (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(100) NOT NULL,
-    -- type         some_enum -- affluence/bin-level
     installed_at    integer REFERENCES places (id) DEFAULT NULL,
     project         text DEFAULT NULL,
     sim             text UNIQUE NOT NULL,
@@ -61,7 +60,7 @@ CREATE TRIGGER updated_at_outputs BEFORE UPDATE ON outputs FOR EACH ROW EXECUTE 
 
 CREATE TABLE IF NOT EXISTS measurements (
     id                  SERIAL PRIMARY KEY,
-    output_id           integer REFERENCES outputs (id) NOT NULL,
+    output_id           integer REFERENCES outputs (id) ON DELETE CASCADE NOT NULL,
     "value"             real[] NOT NULL,
     "date"              timestamp without time zone NOT NULL
 ) INHERITS(lifecycle);
