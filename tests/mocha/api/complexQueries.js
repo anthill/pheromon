@@ -43,6 +43,8 @@ var api = prepareAPI(sendReq, apiOrigin);
 describe('Verify API', function() {
     this.timeout(2000);
 
+    var simId = 'sim01'
+
     // after all tests, clear the table
     after('clearing Sensor Table', function(){
         return database.Sensors.deleteAll()
@@ -63,7 +65,7 @@ describe('Verify API', function() {
         })
         .then(function(place){
             return database.Sensors.create({ // create Sensor
-                sim: 'sim01',
+                sim: simId,
                 installed_at: place.id
             })
             .then(function(sensor){
@@ -114,12 +116,9 @@ describe('Verify API', function() {
         it('/currentAffluence', function () {
             return api.getCurrentPlaceMeasurements('wifi')
             .then(function(affluence){
-                console.log('affluence', affluence);
-
                 expect(affluence[0].max).to.deep.equal(3);
                 expect(affluence[0].latest).to.deep.equal(2);
                 expect(affluence[0].type).to.deep.equal('wifi');
-
             });
               
         });
@@ -130,10 +129,8 @@ describe('Verify API', function() {
                 types: ['blue']
             })
             .then(function(measurements){
-                console.log('measurements', measurements);
                 expect(measurements.length).to.deep.equal(1);
                 expect(measurements[0].type).to.deep.equal('blue');
-
             });
         });
 
@@ -143,7 +140,26 @@ describe('Verify API', function() {
                 types: ['blue', 'wifi']
             })
             .then(function(measurements){
-                console.log('measurements', measurements);
+                expect(measurements.length).to.deep.equal(3);
+            });
+        });
+
+        it('/getMeasurements - Single type', function () {
+            return api.getMeasurements({
+                sim: simId,
+                types: ['wifi']
+            })
+            .then(function(measurements){
+                expect(measurements.length).to.deep.equal(2);
+            });
+        });
+
+        it('/getMeasurements - Multiple types', function () {
+            return api.getMeasurements({
+                sim: simId,
+                types: ['blue', 'wifi']
+            })
+            .then(function(measurements){
                 expect(measurements.length).to.deep.equal(3);
             });
         });
