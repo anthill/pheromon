@@ -22,7 +22,7 @@ var toExport = {
                             .join(measurement)
                             .on(measurement.output_id.equals(output.id))
                         )
-                        .on(output.sensor_id.equals(sensor.id))
+                        .on(output.sensor_id.equals(sensor.id), output.type.equals('wifi'))
                     )
                     .on(place.id.equals(sensor.installed_at));
                 /*
