@@ -124,7 +124,7 @@ describe('Verify API', function() {
               
         });
 
-        it('/getPlaceMeasurements', function () {
+        it('/getPlaceMeasurements - Single type', function () {
             return api.getPlaceMeasurements({
                 id: 1,
                 types: ['blue']
@@ -134,6 +134,17 @@ describe('Verify API', function() {
                 expect(measurements.length).to.deep.equal(1);
                 expect(measurements[0].type).to.deep.equal('blue');
 
+            });
+        });
+
+        it('/getPlaceMeasurements - Multiple types', function () {
+            return api.getPlaceMeasurements({
+                id: 1,
+                types: ['blue', 'wifi']
+            })
+            .then(function(measurements){
+                console.log('measurements', measurements);
+                expect(measurements.length).to.deep.equal(3);
             });
         });
 
