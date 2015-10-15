@@ -13,7 +13,7 @@ var toExport = {
     Sensors: require('./models/sensors.js'),
     Measurements: require('./models/measurements.js'),
     complexQueries: {
-        currentPlaceAffluences: function(){
+        currentPlaceMeasurements: function(type){
             return databaseP.then(function(db) {
 
                 var fullJoin = place
@@ -22,8 +22,9 @@ var toExport = {
                             .join(measurement)
                             .on(measurement.output_id.equals(output.id))
                         )
-                        .on(output.sensor_id.equals(sensor.id), output.type.equals('wifi'))
-                    )
+                        .on(output.sensor_id.equals(sensor.id).and(
+                            output.type.equals(type)
+                        )))
                     .on(place.id.equals(sensor.installed_at));
                 /*
                     For each place, get the last measurement date
@@ -45,6 +46,7 @@ var toExport = {
                     .subQuery('latest_recycling_center_measurement_value')
                     .select(
                         place.id,
+                        output.type,
                         measurement
                             .literal('array_length(measurements.value, 1)')
                             .as('latest')

@@ -121,12 +121,13 @@ describe('Verify API', function() {
                 return new Promise(function(resolve, reject){
 
                     setTimeout(function(){
-                        resolve(api.getLiveAffluence()
+                        resolve(api.getCurrentPlaceMeasurements('wifi')
                         .then(function(affluence){
                             console.log('affluence', affluence);
 
                             expect(affluence[0].max).to.deep.equal(3);
                             expect(affluence[0].latest).to.deep.equal(2);
+                            expect(affluence[0].type).to.deep.equal('wifi');
 
                         }));
                     }, 500);

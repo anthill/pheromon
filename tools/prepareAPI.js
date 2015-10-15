@@ -46,8 +46,8 @@ module.exports = function(request, origin){
         },
         
         // TO UPDATE
-        getLiveAffluence: function(){
-            return request('GET', origin + '/currentAffluence');
+        getCurrentPlaceMeasurements: function(type){
+            return request('GET', origin + '/currentPlaceMeasurements/' + type);
         },
         getPlaceMeasurements: function(data){
             return request('POST', origin + '/measurements/place', data);
