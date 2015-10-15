@@ -61,8 +61,6 @@ module.exports = React.createClass({
             day: props.day
         });
 
-
-
         // build Map
         var map = new MapComponent({
             mapBoxToken: props.mapBoxToken,
@@ -91,7 +89,7 @@ module.exports = React.createClass({
                 }
                 else{
                     console.log('6');
-                    props.getPlaceMeasurements(place); 
+                    props.getPlaceMeasurements(place, ['wifi']); 
                 }
             }
         });
