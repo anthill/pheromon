@@ -114,7 +114,7 @@ var toExport = {
                             .join(output
                                 .join(measurement)
                                 .on(measurement.output_id.equals(output.id)))
-                            .on(output.sensor_sim.equals(sensor.sim)))
+                            .on(output.sensor_id.equals(sensor.id)))
                     .toQuery();
 
                 return new Promise(function (resolve, reject) {
