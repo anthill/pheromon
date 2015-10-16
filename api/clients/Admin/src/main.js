@@ -213,6 +213,7 @@ function refreshView(){
             var measurementsPs = [];
 
             sensorMap.forEach(function (sensor){
+                console.log('MAIN sensor outputs', sensor.outputs);
                 sensor.outputs = makeMap(sensor.outputs, 'type');
 
                 if (sensor.installed_at) {
