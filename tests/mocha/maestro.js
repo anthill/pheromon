@@ -82,9 +82,9 @@ describe('Maestro testing', function(){
             it('checkSensor should register unknown sensor', function () {
                 return checkSensor(sensor.sim)
                 .then(function(){
-                    database.Sensors.getAll()
+                    return database.Sensors.getAll()
                     .then(function(sensors){
-                        expect(sensors.length).to.equal(1);
+                        expect(sensors.length).to.deep.equal(1);
                     });
                 });
             });
@@ -92,9 +92,25 @@ describe('Maestro testing', function(){
             it('checkSensor should not register known sensor', function () {
                 return checkSensor(sensor.sim)
                 .then(function(){
-                    database.Sensors.getAll()
+                    return database.Sensors.getAll()
                     .then(function(sensors){
-                        expect(sensors.length).to.equal(1);
+                        expect(sensors.length).to.deep.equal(1);
+                    });
+                });
+            });
+
+            it('checkSensor should not add already existing output', function () {
+                return checkSensor(sensor.sim, 'wifi')
+                .then(function(){
+                    return checkSensor(sensor.sim, 'wifi');
+                })
+                .then(function(){
+                    return checkSensor(sensor.sim, 'signal');
+                })
+                .then(function(){
+                    return database.Sensors.get(sensor.sim)
+                    .then(function(sensor){
+                        expect(sensor.outputs.length).to.deep.equal(1);
                     });
                 });
             });
@@ -159,7 +175,7 @@ describe('Maestro testing', function(){
 
         it('Maestro should register output status update in DB', function () {
 
-            fakeSensor.publish('status/' + simId + '/wifi', 'recording');
+            fakeSensor.publish('status/' + simId + '/wifi', 'recording');            
             
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
@@ -169,7 +185,7 @@ describe('Maestro testing', function(){
                         expect(outputs.get('wifi').status).to.deep.equal('recording');
                     }));
 
-                }, 200);
+                }, 300);
             });
         });
 

@@ -39,8 +39,8 @@ module.exports = function(sim, type){
         }  
     })
     .then(function(sensor){
-        var outputs = makeMap(sensor.outputs);
-
+        var outputs = makeMap(sensor.outputs, 'type');
+        
         // if type exists and was not referenced in DB and is not a sensor type, create it
         if (type && !outputs.has(type) && !SENSOR_STATUS.has(type)){ 
             console.log('SIM', sim);

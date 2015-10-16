@@ -1,7 +1,7 @@
 
 # Unitary Tests for Pheromon
 
-25 tests are available for now.
+26 tests are available for now.
 
 ## Database API
  
@@ -35,13 +35,14 @@
 
 19. `checkSensor` should register unknown sensor
 20. `checkSensor` should not register known sensor
+21. `checkSensor` should not add already existing output
 
   ## Maestro
   
   Tests to verify complete maestro functionality, from sensor message to maestro response.
 
-21. Maestro should register unknown sensor
-22. Maestro should send back init command when asked
-23. Maestro should register sensor status update in DB
-24. Pushing wifi measurements
-25. Emitting commands through socket should send command to sensors
+22. Maestro should register unknown sensor
+23. Maestro should send back init command when asked
+24. Maestro should register sensor status update in DB
+25. Pushing wifi measurements
+26. Emitting commands through socket should send command to sensors
