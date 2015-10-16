@@ -65,8 +65,11 @@ var Ant = React.createClass({
 
         var outputs = props.ant.outputs;
 
-        var wifiClasses = ['wifi', outputs.get('wifi') ? outputs.get('wifi').status : ''];
-        var bluetoothClasses = ['bluetooth', outputs.get('bluetooth') ? outputs.get('bluetooth').status : ''];
+        var wifiStatus = outputs.get('wifi') ? outputs.get('wifi').status : '';
+        var bluetoothStatus = outputs.get('bluetooth') ? outputs.get('bluetooth').status : '';
+
+        var wifiClasses = ['wifi', wifiStatus];
+        var bluetoothClasses = ['bluetooth', bluetoothStatus];
 
         return React.DOM.div({className: classes.join(' ')},
             React.DOM.input({
@@ -120,11 +123,11 @@ var Ant = React.createClass({
                         React.DOM.div({className: 'sensors'},
                             React.DOM.div({className: wifiClasses.join(' ')}, 
                                 React.DOM.i({className: 'flaticon-wifi74'}),
-                                React.DOM.div({}, props.ant.outputs.get('wifi').status)
+                                React.DOM.div({}, wifiStatus)
                             ),
                             React.DOM.div({className: bluetoothClasses.join(' ')}, 
                                 React.DOM.i({className: 'flaticon-logotype56'}),
-                                React.DOM.div({}, props.ant.outputs.get('bluetooth').status)
+                                React.DOM.div({}, bluetoothStatus)
                             )
                         ),
                         React.DOM.div({className: 'settings'},
