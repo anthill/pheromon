@@ -55,7 +55,7 @@ module.exports = function(authToken, io){
             var sim = subtopics[1];
             var type = subtopics[2];
 
-            debug('Maestro received:', main, sim, type);
+            console.log('Maestro received:', main, sim, type);
 
             // maybe add a function to check topics
 
