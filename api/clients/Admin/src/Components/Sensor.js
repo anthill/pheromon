@@ -128,7 +128,7 @@ var Sensor = React.createClass({
         var d = Math.floor((pokeNumber + 1) % 100 / 10);
         var u = Math.floor((pokeNumber + 1) % 10);
 
-        var img = pokeNumber > 0 ?
+        var img = pokeNumber >= 0 ?
             React.DOM.img({src: 'http://assets22.pokemon.com/assets/cms2/img/pokedex/full/' + h + d + u +'.png', alt:'poke'})
             : undefined;
 
