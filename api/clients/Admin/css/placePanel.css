@@ -157,15 +157,15 @@
 	color: black;
 }
 
-.blue.uninitialized{
+.bluetooth.uninitialized{
 	color: #CCC;
 }
 
-.blue.initialized {
+.bluetooth.initialized {
 	color: #888;
 }
 
-.blue.recording {
+.bluetooth.recording {
 	color: black;
 }
 
