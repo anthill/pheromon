@@ -19,8 +19,7 @@ interface AntProps{
         sim: string,
         client_status: string,
         signal_status: string,
-        wifi_status: string,
-        blue_status: string,
+        outputs: [],
         updated_at: string,
         isSelected: bool
     },
@@ -60,14 +59,14 @@ var Ant = React.createClass({
         var classes = [
             'ant',
             props.ant.client_status ? props.ant.client_status.toLowerCase() : '',
-            
-            props.ant.blue_status ? props.ant.blue_status.toLowerCase() : '',
             props.isSelected ? 'selected' : '',
             props.ant.isUpdating ? 'updating' : ''
         ];
 
-        var wifiClasses = ['wifi', props.ant.wifi_status ? props.ant.wifi_status.toLowerCase() : ''];
-        var blueClasses = ['blue', props.ant.blue_status ? props.ant.blue_status.toLowerCase() : ''];
+        var outputs = props.ant.outputs;
+
+        var wifiClasses = ['wifi', outputs.get('wifi') ? outputs.get('wifi') : ''];
+        var blueClasses = ['blue', outputs.get('blue') ? outputs.get('blue') : ''];
 
         return React.DOM.div({className: classes.join(' ')},
             React.DOM.input({
