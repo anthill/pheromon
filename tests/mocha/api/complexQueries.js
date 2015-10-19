@@ -71,7 +71,7 @@ describe('Verify API', function() {
                 // add Outputs
                 return database.Sensors.addOutput(sensor.sim, 'wifi') 
                 .then(function(sensor){
-                    return database.Sensors.addOutput(sensor.sim, 'blue');
+                    return database.Sensors.addOutput(sensor.sim, 'bluetooth');
                 })
                 .then(function(sensor){
                     var idWifi;
@@ -80,7 +80,7 @@ describe('Verify API', function() {
                     sensor.outputs.forEach(function(output){ // get output ids
                         if (output.type === 'wifi')
                             idWifi = output.id;
-                        if (output.type === 'blue')
+                        if (output.type === 'bluetooth')
                             idBlue = output.id;
                     });
 
@@ -125,18 +125,18 @@ describe('Verify API', function() {
         it('/getPlaceMeasurements - Single type', function () {
             return api.getPlaceMeasurements({
                 id: 1,
-                types: ['blue']
+                types: ['bluetooth']
             })
             .then(function(measurements){
                 expect(measurements.length).to.deep.equal(1);
-                expect(measurements[0].type).to.deep.equal('blue');
+                expect(measurements[0].type).to.deep.equal('bluetooth');
             });
         });
 
         it('/getPlaceMeasurements - Multiple types', function () {
             return api.getPlaceMeasurements({
                 id: 1,
-                types: ['blue', 'wifi']
+                types: ['bluetooth', 'wifi']
             })
             .then(function(measurements){
                 expect(measurements.length).to.deep.equal(3);
@@ -156,7 +156,7 @@ describe('Verify API', function() {
         it('/getMeasurements - Multiple types', function () {
             return api.getMeasurements({
                 sim: simId,
-                types: ['blue', 'wifi']
+                types: ['bluetooth', 'wifi']
             })
             .then(function(measurements){
                 expect(measurements.length).to.deep.equal(3);

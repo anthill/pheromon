@@ -55,7 +55,7 @@ module.exports = function(authToken, io){
             var sim = subtopics[1];
             var type = subtopics[2];
 
-            debug('Maestro received:', main, sim, type);
+            console.log('Maestro received:', main, sim, type);
 
             // maybe add a function to check topics
 
@@ -138,12 +138,14 @@ module.exports = function(authToken, io){
                                 date: data.date
                             })
                             .then(function() {
-                                io.emit('data', {
-                                    installed_at: sensor.installed_at,
-                                    type: type,
-                                    value: value,
-                                    date: data.date
-                                });
+                                if (type === 'wifi'){ // for now
+                                    io.emit('data', {
+                                        installed_at: sensor.installed_at,
+                                        type: type,
+                                        value: value,
+                                        date: data.date
+                                    });
+                                }
                                 console.log('measurement of type', type, 'updated');
                             })
                             .catch(function(err) {

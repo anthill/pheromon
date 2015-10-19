@@ -19,8 +19,7 @@ interface AntProps{
         sim: string,
         client_status: string,
         signal_status: string,
-        wifi_status: string,
-        blue_status: string,
+        outputs: [],
         updated_at: string,
         isSelected: bool
     },
@@ -60,14 +59,17 @@ var Ant = React.createClass({
         var classes = [
             'ant',
             props.ant.client_status ? props.ant.client_status.toLowerCase() : '',
-            
-            props.ant.blue_status ? props.ant.blue_status.toLowerCase() : '',
             props.isSelected ? 'selected' : '',
             props.ant.isUpdating ? 'updating' : ''
         ];
 
-        var wifiClasses = ['wifi', props.ant.wifi_status ? props.ant.wifi_status.toLowerCase() : ''];
-        var blueClasses = ['blue', props.ant.blue_status ? props.ant.blue_status.toLowerCase() : ''];
+        var outputs = props.ant.outputs;
+
+        var wifiStatus = outputs.get('wifi') ? outputs.get('wifi').status : '';
+        var bluetoothStatus = outputs.get('bluetooth') ? outputs.get('bluetooth').status : '';
+
+        var wifiClasses = ['wifi', wifiStatus];
+        var bluetoothClasses = ['bluetooth', bluetoothStatus];
 
         return React.DOM.div({className: classes.join(' ')},
             React.DOM.input({
@@ -121,11 +123,11 @@ var Ant = React.createClass({
                         React.DOM.div({className: 'sensors'},
                             React.DOM.div({className: wifiClasses.join(' ')}, 
                                 React.DOM.i({className: 'flaticon-wifi74'}),
-                                React.DOM.div({}, props.ant.wifi_status)
+                                React.DOM.div({}, wifiStatus)
                             ),
-                            React.DOM.div({className: blueClasses.join(' ')}, 
+                            React.DOM.div({className: bluetoothClasses.join(' ')}, 
                                 React.DOM.i({className: 'flaticon-logotype56'}),
-                                React.DOM.div({}, props.ant.blue_status)
+                                React.DOM.div({}, bluetoothStatus)
                             )
                         ),
                         React.DOM.div({className: 'settings'},
