@@ -19,6 +19,7 @@ var debug = require('../tools/debug');
 var routes = require('./routes.js');
 
 var PRIVATE = require('../PRIVATE.json');
+var DEBUG = process.env.NODE_ENV === "development";
 
 var server = new http.Server(app);
 var io = require('socket.io')(server);
@@ -45,7 +46,13 @@ schedule.scheduleJob('0 3 * * *', function(){
     });
 });
 
-
+//CORS for GET
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.use(compression());
 app.use(bodyParser.urlencoded());
@@ -55,7 +62,7 @@ app.use('/leaflet.css', express.static(path.join(__dirname, '../node_modules/lea
 
 app.use('/dygraph-combined.js', express.static(path.join(__dirname, '../node_modules/dygraphs/dygraph-combined.js')));
 
-app.use('/Admin', express.static(path.join(__dirname, './clients/Admin')));
+app.use('/Admin/css', express.static(path.join(__dirname, './clients/Admin/css')));
 app.use('/Dashboard', express.static(path.join(__dirname, './clients/Dashboard')));
 app.use('/_common', express.static(path.join(__dirname, './clients/_common')));
 
@@ -65,7 +72,10 @@ app.get('/', function(req, res){
 });
 
 app.get('/Admin', function(req, res){ // maybe not necessary
-    res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
+    if(req.query.s === PRIVATE.secret || DEBUG)
+        res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
+    else
+        res.status(403).send({success: false, message: 'No token provided.'});
 });
 
 app.get('/Admin-browserify-bundle.js', function(req, res){

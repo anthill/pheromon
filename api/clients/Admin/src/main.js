@@ -11,8 +11,6 @@ var prepareAPI = require('../../../../tools/prepareAPI.js');
 var sendReq = require('../../../../tools/sendReq.js');
 var makeMap = require('../../../../tools/makeMap.js');
 
-var api = prepareAPI(sendReq);
-
 var dbStatusMap = require('./dbStatusMap.js');
 
 var socket = io();
@@ -32,6 +30,21 @@ var topLevelStore = {
     onCreateSensor: createSensorInDb,
     sendCommand: sendCommand
 };
+
+var urlParams;
+(window.onpopstate = function () {
+    var match,
+        pl     = /\+/g,  // Regex for replacing addition symbol with a space
+        search = /([^&=]+)=?([^&]*)/g,
+        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+        query  = window.location.search.substring(1);
+
+    urlParams = {};
+    while (match = search.exec(query))
+       urlParams[decode(match[1])] = decode(match[2]);
+})();
+
+var api = prepareAPI(sendReq, '', urlParams.s);
 
 function render(){
     React.render(new Application(topLevelStore), document.body);

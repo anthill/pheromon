@@ -1,35 +1,42 @@
 'use strict';
 
 var database = require('../database');
+var PRIVATE = require('../PRIVATE.json');
+var DEBUG = process.env.NODE_ENV === "development";
 
 module.exports = function(app, debug){
 
     // --------------> sensor
-    app.post('/sensor/create', function(req, res){    
-        console.log('creating sensor', req.body);
+    app.post('/sensor/create', function(req, res){
+        if(req.query.s === PRIVATE.secret || DEBUG) {
+            
+            console.log('creating sensor', req.body);
 
-        database.Sensors.create(req.body)
-        .then(function(data){
-            debug('Sensor created', data);
-            res.status(201).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t create Sensor in database');
-            console.log('error in /sensor/create', error);
-        });
+            database.Sensors.create(req.body)
+            .then(function(data){
+                debug('Sensor created', data);
+                res.status(201).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t create Sensor in database');
+                console.log('error in /sensor/create', error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     app.post('/sensor/update', function(req, res){
-        var sim = req.body.sim;
+        if(req.query.s === PRIVATE.secret || DEBUG) {
+            var sim = req.body.sim;
 
-        database.Sensors.update(sim, req.body.delta)
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t update Sensors database');
-            console.log('error in /sensor/update/' + sim, error);
-        });
+            database.Sensors.update(sim, req.body.delta)
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t update Sensors database');
+                console.log('error in /sensor/update/' + sim, error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     app.get('/sensor/get/:sim', function(req, res){
@@ -59,59 +66,67 @@ module.exports = function(app, debug){
         });
     });
 
-    app.delete('/sensor/delete/:sim', function(req, res){    
-        var sim = req.params.sim;
-        console.log('deleting', sim);
+    app.delete('/sensor/delete/:sim', function(req, res){
+        if(req.query.s === PRIVATE.secret || DEBUG) { 
+            var sim = req.params.sim;
+            console.log('deleting', sim);
 
-        database.Sensors.delete(sim)
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t delete Sensor from database');
-            console.log('error in DELETE /sensor/' + sim, error);
-        });
+            database.Sensors.delete(sim)
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t delete Sensor from database');
+                console.log('error in DELETE /sensor/' + sim, error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
-    app.delete('/sensor/deleteAll', function(req, res){    
-        console.log('deleting all sensors');
+    app.delete('/sensor/deleteAll', function(req, res){
+        if(req.query.s === PRIVATE.secret || DEBUG) {     
+            console.log('deleting all sensors');
 
-        database.Sensors.deleteAll()
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t delete all Sensors from database');
-            console.log('error in DELETE /sensor/all', error);
-        });
+            database.Sensors.deleteAll()
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t delete all Sensors from database');
+                console.log('error in DELETE /sensor/all', error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     // --------------> place
-    app.post('/place/create', function(req, res){    
-        console.log('creating place', req.body);
+    app.post('/place/create', function(req, res){
+        if(req.query.s === PRIVATE.secret || DEBUG) {       
+            console.log('creating place', req.body);
 
-        database.Places.create(req.body)
-        .then(function(data){
-            debug('Place created', data);
-            res.status(201).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t create Place in database');
-            console.log('error in /place/create/', error);
-        });
+            database.Places.create(req.body)
+            .then(function(data){
+                debug('Place created', data);
+                res.status(201).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t create Place in database');
+                console.log('error in /place/create/', error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     app.post('/place/update', function(req, res){
-        var id = req.body.id;
+        if(req.query.s === PRIVATE.secret || DEBUG) { 
+            var id = req.body.id;
 
-        database.Places.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t update Places database');
-            console.log('error in /place/update/' + id, error);
-        });
+            database.Places.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t update Places database');
+                console.log('error in /place/update/' + id, error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     app.get('/place/get/:id', function(req, res){
@@ -141,31 +156,35 @@ module.exports = function(app, debug){
         });
     });
 
-    app.delete('/place/delete/:id', function(req, res){    
-        var id = req.params.id;
-        console.log('deleting place id', id);
+    app.delete('/place/delete/:id', function(req, res){
+        if(req.query.s === PRIVATE.secret || DEBUG) { 
+            var id = req.params.id;
+            console.log('deleting place id', id);
 
-        database.Places.delete(id)
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t delete Place from database');
-            console.log('error in /place/delete/' + id, error);
-        });
+            database.Places.delete(id)
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t delete Place from database');
+                console.log('error in /place/delete/' + id, error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
-    app.delete('/place/deleteAll', function(req, res){    
-        console.log('deleting all sensors');
+    app.delete('/place/deleteAll', function(req, res){
+        if(req.query.s === PRIVATE.secret || DEBUG) {  
+            console.log('deleting all sensors');
 
-        database.Places.deleteAll()
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t delete all Places from database');
-            console.log('error in /place/deleteAll', error);
-        });
+            database.Places.deleteAll()
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t delete all Places from database');
+                console.log('error in /place/deleteAll', error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     // complex queries
