@@ -49,13 +49,11 @@ describe('Maestro testing', function(){
 
     // before all tests, clear the table
     before('Clearing Sensor table', function(){
-        console.log('Clearing Sensor table');
         return database.Sensors.deleteAll();
     });
 
     // after all tests, clear the table
     after('Clearing Sensor table', function(){
-        console.log('Clearing Sensor table');
 
         return database.Measurements.deleteAll() 
         .then(function(){
@@ -66,7 +64,6 @@ describe('Maestro testing', function(){
     describe('Maestro utils', function(){
         // after each test, clear the table
         afterEach('Clearing Sensor Table', function(){
-            console.log('After: Clearing Sensor table');
             return database.Sensors.deleteAll();
         });
 
@@ -128,7 +125,6 @@ describe('Maestro testing', function(){
         beforeEach('Creating Fake Sensor', function(){
             i++;
             simId = 'simNumber' + i;
-            console.log('Before: creating fake sensor');
             return createFakeSensor(simId)
             .then(function(sensor){
                 fakeSensor = sensor;
@@ -211,7 +207,6 @@ describe('Maestro testing', function(){
 
             return sigCodec.encode(measurement)
             .then(function(encoded){
-                console.log('SENT', encoded);
                 fakeSensor.publish('measurement/' + simId + '/wifi', encoded);
 
                 var data = {
@@ -224,7 +219,6 @@ describe('Maestro testing', function(){
 
                         resolve(api.getMeasurements(data)
                         .then(function(measurements){
-                            console.log('measurements', measurements);
                             expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);
                             expect(Date.parse(measurements[0].date)).to.be.a('number');

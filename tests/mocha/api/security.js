@@ -36,29 +36,12 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     lon: -0.570468
                 };
 
-                return api.createPlace(place)
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
+                return expect(api.createPlace(place)).to.be.rejectedWith('HTTP error');
             });
         });
 
         describe('Update', function(){
             var id;
-
-            before('Creating place to be updated', function(){
-
-                var place = {
-                    name: 'Place1',
-                    lat: 44.840450,
-                    lon: -0.570468
-                };
-
-                return api.createPlace(place)
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
-            });
 
             it('/update/place', function () {
                 this.timeout(2000);
@@ -74,10 +57,7 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     delta: delta
                 };
 
-                return api.updatePlace(updateData)
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
+                return expect(api.updatePlace(updateData)).to.be.rejectedWith('HTTP error');
             });
 
         });
@@ -85,56 +65,16 @@ describe('Verify API refuses unauthorized operation with no token', function() {
         describe('Deletion', function(){
             var id;
 
-            before('Creating place to be deleted', function(){
-
-                var place = {
-                    name: 'Place1',
-                    lat: 44.840450,
-                    lon: -0.570468
-                };
-
-                return api.createPlace(place)
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
-            });
-
             it('/place/delete', function () {
-
-                return api.deletePlace(id)
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
+                return expect(api.deletePlace(id)).to.be.rejectedWith('HTTP error');
             });
 
         });
 
         describe('Delete All Places', function(){
 
-            before('Creating places to be deleted', function(){
-
-                var creationPs = [0, 1, 2].map(function(item){
-
-                    var place = {
-                        name: 'Place' + item,
-                        lat: Math.random(),
-                        lon: Math.random()
-                    };
-
-                    return api.createPlace(place);
-                });
-
-                return Promise.all(creationPs);
-            
-            });
-
             it('/place/deleteAll', function () {
-
-                return api.deleteAllPlaces()
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
-
+                return expect(api.deleteAllPlaces()).to.be.rejectedWith('HTTP error');
             });
 
         });
@@ -152,10 +92,7 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     outputs: ['type1', 'type2']
                 };
 
-                return api.createSensor(sensor)
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
+                return expect(api.createSensor(sensor)).to.be.rejectedWith('HTTP error');
 
             });
         });
@@ -166,9 +103,6 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                 sim: '290'
             };
 
-            before('Creating sensor to be updated', function(){
-                return api.createSensor(sensor);
-            });
 
             it('/sensor/update', function () {
 
@@ -181,10 +115,7 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     delta: delta
                 };
                 
-                return api.updateSensor(updateData)
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
+                return expect(api.updateSensor(updateData)).to.be.rejectedWith('HTTP error');
 
             });
 
@@ -196,48 +127,22 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                 sim: '290'
             };
 
-            before('Creating sensor to be deleted', function(){
-                return api.createSensor(sensor)
-            });
-
             it('/sensor/delete', function () {
 
                 var deleteData = {
                     sim: sensor.sim
                 };
 
-                return api.deleteSensor(deleteData.sim)
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
+                return expect(api.deleteSensor(deleteData.sim)).to.be.rejectedWith('HTTP error');
 
             });
         });
 
         describe('Delete All Sensors', function(){
 
-            before('Creating sensors to be deleted', function(){
-
-                var creationPs = [0, 1, 2].map(function(item){
-
-                    var sensor = {
-                        name: 'Sensor' + item,
-                        sim: 'sim' + item * 10
-                    };
-
-                    return api.createSensor(sensor);
-                });
-
-                return Promise.all(creationPs);
-                
-            });
-
             it('/sensor/deleteAll', function () {
 
-                return api.deleteAllSensors()
-                .then(function(res){
-                    expect(res.message).to.deep.equal('No token provided.');
-                });
+                return expect(api.deleteAllSensors()).to.be.rejectedWith('HTTP error');
 
             });
         });

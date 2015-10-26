@@ -212,7 +212,7 @@ module.exports = function(app, debug){
             res.status(200).send(data);
         })
         .catch(function(error){
-            res.status(500).send('Couldn\'t place measurements from database');
+            res.status(500).send('Couldn\'t get place measurements from database');
             console.log('error in /measurements/place/' + placeId, error);
         });
     });
