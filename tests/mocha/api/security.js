@@ -36,7 +36,13 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     lon: -0.570468
                 };
 
-                return expect(api.createPlace(place)).to.be.rejectedWith('HTTP error');
+                var placeP = api.createPlace(place)
+
+                expect(placeP).to.be.rejected;
+
+                return placeP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
             });
         });
 
@@ -57,7 +63,13 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     delta: delta
                 };
 
-                return expect(api.updatePlace(updateData)).to.be.rejectedWith('HTTP error');
+                var placeP = api.updatePlace(updateData);
+
+                expect(placeP).to.be.rejectedWith('HTTP error');
+
+                return placeP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
             });
 
         });
@@ -66,7 +78,13 @@ describe('Verify API refuses unauthorized operation with no token', function() {
             var id;
 
             it('/place/delete', function () {
-                return expect(api.deletePlace(id)).to.be.rejectedWith('HTTP error');
+                var placeP = api.deletePlace(id);
+
+                expect(placeP).to.be.rejectedWith('HTTP error');
+
+                return placeP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
             });
 
         });
@@ -74,7 +92,13 @@ describe('Verify API refuses unauthorized operation with no token', function() {
         describe('Delete All Places', function(){
 
             it('/place/deleteAll', function () {
-                return expect(api.deleteAllPlaces()).to.be.rejectedWith('HTTP error');
+                var placeP = api.deleteAllPlaces();
+
+                expect(placeP).to.be.rejectedWith('HTTP error');
+
+                return placeP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
             });
 
         });
@@ -91,8 +115,13 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     sim: '290',
                     outputs: ['type1', 'type2']
                 };
+                var sensorP = api.createSensor(sensor);
 
-                return expect(api.createSensor(sensor)).to.be.rejectedWith('HTTP error');
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
 
             });
         });
@@ -115,7 +144,13 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     delta: delta
                 };
                 
-                return expect(api.updateSensor(updateData)).to.be.rejectedWith('HTTP error');
+                var sensorP = api.updateSensor(updateData);
+
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
 
             });
 
@@ -133,7 +168,13 @@ describe('Verify API refuses unauthorized operation with no token', function() {
                     sim: sensor.sim
                 };
 
-                return expect(api.deleteSensor(deleteData.sim)).to.be.rejectedWith('HTTP error');
+                var sensorP = api.deleteSensor(deleteData.sim);
+
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
 
             });
         });
@@ -142,7 +183,13 @@ describe('Verify API refuses unauthorized operation with no token', function() {
 
             it('/sensor/deleteAll', function () {
 
-                return expect(api.deleteAllSensors()).to.be.rejectedWith('HTTP error');
+                var sensorP = api.deleteAllSensors();
+
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
 
             });
         });
