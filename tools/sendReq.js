@@ -13,9 +13,16 @@ module.exports = function (method, url, data){
         xhr.addEventListener('load', function(){
             if(xhr.status < 400)
                 resolve(xhr.response);
-            else
-                reject(new Error('HTTP error ' + xhr.status + ' ' + xhr.responseText));
-
+            else {
+                reject(Object.assign(
+                    new Error('HTTP error'),
+                    {
+                        HTTPstatus: xhr.status,
+                        text: xhr.responseText,
+                        error: "unknown"
+                    }
+                ));
+            }    
         });
 
         xhr.addEventListener('error', reject);

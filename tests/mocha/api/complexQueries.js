@@ -15,8 +15,8 @@ var io = require('socket.io-client');
 var request = require('request');
 
 var database = require('../../../database');
-var sendReq = require('../../../tools/sendNodeReq');
-var makeMap = require('../../../tools/makeMap');
+var sendReq = require('../../../tools/sendNodeReq.js');
+var makeMap = require('../../../tools/makeMap.js');
 
 var prepareAPI = require('../../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';

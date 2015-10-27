@@ -17,11 +17,30 @@ module.exports = function (method, url, data){
                 request.get({
                     url: url
                 }, function(error, response, body){
-                    if (!error)
-                        resolve(JSON.parse(body));
-        
-                    else 
-                        reject(new Error('HTTP error ', error));
+                    if (!error) {
+                        if(response.statusCode < 400)
+                            resolve(JSON.parse(body));
+                        else {
+                            reject(Object.assign(
+                                new Error('HTTP error'),
+                                {
+                                    HTTPstatus: response.statusCode,
+                                    text: body,
+                                    error: error
+                                }
+                            ));
+                        }
+                    }
+                    else {
+                        reject(Object.assign(
+                                new Error('HTTP error'),
+                                {
+                                    HTTPstatus: response.statusCode,
+                                    text: body,
+                                    error: error
+                                }
+                            ));
+                    }
                 });
                 break;
 
@@ -31,12 +50,30 @@ module.exports = function (method, url, data){
                     headers: headers,
                     body: data
                 }, function(error, response, body){
-                    if (!error)
-                        resolve(JSON.parse(body));
-                        
-                    else 
-                        reject(new Error('HTTP error ', error));
-                        
+                    if (!error) {
+                        if(response.statusCode < 400)
+                            resolve(JSON.parse(body));
+                        else {
+                            reject(Object.assign(
+                                new Error('HTTP error'),
+                                {
+                                    HTTPstatus: response.statusCode,
+                                    text: body,
+                                    error: error
+                                }
+                            ));
+                        }
+                    }
+                    else {
+                        reject(Object.assign(
+                                new Error('HTTP error'),
+                                {
+                                    HTTPstatus: response.statusCode,
+                                    text: body,
+                                    error: error
+                                }
+                            ));
+                    }    
                 });
                 break;
 
@@ -44,10 +81,30 @@ module.exports = function (method, url, data){
                 request.del({
                     url: url
                 }, function(error, response, body){
-                    if (!error)
-                        resolve(JSON.parse(body));
-                    else 
-                        reject(new Error('HTTP error ', error));
+                    if (!error) {
+                        if(response.statusCode < 400)
+                            resolve(JSON.parse(body));
+                        else {
+                            reject(Object.assign(
+                                new Error('HTTP error'),
+                                {
+                                    HTTPstatus: response.statusCode,
+                                    text: body,
+                                    error: error
+                                }
+                            ));
+                        }
+                    }
+                    else {
+                        reject(Object.assign(
+                                new Error('HTTP error'),
+                                {
+                                    HTTPstatus: response.statusCode,
+                                    text: body,
+                                    error: error
+                                }
+                            ));
+                    }
                 });
                 break;
 
