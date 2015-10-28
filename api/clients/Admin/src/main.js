@@ -230,7 +230,7 @@ function refreshView(){
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
-                        api.getPlaceMeasurements({id: sensor.installed_at, types: ['wifi']})
+                        api.measurementsPlaces({ids: [sensor.installed_at], types: ['wifi']})
                         .then(function (measurements) {
 
                             // check last time the sensor was active
