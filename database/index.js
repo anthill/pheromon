@@ -209,8 +209,12 @@ var toExport = {
             });
         },
 
-        getSensorsMeasurements: function(sims, types){
+        getSensorsMeasurements: function(sims, types, start, end){
             return databaseP.then(function(db){
+
+                // if no dates provided, assume we want all
+                var start = start ? start : new Date("1900-10-15T11:23:19.766Z");
+                var end = end ? end : new Date("2200-10-15T11:23:19.766Z");
 
                 var query = sensor
                     .select(
@@ -222,7 +226,11 @@ var toExport = {
                             .as('entry'),
                         measurement.value
                     )
-                    .where(sensor.sim.in(sims), output.type.in(types))
+                    .where(
+                        sensor.sim.in(sims), 
+                        output.type.in(types),
+                        measurement.date.between(start, end)
+                        )
                     .from(
                         sensor
                             .join(output
@@ -230,6 +238,8 @@ var toExport = {
                                 .on(measurement.output_id.equals(output.id)))
                             .on(output.sensor_id.equals(sensor.id)))
                     .toQuery();
+
+                // console.log('getSensorsMeasurements query', query);
 
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {

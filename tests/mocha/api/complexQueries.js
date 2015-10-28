@@ -187,6 +187,18 @@ describe('Verify API', function() {
             });
         });
 
+        it('/measurements/sensors - Date range', function () {
+            return api.measurementsSensors({
+                sims: ['sim01'],
+                types: ['wifi'],
+                start: new Date("2015-10-15T11:23:19.766Z"),
+                end: new Date("2015-10-15T14:23:19.766Z")
+            })
+            .then(function(measurements){
+                expect(measurements.length).to.deep.equal(2);
+            });
+        });
+
     });
 
 });

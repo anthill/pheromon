@@ -234,13 +234,15 @@ module.exports = function(app, debug){
         });
     });
 
-    // get various measurements types for many sensors
+    // get all measurements of various types for various sensors
     app.post('/measurements/sensors', function(req, res){
 
         var sims = req.body.sims;
         var types = req.body.types;
+        var start = req.body.start;
+        var end = req.body.end;
 
-        database.complexQueries.getSensorsMeasurements(sims, types)
+        database.complexQueries.getSensorsMeasurements(sims, types, start, end)
         .then(function(data){
             res.status(200).send(data);
         })
