@@ -48,14 +48,20 @@ module.exports = function(request, origin, token){
         },
         
         // TO UPDATE
-        getCurrentPlaceMeasurements: function(type){
-            return request('GET', origin + '/currentPlaceMeasurements/' + type);
+        placeLatestMeasurement: function(placeId, type){
+            return request('GET', origin + '/placeLatestMeasurement/' + placeId + '/' + type);
         },
-        getPlaceMeasurements: function(data){
-            return request('POST', origin + '/measurements/place', data);
+        placesLatestMeasurement: function(type){
+            return request('GET', origin + '/placesLatestMeasurement/' + type);
         },
-        getMeasurements: function(data){
-            return request('POST', origin + '/measurements/sensor', data);
+        sensorsLatestMeasurement: function(data){
+            return request('POST', origin + '/sensorsLatestMeasurement/', data);
+        },
+        measurementsPlaces: function(data){
+            return request('POST', origin + '/measurements/places', data);
+        },
+        measurementsSensors: function(data){
+            return request('POST', origin + '/measurements/sensors', data);
         },
         getAllPlacesInfos: function(){
             return request('GET', origin + '/allPlacesInfos');

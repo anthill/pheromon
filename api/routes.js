@@ -189,51 +189,87 @@ module.exports = function(app, debug){
 
     // complex queries
 
-    app.get('/currentPlaceMeasurements/:type', function(req, res){
+    // get latest measurement of one type for one place
+    app.get('/placeLatestMeasurement/:place/:type', function(req, res){
+        var type = req.params.type;
+        var place = req.params.place;
+
+        database.complexQueries.placeLatestMeasurement(place, type)
+        .then(function(data){
+            res.status(200).send(data);
+        })
+        .catch(function(error){
+            console.log('error in /placeLatestMeasurement', error);
+            res.status(500).send('Error in /placeLatestMeasurement/:place/:type');
+        });
+    });
+
+    // get latest measurement of one type for all places
+    app.get('/placesLatestMeasurement/:type', function(req, res){
         var type = req.params.type;
 
-        database.complexQueries.currentPlaceMeasurements(type)
+        database.complexQueries.placesLatestMeasurement(type)
         .then(function(data){
             res.status(200).send(data);
         })
         .catch(function(error){
-            console.log('error in /currentPlaceMeasurements', error);
-            res.status(500).send('Couldn\'t get current live affluence database');
+            console.log('error in /placesLatestMeasurement', error);
+            res.status(500).send('Error in get /placesLatestMeasurement/:type');
         });
     });
 
-    app.post('/measurements/place', function(req, res){
-        var placeId = req.body.id;
+    // get latest measurement of one type for some sensors
+    app.post('/sensorsLatestMeasurement/', function(req, res){
+        var type = req.body.type;
+        var sims = req.body.sims;
+
+        database.complexQueries.sensorsLatestMeasurement(sims, type)
+        .then(function(data){
+            res.status(200).send(data);
+        })
+        .catch(function(error){
+            console.log('error in /sensorsLatestMeasurement', error);
+            res.status(500).send('Error in post /sensorsLatestMeasurement/');
+        });
+    });
+
+    // get various measurements of various types for various place
+    app.post('/measurements/places', function(req, res){
+        var ids = req.body.ids;
         var types = req.body.types;
-        console.log('requesting place id', placeId, types);
+        var start = req.body.start;
+        var end = req.body.end;
+
         
-        database.complexQueries.getPlaceMeasurements(placeId, types)
+        database.complexQueries.getPlaceMeasurements(ids, types, start, end)
         .then(function(data){
             res.status(200).send(data);
         })
         .catch(function(error){
-            res.status(500).send('Couldn\'t get place measurements from database');
-            console.log('error in /measurements/place/' + placeId, error);
+            res.status(500).send('Couldn\'t get places measurements from database');
+            console.log('error in /measurements/places/' + ids, error);
         });
     });
 
-    app.post('/measurements/sensor', function(req, res){
+    // get various measurements of various types for various sensors
+    app.post('/measurements/sensors', function(req, res){
 
-        var sim = req.body.sim;
+        var sims = req.body.sims;
         var types = req.body.types;
+        var start = req.body.start;
+        var end = req.body.end;
 
-        console.log('requesting sensor measurements for sensor', sim);
-        database.complexQueries.getSensorMeasurements(sim, types)
+        database.complexQueries.getSensorsMeasurements(sims, types, start, end)
         .then(function(data){
-            console.log('data', data);
             res.status(200).send(data);
         })
         .catch(function(error){
-            res.status(500).send('Couldn\'t sensor measurements from database');
-            console.log('error in /measurements/sensor/' + sim, error);
+            res.status(500).send('Couldn\'t sensors measurements from database');
+            console.log('error in /measurements/sensors/' + sims, error);
         });
     });
 
+    // get all places
     app.get('/allPlacesInfos', function(req, res){
         database.complexQueries.getAllPlacesInfos()
         .then(function(data){

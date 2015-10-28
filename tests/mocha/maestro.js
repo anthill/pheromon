@@ -210,14 +210,14 @@ describe('Maestro testing', function(){
                 fakeSensor.publish('measurement/' + simId + '/wifi', encoded);
 
                 var data = {
-                    sim: simId,
+                    sims: [simId],
                     types: ['wifi']
                 };
 
                 return new Promise(function(resolve, reject){
                     setTimeout(function(){
 
-                        resolve(api.getMeasurements(data)
+                        resolve(api.measurementsSensors(data)
                         .then(function(measurements){
                             expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);
@@ -232,7 +232,6 @@ describe('Maestro testing', function(){
         it('Emitting commands through socket should send command to sensors', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
-                    console.log('handleCMD', message.toString());
 
                     if(topic === simId || 'all') {
                         expect(message.toString()).to.deep.equal('myCommand');
