@@ -262,8 +262,12 @@ var toExport = {
                 });
             });
         },
-        getPlaceMeasurements: function(placeId, types){
+        getPlaceMeasurements: function(ids, types, start, end){
             return databaseP.then(function(db){
+
+                // if no dates provided, assume we want all
+                var start = start ? start : new Date("1900-10-15T11:23:19.766Z");
+                var end = end ? end : new Date("2200-10-15T11:23:19.766Z");
 
                 var query = sensor
                     .select(
@@ -275,7 +279,11 @@ var toExport = {
                         measurement.value,
                         output.type
                     )
-                    .where(sensor.installed_at.equals(placeId), output.type.in(types))
+                    .where(
+                        sensor.installed_at.in(ids), 
+                        output.type.in(types),
+                        measurement.date.between(start, end)
+                    )
                     .from(
                         sensor
                             .join(output

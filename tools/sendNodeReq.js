@@ -23,7 +23,7 @@ module.exports = function (method, url, data){
                     resolve(JSON.parse(body));
                 else {
                     reject(Object.assign(
-                        new Error('HTTP error because of bad status code ' + response.statusCode),
+                        new Error('HTTP error because of bad status code ' + body),
                         {
                             HTTPstatus: response.statusCode,
                             text: body,

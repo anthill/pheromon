@@ -160,9 +160,9 @@ describe('Verify API', function() {
             });
         });
 
-        it('/measurements/place - Single type', function () {
-            return api.measurementsPlace({
-                id: 1,
+        it('/measurements/places - Single type', function () {
+            return api.measurementsPlaces({
+                ids: [1],
                 types: ['bluetooth']
             })
             .then(function(measurements){
@@ -171,13 +171,25 @@ describe('Verify API', function() {
             });
         });
 
-        it('/measurements/place - Multiple types', function () {
-            return api.measurementsPlace({
-                id: 1,
+        it('/measurements/places - Multiple types', function () {
+            return api.measurementsPlaces({
+                ids: [1],
                 types: ['bluetooth', 'wifi']
             })
             .then(function(measurements){
                 expect(measurements.length).to.deep.equal(3);
+            });
+        });
+
+        it('/measurements/places - Date range', function () {
+            return api.measurementsPlaces({
+                ids: [1],
+                types: ['wifi'],
+                start: new Date("2015-10-15T11:23:19.766Z"),
+                end: new Date("2015-10-15T14:23:19.766Z")
+            })
+            .then(function(measurements){
+                expect(measurements.length).to.deep.equal(2);
             });
         });
 

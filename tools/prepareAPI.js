@@ -57,8 +57,8 @@ module.exports = function(request, origin, token){
         sensorsLatestMeasurement: function(data){
             return request('POST', origin + '/sensorsLatestMeasurement/', data);
         },
-        measurementsPlace: function(data){
-            return request('POST', origin + '/measurements/place', data);
+        measurementsPlaces: function(data){
+            return request('POST', origin + '/measurements/places', data);
         },
         measurementsSensors: function(data){
             return request('POST', origin + '/measurements/sensors', data);

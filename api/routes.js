@@ -233,23 +233,25 @@ module.exports = function(app, debug){
         });
     });
 
-    // get various measurements for one place
-    app.post('/measurements/place', function(req, res){
-        var placeId = req.body.id;
+    // get various measurements of various types for various place
+    app.post('/measurements/places', function(req, res){
+        var ids = req.body.ids;
         var types = req.body.types;
-        console.log('requesting place id', placeId, types);
+        var start = req.body.start;
+        var end = req.body.end;
+
         
-        database.complexQueries.getPlaceMeasurements(placeId, types)
+        database.complexQueries.getPlaceMeasurements(ids, types, start, end)
         .then(function(data){
             res.status(200).send(data);
         })
         .catch(function(error){
-            res.status(500).send('Couldn\'t get place measurements from database');
-            console.log('error in /measurements/place/' + placeId, error);
+            res.status(500).send('Couldn\'t get places measurements from database');
+            console.log('error in /measurements/places/' + ids, error);
         });
     });
 
-    // get all measurements of various types for various sensors
+    // get various measurements of various types for various sensors
     app.post('/measurements/sensors', function(req, res){
 
         var sims = req.body.sims;
