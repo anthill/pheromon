@@ -12,106 +12,37 @@ module.exports = function (method, url, data){
             data = JSON.stringify(data);
         }
 
-        switch(method){
-            case 'GET':
-                request.get({
-                    url: url
-                }, function(error, response, body){
-                    if (!error) {
-                        if(response.statusCode < 400)
-                            resolve(JSON.parse(body));
-                        else {
-                            reject(Object.assign(
-                                new Error('HTTP error'),
-                                {
-                                    HTTPstatus: response.statusCode,
-                                    text: body,
-                                    error: error
-                                }
-                            ));
+        request({
+            method: method.toUpperCase(),
+            url: url,
+            headers: headers,
+            body: data
+        }, function(error, response, body){
+            if (!error) {
+                if(response.statusCode < 400)
+                    resolve(JSON.parse(body));
+                else {
+                    reject(Object.assign(
+                        new Error('HTTP error because of bad status code ' + response.statusCode),
+                        {
+                            HTTPstatus: response.statusCode,
+                            text: body,
+                            error: error
                         }
-                    }
-                    else {
-                        reject(Object.assign(
-                                new Error('HTTP error'),
-                                {
-                                    HTTPstatus: response.statusCode,
-                                    text: body,
-                                    error: error
-                                }
-                            ));
-                    }
-                });
-                break;
-
-            case 'POST':
-                request.post({
-                    url: url,
-                    headers: headers,
-                    body: data
-                }, function(error, response, body){
-                    if (!error) {
-                        if(response.statusCode < 400)
-                            resolve(JSON.parse(body));
-                        else {
-                            reject(Object.assign(
-                                new Error('HTTP error'),
-                                {
-                                    HTTPstatus: response.statusCode,
-                                    text: body,
-                                    error: error
-                                }
-                            ));
+                    ));
+                }
+            }
+            else {
+                reject(Object.assign(
+                        new Error('HTTP error'),
+                        {
+                            HTTPstatus: response.statusCode,
+                            text: body,
+                            error: error
                         }
-                    }
-                    else {
-                        reject(Object.assign(
-                                new Error('HTTP error'),
-                                {
-                                    HTTPstatus: response.statusCode,
-                                    text: body,
-                                    error: error
-                                }
-                            ));
-                    }    
-                });
-                break;
+                    ));
+            }
+        });
 
-            case 'DELETE':
-                request.del({
-                    url: url
-                }, function(error, response, body){
-                    if (!error) {
-                        if(response.statusCode < 400)
-                            resolve(JSON.parse(body));
-                        else {
-                            reject(Object.assign(
-                                new Error('HTTP error'),
-                                {
-                                    HTTPstatus: response.statusCode,
-                                    text: body,
-                                    error: error
-                                }
-                            ));
-                        }
-                    }
-                    else {
-                        reject(Object.assign(
-                                new Error('HTTP error'),
-                                {
-                                    HTTPstatus: response.statusCode,
-                                    text: body,
-                                    error: error
-                                }
-                            ));
-                    }
-                });
-                break;
-
-            default :
-                reject(new Error('HTTP request method unknown'));
-                break;
-
-        }
     });
 };

@@ -13,7 +13,90 @@ var toExport = {
     Sensors: require('./models/sensors.js'),
     Measurements: require('./models/measurements.js'),
     complexQueries: {
-        currentPlaceMeasurements: function(type){
+        placeLatestMeasurement: function(placeId, type){
+            return databaseP.then(function(db) {
+
+                var fullJoin = place
+                    .join(sensor
+                        .join(output
+                            .join(measurement)
+                            .on(measurement.output_id.equals(output.id))
+                        )
+                        .on(output.sensor_id.equals(sensor.id).and(
+                            output.type.equals(type)
+                        )))
+                    .on(place.id.equals(sensor.installed_at));
+                /*
+                    For each place, get the last measurement date
+                */
+                var latestPlaceMeasurementDate = place
+                    .subQuery('latest_recycling_center_measurement_date')
+                    .select(
+                        place.id,
+                        measurement.date.max().as('last_date')
+                    )
+                    .from(fullJoin)
+                    .where(place.id.equals(placeId))
+                    .group(place.id);
+
+                /*
+                    For each recycling center, get the measurement value associated to the last measurement date
+                */
+                
+                var latestPlaceMeasurementValue = place
+                    .subQuery('latest_recycling_center_measurement_value')
+                    .select(
+                        place.id,
+                        output.type,
+                        measurement
+                            .literal('array_length(measurements.value, 1)')
+                            .as('latest')
+                    )
+                    .from(fullJoin
+                        .join(latestPlaceMeasurementDate)
+                        .on(place.id.equals(latestPlaceMeasurementDate.id).and(
+                            latestPlaceMeasurementDate.last_date.equals(measurement.date)
+                        )));
+
+                /*
+                    For each recycling center, get the maximum measurement (and recycling center infos)
+                    TODO restrict maximum to the last few months
+                */
+                var maxMeasurementPerPlace = place
+                    .subQuery('max_measurement_per_recycling_center')
+                    .select(
+                        place.id, place.name, place.lat, place.lon,
+                        'max(array_length(measurements.value, 1))'
+                    )
+                    .from(fullJoin)
+                    .where(place.id.equals(placeId))
+                    .group(place.id);
+
+                /*
+                    For each recycling center, get
+                    * recycling center infos (long lat)
+                    * maximum number of signals
+                    * latest measured number of signals
+                */
+                var query = place
+                    .select('*')
+                    .from(maxMeasurementPerPlace
+                        .join(latestPlaceMeasurementValue)
+                        .on(maxMeasurementPerPlace.id.equals(latestPlaceMeasurementValue.id))
+                    )
+                    .toQuery();
+
+                console.log('placeLatestMeasurement query', query);
+
+                return new Promise(function (resolve, reject) {
+                    db.query(query, function (err, result) {
+                        if (err) reject(err);
+                        else resolve(result.rows[0]);
+                    });
+                });
+            });
+        },
+        placesLatestMeasurement: function(type){
             return databaseP.then(function(db) {
 
                 var fullJoin = place

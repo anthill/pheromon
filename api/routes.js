@@ -189,19 +189,36 @@ module.exports = function(app, debug){
 
     // complex queries
 
-    app.get('/currentPlaceMeasurements/:type', function(req, res){
+    // get latest measurement of one type for one place
+    app.get('/placeLatestMeasurement/:place/:type', function(req, res){
         var type = req.params.type;
+        var place = req.params.place;
 
-        database.complexQueries.currentPlaceMeasurements(type)
+        database.complexQueries.placeLatestMeasurement(place, type)
         .then(function(data){
             res.status(200).send(data);
         })
         .catch(function(error){
-            console.log('error in /currentPlaceMeasurements', error);
+            console.log('error in /placeLatestMeasurement', error);
             res.status(500).send('Couldn\'t get current live affluence database');
         });
     });
 
+    // get latest measurement of one type for all places
+    app.get('/placesLatestMeasurement/:type', function(req, res){
+        var type = req.params.type;
+
+        database.complexQueries.placesLatestMeasurement(type)
+        .then(function(data){
+            res.status(200).send(data);
+        })
+        .catch(function(error){
+            console.log('error in /placesLatestMeasurement', error);
+            res.status(500).send('Couldn\'t get current live affluence database');
+        });
+    });
+
+    // get various measurements for one place
     app.post('/measurements/place', function(req, res){
         var placeId = req.body.id;
         var types = req.body.types;
@@ -217,6 +234,7 @@ module.exports = function(app, debug){
         });
     });
 
+    // get various measurements types for one sensor
     app.post('/measurements/sensor', function(req, res){
 
         var sim = req.body.sim;
@@ -234,6 +252,7 @@ module.exports = function(app, debug){
         });
     });
 
+    // get all places
     app.get('/allPlacesInfos', function(req, res){
         database.complexQueries.getAllPlacesInfos()
         .then(function(data){
