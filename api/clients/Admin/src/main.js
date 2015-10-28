@@ -236,7 +236,7 @@ function refreshView(){
                             // check last time the sensor was active
                             if (measurements && measurements.length){
 
-                                sensor.lastMeasurementDate = measurements[measurements.length - 1].measurement_date;
+                                sensor.lastMeasurementDate = measurements[measurements.length - 1].date;
 
                                 var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR || 
                                 new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;

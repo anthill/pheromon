@@ -92,11 +92,11 @@ gulp.task('watch', ['watch-dashboard', 'watch-admin', 'watch-tools']);
 gulp.task('build', ['build-dashboard', 'build-admin']);
 
 gulp.task('start-containers-dev', ['build'], function(){
-    spawn('docker-compose', ['-f', 'compose-dev.yml', 'up'], {stdio: 'inherit'});
+    spawn('docker-compose', ['-f', 'compose-dev.yml', 'up', '--force-recreate'], {stdio: 'inherit'});
 });
 
 gulp.task('start-containers-prod', ['build'], function(){
-    spawn('docker-compose', ['-f', 'compose-prod.yml', 'up', '-d'], {stdio: 'inherit'});
+    spawn('docker-compose', ['-f', 'compose-prod.yml', 'up', '-d', '--force-recreate'], {stdio: 'inherit'});
 });
 
 /*
