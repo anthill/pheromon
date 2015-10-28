@@ -143,6 +143,20 @@ describe('Verify API', function() {
                 expect(affluences[0].max).to.deep.equal(4);
                 expect(affluences[0].latest).to.deep.equal(3);
                 expect(affluences[0].type).to.deep.equal('wifi');
+                expect(affluences[0].last_date).to.deep.equal("2015-10-15T15:23:19.766Z");
+            });
+        });
+
+        it('/sensorsLatestMeasurement', function () {
+            return api.sensorsLatestMeasurement({
+                sims: ['sim01'],
+                type: 'wifi'
+            })
+            .then(function(affluences){
+                expect(affluences[0].max).to.deep.equal(4);
+                expect(affluences[0].latest).to.deep.equal(3);
+                expect(affluences[0].type).to.deep.equal('wifi');
+                expect(affluences[0].last_date).to.deep.equal("2015-10-15T15:23:19.766Z");
             });
         });
 

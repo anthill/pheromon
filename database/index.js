@@ -50,7 +50,8 @@ var toExport = {
                         output.type,
                         measurement
                             .literal('array_length(measurements.value, 1)')
-                            .as('latest')
+                            .as('latest'),
+                        measurement.date.as('last_date')
                     )
                     .from(fullJoin
                         .join(latestPlaceMeasurementDate)
@@ -132,7 +133,8 @@ var toExport = {
                         output.type,
                         measurement
                             .literal('array_length(measurements.value, 1)')
-                            .as('latest')
+                            .as('latest'),
+                        measurement.date.as('last_date')
                     )
                     .from(fullJoin
                         .join(latestPlaceMeasurementDate)
@@ -177,7 +179,89 @@ var toExport = {
                 });
             });
         },
+        sensorsLatestMeasurement: function(sims, type){
+            return databaseP.then(function(db) {
 
+                var fullJoin = sensor
+                    .join(output
+                        .join(measurement)
+                        .on(measurement.output_id.equals(output.id))
+                    )
+                    .on(output.sensor_id.equals(sensor.id).and(
+                        output.type.equals(type)
+                    ));
+                /*
+                    For each sensor, get the last measurement date
+                */
+                var latestSensorMeasurementDate = sensor
+                    .subQuery('latest_sensor_measurement_date')
+                    .select(
+                        sensor.id,
+                        measurement.date.max().as('last_date')
+                    )
+                    .from(fullJoin)
+                    .where(sensor.sim.in(sims))
+                    .group(sensor.id);
+
+                /*
+                    For each sensor, get the measurement value associated to the last measurement date
+                */
+                
+                var latestSensorMeasurementValue = sensor
+                    .subQuery('latest_sensor_measurement_value')
+                    .select(
+                        sensor.id,
+                        output.type,
+                        measurement
+                            .literal('array_length(measurements.value, 1)')
+                            .as('latest'),
+                        measurement.date.as('last_date')
+                    )
+                    .from(fullJoin
+                        .join(latestSensorMeasurementDate)
+                        .on(sensor.id.equals(latestSensorMeasurementDate.id).and(
+                            latestSensorMeasurementDate.last_date.equals(measurement.date)
+                        )));
+
+                /*
+                    For each sensor, get the maximum measurement
+                    TODO restrict maximum to the last few months
+                */
+                var maxMeasurementPerSensor = sensor
+                    .subQuery('max_measurement_per_recycling_center')
+                    .select(
+                        sensor.id, sensor.name, sensor.project, sensor.sim, sensor.period,
+                        'max(array_length(measurements.value, 1))'
+                    )
+                    .from(fullJoin)
+                    .where(sensor.sim.in(sims))
+                    .group(sensor.id);
+
+                /*
+                    For each sensor, get
+                    * sensor infos 
+                    * maximum number of signals
+                    * latest measured number of signals
+                    * latest date measured
+                */
+                var query = place
+                    .select('*')
+                    .from(maxMeasurementPerSensor
+                        .join(latestSensorMeasurementValue)
+                        .on(maxMeasurementPerSensor.id.equals(latestSensorMeasurementValue.id))
+                    )
+                    .toQuery();
+
+                // console.log('sensorsLatestMeasurement query', query);
+
+                return new Promise(function (resolve, reject) {
+                    db.query(query, function (err, result) {
+                        if (err) reject(err);
+                        else resolve(result.rows);
+                    });
+                });
+            });
+        },
         getPlaceMeasurements: function(placeId, types){
             return databaseP.then(function(db){
 

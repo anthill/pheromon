@@ -200,7 +200,7 @@ module.exports = function(app, debug){
         })
         .catch(function(error){
             console.log('error in /placeLatestMeasurement', error);
-            res.status(500).send('Couldn\'t get current live affluence database');
+            res.status(500).send('Error in /placeLatestMeasurement/:place/:type');
         });
     });
 
@@ -214,7 +214,22 @@ module.exports = function(app, debug){
         })
         .catch(function(error){
             console.log('error in /placesLatestMeasurement', error);
-            res.status(500).send('Couldn\'t get current live affluence database');
+            res.status(500).send('Error in get /placesLatestMeasurement/:type');
+        });
+    });
+
+    // get latest measurement of one type for some sensors
+    app.post('/sensorsLatestMeasurement/', function(req, res){
+        var type = req.body.type;
+        var sims = req.body.sims;
+
+        database.complexQueries.sensorsLatestMeasurement(sims, type)
+        .then(function(data){
+            res.status(200).send(data);
+        })
+        .catch(function(error){
+            console.log('error in /sensorsLatestMeasurement', error);
+            res.status(500).send('Error in post /sensorsLatestMeasurement/');
         });
     });
 
