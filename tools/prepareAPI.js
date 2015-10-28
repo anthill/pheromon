@@ -57,8 +57,8 @@ module.exports = function(request, origin, token){
         measurementsPlace: function(data){
             return request('POST', origin + '/measurements/place', data);
         },
-        measurementsSensor: function(data){
-            return request('POST', origin + '/measurements/sensor', data);
+        measurementsSensors: function(data){
+            return request('POST', origin + '/measurements/sensors', data);
         },
         getAllPlacesInfos: function(){
             return request('GET', origin + '/allPlacesInfos');

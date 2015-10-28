@@ -86,7 +86,7 @@ var toExport = {
                     )
                     .toQuery();
 
-                console.log('placeLatestMeasurement query', query);
+                // console.log('placeLatestMeasurement query', query);
 
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
@@ -209,7 +209,7 @@ var toExport = {
             });
         },
 
-        getSensorMeasurements: function(sim, types){
+        getSensorsMeasurements: function(sims, types){
             return databaseP.then(function(db){
 
                 var query = sensor
@@ -222,7 +222,7 @@ var toExport = {
                             .as('entry'),
                         measurement.value
                     )
-                    .where(sensor.sim.equals(sim), output.type.in(types))
+                    .where(sensor.sim.in(sims), output.type.in(types))
                     .from(
                         sensor
                             .join(output

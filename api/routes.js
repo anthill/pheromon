@@ -234,21 +234,19 @@ module.exports = function(app, debug){
         });
     });
 
-    // get various measurements types for one sensor
-    app.post('/measurements/sensor', function(req, res){
+    // get various measurements types for many sensors
+    app.post('/measurements/sensors', function(req, res){
 
-        var sim = req.body.sim;
+        var sims = req.body.sims;
         var types = req.body.types;
 
-        console.log('requesting sensor measurements for sensor', sim);
-        database.complexQueries.getSensorMeasurements(sim, types)
+        database.complexQueries.getSensorsMeasurements(sims, types)
         .then(function(data){
-            console.log('data', data);
             res.status(200).send(data);
         })
         .catch(function(error){
-            res.status(500).send('Couldn\'t sensor measurements from database');
-            console.log('error in /measurements/sensor/' + sim, error);
+            res.status(500).send('Couldn\'t sensors measurements from database');
+            console.log('error in /measurements/sensors/' + sims, error);
         });
     });
 

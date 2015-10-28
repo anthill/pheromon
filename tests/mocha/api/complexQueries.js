@@ -167,9 +167,9 @@ describe('Verify API', function() {
             });
         });
 
-        it('/measurements/sensor - Single type', function () {
-            return api.measurementsSensor({
-                sim: 'sim01',
+        it('/measurements/sensors - Single type', function () {
+            return api.measurementsSensors({
+                sims: ['sim01'],
                 types: ['wifi']
             })
             .then(function(measurements){
@@ -177,13 +177,13 @@ describe('Verify API', function() {
             });
         });
 
-        it('/measurements/sensor - Multiple types', function () {
-            return api.measurementsSensor({
-                sim: 'sim01',
+        it('/measurements/sensors - Multiple types', function () {
+            return api.measurementsSensors({
+                sims: ['sim01', 'sim02'],
                 types: ['bluetooth', 'wifi']
             })
             .then(function(measurements){
-                expect(measurements.length).to.deep.equal(3);
+                expect(measurements.length).to.deep.equal(6);
             });
         });
 
