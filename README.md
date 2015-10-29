@@ -27,7 +27,7 @@ The **Dashboard** is useful to visualize the measurements on a map.
 ![Dashboard](https://docs.google.com/drawings/d/15e3pNNdNSJg61KrjDVDR1zNUwxQwabhA4rs4NJAqo9A/pub?w=960&h=540)
 
 You can also administrate your sensors with the **Admin**.
-![Admin](https://docs.google.com/drawings/d/1vV2AWF36vDeI0nxXbfTBlMmFX7O1Y_bWcNblKMaAq7I/pub?w=960&h=540)
+![Admin](https://drive.google.com/file/d/0B1PNw6hzqx_EeXFfTFlpRkxyd0k/view?usp=sharing)
 
 More on those clients later.
 
