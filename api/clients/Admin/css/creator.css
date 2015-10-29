@@ -1,7 +1,7 @@
 
 .creator {
-	background-color: black; margin-top: -2.2rem; border-bottom: 1px solid white;
-	color: #EEE;
+	background-color: #00796B; margin-top: -2.2rem;
+	color: #B2DFDB;
 	transition: margin-top .5s ease-in-out;
 }
 
@@ -22,7 +22,7 @@
 	display: inline-block;
 	padding: 0.5em;
 	text-align: center;
-	color: white;
+	color: #212121;
 }
 
 .creator li {
@@ -35,7 +35,7 @@
 
 .creator input {
 	padding: .1rem .5rem; margin: .1rem;
-	color: black;
+	color: #212121;
 }
 
 #sensorPanel .creator input:first-child{

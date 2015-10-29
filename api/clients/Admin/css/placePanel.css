@@ -10,17 +10,18 @@
 
 #placePanel{
     display: inline-block; position: relative; width: 78vw; height: 100vh;
-    background-color: #cbc6e1;
+    background-color: #FFFFFF;
 }
 
 .place{
 	display: inline-block; margin: 1em; padding: .5em; width: 30%; position: relative;
-	border: 1px solid #AAA; border-radius: 5px;
-	background-color: white;
+	border-radius: 9px;
+	color: #FFFFFF;
+	background-color: #727272; box-shadow: -10px 0px 30px #727272;
 }
 
 .place .placeName {
-	display: block; width: 100%; margin: 0 auto;
+	display: block; width: 100%; margin: 0 0.5em auto;
 	font-weight: bold; font-size: 1.5em;
 }
 
@@ -37,10 +38,10 @@
 	font-size: .7em;
 }
 
-.ant{
+.ant {
 	display: block; margin: 1em 0; padding: .2rem; position: relative;
-	border: 1px solid #444; border-radius: 5px;
-	background-color: white;
+	border-radius: 5px;
+	color: #212121; background-color: #B2DFDB;
 	transition: background-color 1s;
 }
 
@@ -73,19 +74,19 @@
 }
 
 .light{
-	background-color: #EEE;
+	color: #00796B; background-color: #B2DFDB;
 }
 
 .dark{
-	background-color: #DDD;
+	color: #727272; background-color: #B2DFDB;
 }
 
 .ant.selected{
-	background-color: #555;
+	background-color: #212121;
 }
 
 .ant.updating {
-	background-color: red;
+	background-color: #FF5252;
 }
 
 .ant-selector {
@@ -112,12 +113,12 @@
 }
 
 .client div div:last-child{
-	position: absolute; top: 0; right: 0; border: 1px solid black; padding: .1em;
-	font-size: 0.6em; color: black;
+	position: absolute; top: 0.7em; right: 0; border: 1px solid #FF5252; padding: .1em;
+	font-size: 0.6em; color: #FF5252;
 }
 
 .ant.disconnected .client {
-	color: red;
+	color: #FF5252;
 }
 
 .ant.connected .client {
@@ -202,9 +203,9 @@
 
 .clear {
 	display: inline;
-	color: red;
+	color: #FF5252;
 }
 
 .low-importance {
-	color: #999999; font-size: small; font-style: italic;
+	color: #00796B; font-size: small; font-style: italic;
 }

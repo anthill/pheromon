@@ -34,8 +34,8 @@ var topLevelStore = {
     placeMap: undefined,
     selectedPlaceMap: new Map(),
     updatingIDs: [],
-    getPlaceMeasurements: function(place, types){
-        api.getPlaceMeasurements({id: place.id, types: types})
+    measurementsPlaces: function(place, types){
+        api.measurementsPlaces({ids: [place.id], types: types})
         .then(function(measurements){
             console.log('place measurements', place, measurements);
             

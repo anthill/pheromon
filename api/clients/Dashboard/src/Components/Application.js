@@ -28,7 +28,7 @@ interface ApplicationProps{
     mapId,
     mapCenter,
     placeMap: Map (placeId => Place),
-    getPlaceMeasurements: (placeId) => Promise<MeasurementHistory[]>,
+    measurementsPlaces: (placeId) => Promise<MeasurementHistory[]>,
     updatingIDs: [int],
     day: string
 }
@@ -71,15 +71,12 @@ module.exports = React.createClass({
             updatingIDs: props.updatingIDs,
             onPlaceSelected: function(place){
                 if (place.measurements){
-                    console.log('1');
                     if (state.selectedPlaceMap && state.selectedPlaceMap.has(place.id)){
                         state.selectedPlaceMap.delete(place.id);
-                        console.log('2');
                         self.setState({
                             selectedPlaceMap: state.selectedPlaceMap
                         });
                     } else {
-                        console.log('3');
                         state.selectedPlaceMap.set(place.id, place);
 
                         self.setState({
@@ -88,8 +85,7 @@ module.exports = React.createClass({
                     }
                 }
                 else{
-                    console.log('6');
-                    props.getPlaceMeasurements(place, ['wifi']); 
+                    props.measurementsPlaces(place, ['wifi']); 
                 }
             }
         });
