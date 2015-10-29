@@ -122,14 +122,13 @@ var Sensor = React.createClass({
         // );
 
         var pokeNumber = pokemonNames.indexOf(props.sensor.name);
-        console.log('POKE', pokeNumber);
 
         var h = Math.floor((pokeNumber + 1) / 100);
         var d = Math.floor((pokeNumber + 1) % 100 / 10);
         var u = Math.floor((pokeNumber + 1) % 10);
 
         var img = pokeNumber >= 0 ?
-            React.DOM.img({src: 'http://assets22.pokemon.com/assets/cms2/img/pokedex/full/' + h + d + u +'.png', alt:'poke'})
+            React.DOM.img({src: 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/' + h + d + u +'.png', alt:'poke'})
             : undefined;
 
         return React.DOM.div({className: classes.join(' ')},
