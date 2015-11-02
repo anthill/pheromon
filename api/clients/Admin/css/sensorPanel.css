@@ -9,13 +9,16 @@
 */
 
 #sensorPanel {
-	display: inline-block; position: absolute; top: 0; right: 0; width: 22vw; height: 100%; border-left: 1px solid #EEE;
-	background-color: #cfea99;
+	display: inline-block; position: absolute; top: 0; right: 0; width: 22vw; height: 100%;
+	background-color: #009688;
+	box-shadow: -10px 0px 30px #727272;
 }
 
 .sensor{
-	display: block; margin: 1em; padding: .2em; position: relative; border: 1px solid #DDD; position: relative;
-	background-color: white;
+	display: block; margin: 1em; padding: .2em; position: relative; position: relative;
+	color: #212121;
+	border-radius: 5px;
+	background-color: #B2DFDB;
 }
 
 .sensor ul {
@@ -40,9 +43,8 @@
 }
 
 .sensor.orphan {
-	font-weight: bold;
-    color: white;
-    background-color: orange;
+    color: #FFFFFF;
+    background-color: #FF5252;
 }
 
 .sensor img{

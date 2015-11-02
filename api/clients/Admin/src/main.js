@@ -11,8 +11,6 @@ var prepareAPI = require('../../../../tools/prepareAPI.js');
 var sendReq = require('../../../../tools/sendReq.js');
 var makeMap = require('../../../../tools/makeMap.js');
 
-var api = prepareAPI(sendReq);
-
 var dbStatusMap = require('./dbStatusMap.js');
 
 var socket = io();
@@ -32,6 +30,20 @@ var topLevelStore = {
     onCreateSensor: createSensorInDb,
     sendCommand: sendCommand
 };
+
+// this is used to parse the url and get the secret tocken so admin can call the api
+var match,
+    pl     = /\+/g,  // Regex for replacing addition symbol with a space
+    search = /([^&=]+)=?([^&]*)/g,
+    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+    query  = window.location.search.substring(1);
+
+var urlParams = {};
+while (match = search.exec(query))
+   urlParams[decode(match[1])] = decode(match[2]);
+
+
+var api = prepareAPI(sendReq, '', urlParams.s);
 
 function render(){
     React.render(new Application(topLevelStore), document.body);
@@ -218,13 +230,13 @@ function refreshView(){
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
-                        api.getPlaceMeasurements({id: sensor.installed_at, types: ['wifi']})
+                        api.measurementsPlaces({ids: [sensor.installed_at], types: ['wifi']})
                         .then(function (measurements) {
 
                             // check last time the sensor was active
                             if (measurements && measurements.length){
 
-                                sensor.lastMeasurementDate = measurements[measurements.length - 1].measurement_date;
+                                sensor.lastMeasurementDate = measurements[measurements.length - 1].date;
 
                                 var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR || 
                                 new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;

@@ -21,6 +21,7 @@ interface AntProps{
         signal_status: string,
         outputs: [],
         updated_at: string,
+        lastMeasurementDate: string,
         isSelected: bool
     },
     isSelected: boolean,

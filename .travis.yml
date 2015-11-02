@@ -5,8 +5,7 @@ node_js:
   - "0.10"
 
 env:
-  - COMPOSE_VERSION=1.4.2
-  - DOCKER_CLIENT_TIMEOUT=1000
+  - COMPOSE_VERSION=1.4.2 DOCKER_CLIENT_TIMEOUT=1000
 
 services:
   - docker

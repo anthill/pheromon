@@ -6,7 +6,6 @@ var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 var expect = chai.expect;
-var assert = chai.assert;
 
 var request = require('request');
 var PRIVATE = require('../../PRIVATE.json');
@@ -28,7 +27,7 @@ describe('Broker Testing', function() {
 
     it('Broker should not authenticate sensor with fake token', function () {
 
-        return new Promise(function(resolve, reject){
+        var promise = new Promise(function(resolve, reject){
             fakeSensor = mqtt.connect('mqtt://broker:1883',
                 {
                     username: simId,
@@ -37,11 +36,21 @@ describe('Broker Testing', function() {
                 }
             );
 
-            setTimeout(function(){
+            fakeSensor.on('connect', function(error){
                 resolve();
+            })
+
+            fakeSensor.on('error', function(error){
+                reject();
+            })
+
+            setTimeout(function(){
+                reject();
             }, 500);
 
         });
+
+        return expect(promise).to.be.rejected;
     });
     
 });

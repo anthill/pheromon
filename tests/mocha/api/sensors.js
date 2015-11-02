@@ -11,10 +11,11 @@ chai.use(chaiAsPromised);
 var expect = chai.expect;
 
 var prepareAPI = require('../../../tools/prepareAPI.js');
+var PRIVATE = require('../../../PRIVATE.json');
 
 var origin = 'http://api:4000';
 // var origin = 'http://192.168.59.103:4000';
-var api = prepareAPI(sendReq, origin);
+var api = prepareAPI(sendReq, origin, PRIVATE.secret);
 
 
 describe('Verify API', function() {
