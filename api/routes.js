@@ -269,6 +269,40 @@ module.exports = function(app, debug){
         });
     });
 
+    // get sensor measurements of a specified type without any processing.
+    app.post('/measurements/sensor/raw', function(req, res) {
+        var sim = req.body.sim;
+        var type = req.body.type;
+        var start = req.body.start;
+        var end = req.body.end;
+
+        database.complexQueries.getSensorRawMeasurements(sim, type, start, end)
+        .then(function(data){
+            res.status(200).send(data);
+        })
+        .catch(function(error){
+            res.status(500).send('Couldn\'t sensors measurements from database');
+            console.log('error in /measurements/sensor/raw ' + sim, error);
+        });
+    });
+
+    // get place measurements of a specified type without any processing.
+    app.post('/measurements/place/raw', function(req, res) {
+        var place_id = req.body.place_id;
+        var type = req.body.type;
+        var start = req.body.start;
+        var end = req.body.end;
+
+        database.complexQueries.getPlaceRawMeasurements(place_id, type, start, end)
+        .then(function(data){
+            res.status(200).send(data);
+        })
+        .catch(function(error){
+            res.status(500).send('Couldn\'t sensors measurements from database');
+            console.log('error in /measurements/sensor/raw ' + place_id, error);
+        });
+    });
+
     // get all places
     app.get('/allPlacesInfos', function(req, res){
         database.complexQueries.getAllPlacesInfos()

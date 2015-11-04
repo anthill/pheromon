@@ -264,6 +264,7 @@ var toExport = {
                 });
             });
         },
+
         getPlaceMeasurements: function(ids, types, start, end){
             return databaseP.then(function(db){
 
@@ -370,6 +371,82 @@ var toExport = {
             })
             .catch(function(err){
                 console.log('ERROR in getAllPlacesInfos', err);
+            });
+        },
+
+        // Returns place measurements of a specified type without any processing.
+        getPlaceRawMeasurements: function(place_id, type, start, end) {
+            return databaseP.then(function(db){
+
+                // if no dates provided, assume we want all
+                var _start = start || new Date('1900-10-15T11:23:19.766Z');
+                var _end = end || new Date('2200-10-15T11:23:19.766Z');
+
+                var query = sensor
+                    .select(
+                        sensor.sim,
+                        measurement.date,
+                        measurement.value,
+                        output.type
+                    )
+                    .where(
+                        sensor.installed_at.equals(place_id),
+                        output.type.equals(type),
+                        measurement.date.between(_start, _end)
+                    )
+                    .from(
+                        sensor
+                            .join(output
+                                .join(measurement)
+                                .on(measurement.output_id.equals(output.id)))
+                            .on(output.sensor_id.equals(sensor.id)))
+                    .toQuery();
+
+                return new Promise(function (resolve, reject) {
+                    db.query(query, function (err, result) {
+                        if (err) reject(err);
+                        else resolve(result.rows);
+                    });
+                });
+            });
+
+        },
+
+        // Returns sensor measurements of a specified type without any processing.
+        getSensorRawMeasurements: function(sim, type, start, end) {
+            return databaseP.then(function(db){
+
+                // if no dates provided, assume we want all
+                var _start = start || new Date('1900-10-15T11:23:19.766Z');
+                var _end = end || new Date('2200-10-15T11:23:19.766Z');
+
+                var query = sensor
+                    .select(
+                        sensor.sim,
+                        output.type,
+                        measurement.date,
+                        measurement.value
+                    )
+                    .where(
+                        sensor.sim.equals(sim),
+                        output.type.equals(type),
+                        measurement.date.between(_start, _end)
+                        )
+                    .from(
+                        sensor
+                            .join(output
+                                .join(measurement)
+                                .on(measurement.output_id.equals(output.id)))
+                            .on(output.sensor_id.equals(sensor.id)))
+                    .toQuery();
+
+                return new Promise(function (resolve, reject) {
+                    db.query(query, function (err, result) {
+                        if (err) reject(err);
+                        else
+                            resolve(result.rows);
+                    });
+                });
             });
         }
     }

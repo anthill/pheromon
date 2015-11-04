@@ -252,7 +252,7 @@ module.exports = function(authToken, io){
             });
         });
 
-        console.log('Maestro ready');   
+        console.log('Maestro ready');
 
     });
 
