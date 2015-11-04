@@ -61,7 +61,7 @@ CREATE TRIGGER updated_at_outputs BEFORE UPDATE ON outputs FOR EACH ROW EXECUTE 
 CREATE TABLE IF NOT EXISTS measurements (
     id                  SERIAL PRIMARY KEY,
     output_id           integer REFERENCES outputs (id) ON DELETE CASCADE NOT NULL,
-    "value"             real[] NOT NULL,
+    "value"             json NOT NULL,
     "date"              timestamp without time zone NOT NULL
 ) INHERITS(lifecycle);
 CREATE TRIGGER updated_at_measurements BEFORE UPDATE ON measurements FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
