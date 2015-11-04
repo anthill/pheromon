@@ -175,13 +175,13 @@ module.exports = {
     getAll: function() {
         return databaseP.then(function (db) {
             
-            var query = sensorTable
+            var query1 = sensorTable
                 .select('*')
                 .toQuery();
 
             // first get the sensors
             return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
+                db.query(query1, function (err, result) {
                     if (err) reject(err);
                     else
                         resolve(result.rows);
@@ -190,13 +190,13 @@ module.exports = {
             // then get the corresponding inputs for each sensor
             .then(function(sensors){
 
-                var query = outputTable
+                var query2 = outputTable
                     .select('*')
                     .where(outputTable.sensor_id.in(sensors.map(function(s){ return s.id; })))
                     .toQuery();
 
                 return new Promise(function (resolve, reject) {
-                    db.query(query, function (err, result) {
+                    db.query(query2, function (err, result) {
                         if (err) reject(err);
                         else
                             resolve(result.rows);        
