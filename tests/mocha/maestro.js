@@ -2,6 +2,7 @@
 require('es6-shim');
 
 var sigCodec = require('pheromon-codecs').signalStrengths;
+var trajCodec = require('pheromon-codecs').trajectories;
 
 var mqtt = require('mqtt');
 var chai = require('chai');
@@ -228,6 +229,55 @@ describe('Maestro testing', function(){
                 });
             });
         });
+
+        it('Pushing trajectories measurements should register measurements in DB', function () {
+
+            var trajectories =
+            [
+                [
+                    {
+                        date: new Date(),
+                        signal_strength: -35
+                    },
+
+                    {
+                        date: new Date(),
+                        signal_strength: -55
+                    }
+                ],
+                [
+                    {
+                        date: new Date(new Date().getTime() - 1000 * 60 * 30),
+                        signal_strength: -80
+                    }
+                ]
+            ];
+
+            return trajCodec.encode(trajectories)
+            .then(function(encoded){
+                fakeSensor.publish('measurement/' + simId + '/trajectories', encoded);
+
+                var data = {
+                    sim: simId,
+                    type: 'trajectories'
+                };
+
+                return new Promise(function(resolve, reject){
+                    setTimeout(function(){
+
+                        resolve(api.sensorRawMeasurements(data)
+                        .then(function(measurements){
+                            console.log(measurements);
+                            expect(measurements[0].value[0].signal_strength).to.deep.equal(-35);
+                            expect(measurements[1].value[0].signal_strength).to.deep.equal(-80);
+                            expect(Date.parse(measurements[0].date)).to.be.a('number');
+                        }));
+
+                    }, 200);
+                });
+            });
+        });
+
 
         it('Emitting commands through socket should send command to sensors', function(){
             return new Promise(function(resolve, reject){

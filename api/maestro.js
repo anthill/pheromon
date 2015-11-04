@@ -78,7 +78,7 @@ function extractMeasurementsFromData(data, type) {
                     value: trajectory,
                     date: trajectory.reduce(function (previous, current) {
                         return previous.date.getTime() < current.date.getTime() ? previous : current;
-                    }).date
+                    }, trajectory[0]).date
                 };
             });
 
