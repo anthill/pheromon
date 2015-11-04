@@ -267,7 +267,6 @@ describe('Maestro testing', function(){
 
                         resolve(api.sensorRawMeasurements(data)
                         .then(function(measurements){
-                            console.log(measurements);
                             expect(measurements[0].value[0].signal_strength).to.deep.equal(-35);
                             expect(measurements[1].value[0].signal_strength).to.deep.equal(-80);
                             expect(Date.parse(measurements[0].date)).to.be.a('number');
