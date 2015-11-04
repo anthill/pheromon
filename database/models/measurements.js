@@ -1,5 +1,6 @@
 'use strict';
 
+require('es6-shim');
 var sql = require('sql');
 sql.setDialect('postgres');
 var databaseP = require('../management/databaseClientP');
@@ -10,7 +11,7 @@ module.exports = {
     create: function (data) {
         return databaseP.then(function (db) {
 
-        var cloneData = JSON.parse(JSON.stringify(data)); // Copy the object...
+        var cloneData = Object.assign({}, data);
 
         cloneData.value = JSON.stringify(cloneData.value);
 

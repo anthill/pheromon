@@ -2,90 +2,13 @@
 
 // maestro: mqtt client on the API side of Pheromon
 var mqtt = require('mqtt');
-var sigCodec = require('pheromon-codecs').signalStrengths;
-var trajCodec = require('pheromon-codecs').trajectories;
+var decoder = require('./decodeMessage');
 var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
 var database = require('../database');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
-
-// Decode a message in function of its type
-function decodeMessage(message, type) {
-
-    return new Promise(function (resolve, reject) {
-
-        switch (type) {
-            case 'wifi':
-            case 'bluetooth':
-                sigCodec.decode(message)
-                .then(resolve)
-                .catch(reject);
-                /*
-                    {
-                        date:
-                        devices: [
-                            {
-                                signal_strengh:
-                            }
-                        ]
-                    }
-                */
-
-            break;
-
-            case 'trajectories':
-                trajCodec.decode(message)
-                .then(resolve)
-                .catch(reject);
-                /*
-                    [ // trajectories
-                        [ // trajectory
-                            { // point
-                                date: Date(),
-                                signal_strength: int
-                            },
-                            ...
-                        ],
-                        ...
-                    ]
-                */
-            break;
-
-            default:
-                reject(new Error('measurement type not supported by decode'));
-        }
-    });
-}
-
-// Extract measurements informations from decoded data
-function extractMeasurementsFromData(data, type) {
-    switch (type) {
-        case 'wifi':
-        case 'bluetooth':
-            return [ // wifi and bluetooth messages correspond to only one measurement
-                {
-                    value: data.devices.map(function (measurement) {
-                        return measurement.signal_strength;
-                    }),
-                    date: data.date
-                }];
-
-        case 'trajectories': // trajectories messages contains many measurements (1 per trajectory)
-            return data.map(function (trajectory) {
-                return {
-                    value: trajectory,
-                    date: trajectory.reduce(function (previous, current) {
-                        return previous.date.getTime() < current.date.getTime() ? previous : current;
-                    }, trajectory[0]).date
-                };
-            });
-
-        default:
-            return null;
-    }
-}
 
 module.exports = function(authToken, io){
 
@@ -161,7 +84,7 @@ module.exports = function(authToken, io){
                         var deltaStatus = {};
 
                         // update only sensor, client and signal are reserved keywords
-                        if (SENSOR_STATUS.has(type)){ 
+                        if (SENSOR_STATUS.has(type)){
                             deltaStatus[type + '_status'] = message;
 
                             database.Sensors.update(sensor.sim, deltaStatus)
@@ -190,12 +113,12 @@ module.exports = function(authToken, io){
                             
                     case 'measurement':
                         
-                        decodeMessage(message, type)
+                        decoder.decodeMessage(message, type)
                         .then(function(data){
                             debug('Measurement to register', data, sensor.outputs);
 
                             var outputId = makeMap(sensor.outputs, 'type').get(type).id;
-                            var measurements = extractMeasurementsFromData(data, type);
+                            var measurements = decoder.extractMeasurementsFromData(data, type);
 
                             if (measurements) {
                                 measurements.forEach(function (measurement) {
