@@ -19,7 +19,7 @@ var debug = require('../tools/debug');
 var routes = require('./routes.js');
 
 var PRIVATE = require('../PRIVATE.json');
-var DEBUG = process.env.NODE_ENV === "development";
+var DEBUG = process.env.NODE_ENV === 'development';
 
 var server = new http.Server(app);
 var io = require('socket.io')(server);
@@ -50,7 +50,7 @@ schedule.scheduleJob('0 3 * * *', function(){
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
 

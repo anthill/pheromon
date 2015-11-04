@@ -264,12 +264,12 @@ var toExport = {
                 });
             });
         },
-        getPlaceMeasurements: function(ids, types, _start, _end){
+        getPlaceMeasurements: function(ids, types, start, end){
             return databaseP.then(function(db){
 
                 // if no dates provided, assume we want all
-                var start = _start ? _start : new Date('1900-10-15T11:23:19.766Z');
-                var end = _end ? _end : new Date('2200-10-15T11:23:19.766Z');
+                var _start = start || new Date('1900-10-15T11:23:19.766Z');
+                var _end = end || new Date('2200-10-15T11:23:19.766Z');
 
                 var query = sensor
                     .select(
@@ -282,9 +282,9 @@ var toExport = {
                         output.type
                     )
                     .where(
-                        sensor.installed_at.in(ids), 
+                        sensor.installed_at.in(ids),
                         output.type.in(types),
-                        measurement.date.between(start, end)
+                        measurement.date.between(_start, _end)
                     )
                     .from(
                         sensor
@@ -303,12 +303,12 @@ var toExport = {
             });
         },
 
-        getSensorsMeasurements: function(sims, types, _start, _end){
+        getSensorsMeasurements: function(sims, types, start, end){
             return databaseP.then(function(db){
 
                 // if no dates provided, assume we want all
-                var start = _start ? _start : new Date('1900-10-15T11:23:19.766Z');
-                var end = _end ? _end : new Date('2200-10-15T11:23:19.766Z');
+                var _start = start || new Date('1900-10-15T11:23:19.766Z');
+                var _end = end || new Date('2200-10-15T11:23:19.766Z');
 
                 var query = sensor
                     .select(
@@ -323,7 +323,7 @@ var toExport = {
                     .where(
                         sensor.sim.in(sims), 
                         output.type.in(types),
-                        measurement.date.between(start, end)
+                        measurement.date.between(_start, _end)
                         )
                     .from(
                         sensor

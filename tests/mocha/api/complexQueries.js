@@ -189,7 +189,7 @@ describe('Verify API', function() {
                 end: new Date("2015-10-15T14:23:19.766Z")
             })
             .then(function(measurements){
-                expect(measurements.length).to.deep.equal(2);
+                expect(measurements.length).to.deep.equal(1);
             });
         });
 
@@ -221,7 +221,7 @@ describe('Verify API', function() {
                 end: new Date("2015-10-15T14:23:19.766Z")
             })
             .then(function(measurements){
-                expect(measurements.length).to.deep.equal(2);
+                expect(measurements.length).to.deep.equal(1);
             });
         });
 

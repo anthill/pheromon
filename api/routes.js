@@ -2,7 +2,7 @@
 
 var database = require('../database');
 var PRIVATE = require('../PRIVATE.json');
-var DEBUG = process.env.NODE_ENV === "development";
+var DEBUG = process.env.NODE_ENV === 'development';
 
 module.exports = function(app, debug){
 
