@@ -65,6 +65,12 @@ module.exports = function(request, origin, token){
         },
         getAllPlacesInfos: function(){
             return request('GET', origin + '/allPlacesInfos');
+        },
+        sensorRawMeasurements: function (data){
+            return request('POST', origin + '/measurements/sensor/raw', data);
+        },
+        placeRawMeasurements: function (data){
+            return request('POST', origin + '/measurements/place/raw', data);
         }
     };
 };

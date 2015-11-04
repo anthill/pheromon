@@ -10,8 +10,12 @@ module.exports = {
     create: function (data) {
         return databaseP.then(function (db) {
 
+        var cloneData = JSON.parse(JSON.stringify(data)); // Copy the object...
+
+        cloneData.value = JSON.stringify(cloneData.value);
+
             var query = measurements
-                .insert(data)
+                .insert(cloneData)
                 .returning('*')
                 .toQuery();
 

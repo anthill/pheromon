@@ -85,6 +85,7 @@ describe('Verify API', function() {
                 return Promise.all([
                     database.Sensors.addOutput(sensors[0].sim, 'wifi'),
                     database.Sensors.addOutput(sensors[0].sim, 'bluetooth'),
+                    database.Sensors.addOutput(sensors[0].sim, 'trajectories'),
                     database.Sensors.addOutput(sensors[1].sim, 'wifi'),
                     database.Sensors.addOutput(sensors[1].sim, 'bluetooth')
                 ])
@@ -109,11 +110,17 @@ describe('Verify API', function() {
                                     date: new Date("2015-10-15T15:23:19.766Z"),
                                     value: [-10, -19, -39]
                                 }));
-                            } else {
+                            } else if (output.type === 'bluetooth') {
                                 promises.push(database.Measurements.create({
                                     output_id: output.id,
                                     date: new Date("2015-10-15T18:23:19.766Z"),
                                     value: [-30, -19, -44]
+                                }));
+                            } else if (output.type === 'trajectories') {
+                                promises.push(database.Measurements.create({
+                                    output_id: output.id,
+                                    date: new Date("2015-10-15T18:23:19.766Z"),
+                                    value: [{date: new Date("2015-10-15T18:23:19.766Z"), signal_strength: -75}]
                                 }));
                             }
                         });
@@ -189,7 +196,7 @@ describe('Verify API', function() {
                 end: new Date("2015-10-15T14:23:19.766Z")
             })
             .then(function(measurements){
-                expect(measurements.length).to.deep.equal(2);
+                expect(measurements.length).to.deep.equal(1);
             });
         });
 
@@ -221,7 +228,27 @@ describe('Verify API', function() {
                 end: new Date("2015-10-15T14:23:19.766Z")
             })
             .then(function(measurements){
-                expect(measurements.length).to.deep.equal(2);
+                expect(measurements.length).to.deep.equal(1);
+            });
+        });
+
+        it('/measurements/sensor/raw', function() {
+            return api.sensorRawMeasurements({
+                sim: 'sim01',
+                type: 'trajectories'
+            })
+            .then(function(measurements) {
+                expect(measurements[0].value[0].signal_strength).to.deep.equal(-75);
+            });
+        });
+
+        it('/measurements/place/raw', function() {
+            return api.placeRawMeasurements({
+                place_id: 1,
+                type: 'trajectories'
+            })
+            .then(function(measurements) {
+                expect(measurements[0].value[0].signal_strength).to.deep.equal(-75);
             });
         });
 
