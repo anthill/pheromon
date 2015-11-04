@@ -26,16 +26,16 @@ module.exports = {
             }
             if (!sensorData.name)
                 sensorData.name = getRandomName();
-            var query = sensorTable
+            var query1 = sensorTable
                 .insert(sensorData)
                 .returning('*')
                 .toQuery();
 
             return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
+                db.query(query1, function (err, result) {
                     if (err) reject(err);
                     else
-                        resolve(result.rows[0]);        
+                        resolve(result.rows[0]);
                 });
             })
             // then create the corresponding inputs
@@ -48,16 +48,16 @@ module.exports = {
                         };
                     });
 
-                    var query = outputTable
+                    var query2 = outputTable
                     .insert(insertData)
                     .returning('*')
                     .toQuery();
 
                     return new Promise(function (resolve, reject) {
-                        db.query(query, function (err, result) {
+                        db.query(query2, function (err, result) {
                             if (err) reject(err);
                             else
-                                resolve(result.rows);        
+                                resolve(result.rows);
                         });
                     })
                     // finally return the sensor augmented with output status
@@ -128,14 +128,14 @@ module.exports = {
     get: function(sim){
         return databaseP.then(function (db) {
             
-            var query = sensorTable
+            var query1 = sensorTable
                 .select('*')
                 .where(sensorTable.sim.equals(sim))
                 .toQuery();
 
             // first get the sensor
             return new Promise(function (resolve, reject) {
-                db.query(query, function (err, result) {
+                db.query(query1, function (err, result) {
                     if (err) reject(err);
 
                     else resolve(result.rows[0]);
@@ -144,16 +144,16 @@ module.exports = {
             // then get the corresponding inputs
             .then(function(sensor){
                 if (sensor){ // if the sensor exists in DB
-                    var query = outputTable
+                    var query2 = outputTable
                     .select('*')
                     .where(outputTable.sensor_id.equals(sensor.id))
                     .toQuery();
 
                     return new Promise(function (resolve, reject) {
-                        db.query(query, function (err, result) {
+                        db.query(query2, function (err, result) {
                             if (err) reject(err);
                             else
-                                resolve(result.rows);        
+                                resolve(result.rows);
                         });
                     })
                     // finally return the sensor augmented with output status
