@@ -165,6 +165,8 @@ Once built, you can use
 npm run test
 ```
 
+## Licence MIT
+
 ## Contribute :
 
 * Clone the repository.
