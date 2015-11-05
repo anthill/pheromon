@@ -2,7 +2,7 @@
 
 // maestro: mqtt client on the API side of Pheromon
 var mqtt = require('mqtt');
-var sigCodec = require('pheromon-codecs').signalStrengths;
+var decoder = require('./decodeMessage');
 var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
@@ -84,7 +84,7 @@ module.exports = function(authToken, io){
                         var deltaStatus = {};
 
                         // update only sensor, client and signal are reserved keywords
-                        if (SENSOR_STATUS.has(type)){ 
+                        if (SENSOR_STATUS.has(type)){
                             deltaStatus[type + '_status'] = message;
 
                             database.Sensors.update(sensor.sim, deltaStatus)
@@ -113,45 +113,39 @@ module.exports = function(authToken, io){
                             
                     case 'measurement':
                         
-                        sigCodec.decode(message)
+                        decoder.decodeMessage(message, type)
                         .then(function(data){
-                            /*
-                                {
-                                    date:
-                                    devices: [
-                                        {
-                                            signal_strengh:
-                                        }
-                                    ]
-                                }
-                            */
                             debug('Measurement to register', data, sensor.outputs);
 
                             var outputId = makeMap(sensor.outputs, 'type').get(type).id;
-                            var value = data.devices.map(function (measurement) {
-                                return measurement.signal_strength;
-                            });
+                            var measurements = decoder.extractMeasurementsFromData(data, type);
 
-                            database.Measurements.create({
-                                output_id: outputId,
-                                value: value,
-                                date: data.date
-                            })
-                            .then(function() {
-                                if (type === 'wifi'){ // for now
-                                    io.emit('data', {
-                                        installed_at: sensor.installed_at,
-                                        type: type,
-                                        value: value,
-                                        date: data.date
+                            if (measurements) {
+                                measurements.forEach(function (measurement) {
+
+                                    database.Measurements.create({
+                                        output_id: outputId,
+                                        value: measurement.value,
+                                        date: measurement.date
+                                    })
+                                    .then(function() {
+                                        if (type === 'wifi'){ // for now
+                                            io.emit('data', {
+                                                installed_at: sensor.installed_at,
+                                                type: type,
+                                                value: measurement.value,
+                                                date: measurement.date
+                                            });
+                                        }
+                                        console.log('measurement of type', type, 'updated');
+                                    })
+                                    .catch(function(err) {
+                                        console.log('error : cannot store measurement in DB :', err);
                                     });
-                                }
-                                console.log('measurement of type', type, 'updated');
-                            })
-                            .catch(function(err) {
-                                console.log('error : cannot store measurement in DB :', err);
-                            }); 
-
+                                });
+                            }
+                            else
+                                console.log('Error extracing measurements from data');
                         })
                         .catch(function(err){
                             console.log('ERROR in decoding', err);
@@ -171,7 +165,7 @@ module.exports = function(authToken, io){
                         })
                         .catch(function(err) {
                             console.log('error : cannot update sensor in DB :', err);
-                        });                        
+                        });
                         break;
 
                 }
@@ -181,7 +175,7 @@ module.exports = function(authToken, io){
             });
         });
 
-        console.log('Maestro ready');   
+        console.log('Maestro ready');
 
     });
 

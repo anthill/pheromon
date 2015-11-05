@@ -19,7 +19,7 @@ module.exports = function (method, url, data){
                     {
                         HTTPstatus: xhr.status,
                         text: xhr.responseText,
-                        error: "unknown"
+                        error: 'unknown'
                     }
                 ));
             }    
