@@ -7,12 +7,19 @@ var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
 var database = require('../database');
+var Updater = require('./updater.js');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
+// Updater port range
+var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10);
+var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10);
+
 module.exports = function(authToken, io){
 
-    var maestro = mqtt.connect('mqtt://broker:1883', {
+    var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
+
+    var maestro = mqtt.connect('mqtt://localhost:1883', {
         username: 'maestro',
         password: authToken,
         clientId: 'maestro'
@@ -43,7 +50,41 @@ module.exports = function(authToken, io){
         io.on('connection', function(socket) {
             socket.on('cmd', function(cmd) {
                 console.log('admin client data received');
-                maestro.distribute(cmd);
+
+                var commandLine = cmd.command.toLowerCase().split(' ');
+
+                // Special case : updates
+                // Start the updater instead of sending the message
+                if (commandLine[0] === 'startupdate') {
+
+                    database.Sensors.getAll()
+                    .then(function(sensors) {
+                        try {
+                            updater.startUpdate('./updaterTest', // to change
+                            cmd.to.map(function (sim) {
+                                return sensors.find(function (sensor) {
+                                    return sensor.sim === sim;
+                                });
+                            }),
+                            'useless@localhost',
+                            22); // DEBUG !!! to change too !
+                        }
+                        catch (err) {
+                            console.log('Could not start the update', err, err.stack);
+                            cmd.to.forEach(function (sim) {
+                                maestro.publish('cmdResult/' + sim + '/', {command: 'startUpdate', result: err});
+                            });
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log('Error :', err, err.stack);
+                    });
+                }
+                else if (commandLine[0] === 'stopupdate') {
+                    updater.stopUpdate();
+                }
+                else
+                    maestro.distribute(cmd);
             });
         });
 
@@ -110,7 +151,7 @@ module.exports = function(authToken, io){
                             });
                         }
                         break;
-                            
+
                     case 'measurement':
                         
                         decoder.decodeMessage(message, type)

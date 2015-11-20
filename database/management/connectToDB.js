@@ -2,7 +2,15 @@
 
 var pg = require('pg');
 
-var conString = 'postgres://postgres:' + process.env.POSTGRES_PASSWORD + '@' + process.env.DB_PORT_5432_TCP_ADDR + ':5432/postgres';
+var conString = 'postgres://' +
+                process.env.POSTGRES_USER +
+                ':' +
+                process.env.POSTGRES_PASSWORD +
+                '@' +
+                process.env.POSTGRES_HOST +
+                ':' +
+                process.env.POSTGRES_PORT +
+                '/postgres';
 
 console.log('conString', conString);
 

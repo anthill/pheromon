@@ -37,7 +37,7 @@ schedule.scheduleJob('0 3 * * *', function(){
     var gzip = zlib.createGzip();
     var today = new Date();
     var wstream = fs.createWriteStream('/pheromon/data/backups/' + today.getDay() + '.txt.gz');
-    var proc = spawn('pg_dump', ['-p', process.env.DB_PORT_5432_TCP_PORT, '-h', process.env.DB_PORT_5432_TCP_ADDR, '-U', process.env.POSTGRES_USER, '-d', process.env.POSTGRES_USER, '-w']);
+    var proc = spawn('pg_dump', ['-p', process.env.POSTGRES_PORT, '-h', process.env.POSTGRES_HOST, '-U', process.env.POSTGRES_USER, '-d', process.env.POSTGRES_USER, '-w']);
     proc.stdout
         .pipe(gzip)
         .pipe(wstream);
@@ -99,5 +99,5 @@ server.listen(PORT, function () {
 
 process.on('uncaughtException', function(e){
     console.error('uncaught', e, e.stack);
-    process.kill();
+    process.exit(1);
 });

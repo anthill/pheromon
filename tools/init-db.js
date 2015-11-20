@@ -20,9 +20,9 @@ var conString = [
     ':', 
     process.env.POSTGRES_PASSWORD,
     '@',
-    process.env.DB_PORT_5432_TCP_ADDR,
+    process.env.POSTGRES_HOST,
     ':',
-    process.env.DB_PORT_5432_TCP_PORT,
+    process.env.POSTGRES_PORT,
     '/postgres'
 ].join('');
 
