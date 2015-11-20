@@ -40,30 +40,34 @@ module.exports = function(app, debug){
     });
 
     app.get('/sensor/get/:sim', function(req, res){
-        var sim = req.params.sim;
-        console.log('requesting sensor sim', sim);
+        if(req.query.s === PRIVATE.secret || DEBUG) {
+            var sim = req.params.sim;
+            console.log('requesting sensor sim', sim);
 
-        database.Sensors.get(sim)
-        .then(function(data){
-            // debug('All sensors', data);
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t get sensor from database');
-            console.log('error in GET /sensor/' + sim, error);
-        });
+            database.Sensors.get(sim)
+            .then(function(data){
+                // debug('All sensors', data);
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t get sensor from database');
+                console.log('error in GET /sensor/' + sim, error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     app.get('/sensor/getAll', function(req, res){
-        database.Sensors.getAll()
-        .then(function(data){
-            // debug('All sensors', data);
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t gett all sensors database');
-            console.log('error in GET /sensor/all', error);
-        });
+        if(req.query.s === PRIVATE.secret || DEBUG) { 
+            database.Sensors.getAll()
+            .then(function(data){
+                // debug('All sensors', data);
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t gett all sensors database');
+                console.log('error in GET /sensor/all', error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     app.delete('/sensor/delete/:sim', function(req, res){
@@ -219,22 +223,24 @@ module.exports = function(app, debug){
     });
 
     // get latest measurement of one type for some sensors
-    app.post('/sensorsLatestMeasurement/', function(req, res){
-        var type = req.body.type;
-        var sims = req.body.sims;
+    app.get('/sensorsLatestMeasurement/', function(req, res){
+       if(req.query.s === PRIVATE.secret || DEBUG) {  
+            var type = req.body.type;
+            var sims = req.body.sims;
 
-        database.complexQueries.sensorsLatestMeasurement(sims, type)
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            console.log('error in /sensorsLatestMeasurement', error);
-            res.status(500).send('Error in post /sensorsLatestMeasurement/');
-        });
+            database.complexQueries.sensorsLatestMeasurement(sims, type)
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                console.log('error in /sensorsLatestMeasurement', error);
+                res.status(500).send('Error in post /sensorsLatestMeasurement/');
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     // get various measurements of various types for various place
-    app.post('/measurements/places', function(req, res){
+    app.get('/measurements/places', function(req, res){
         var ids = req.body.ids;
         var types = req.body.types;
         var start = req.body.start;
@@ -252,42 +258,45 @@ module.exports = function(app, debug){
     });
 
     // get various measurements of various types for various sensors
-    app.post('/measurements/sensors', function(req, res){
+    app.get('/measurements/sensors', function(req, res){
+        if(req.query.s === PRIVATE.secret || DEBUG) {  
+            var sims = req.body.sims;
+            var types = req.body.types;
+            var start = req.body.start;
+            var end = req.body.end;
 
-        var sims = req.body.sims;
-        var types = req.body.types;
-        var start = req.body.start;
-        var end = req.body.end;
-
-        database.complexQueries.getSensorsMeasurements(sims, types, start, end)
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t sensors measurements from database');
-            console.log('error in /measurements/sensors/' + sims, error);
-        });
+            database.complexQueries.getSensorsMeasurements(sims, types, start, end)
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t sensors measurements from database');
+                console.log('error in /measurements/sensors/' + sims, error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     // get sensor measurements of a specified type without any processing.
-    app.post('/measurements/sensor/raw', function(req, res) {
-        var sim = req.body.sim;
-        var type = req.body.type;
-        var start = req.body.start;
-        var end = req.body.end;
+    app.get('/measurements/sensor/raw', function(req, res) {
+        if(req.query.s === PRIVATE.secret || DEBUG) {  
+            var sim = req.body.sim;
+            var type = req.body.type;
+            var start = req.body.start;
+            var end = req.body.end;
 
-        database.complexQueries.getSensorRawMeasurements(sim, type, start, end)
-        .then(function(data){
-            res.status(200).send(data);
-        })
-        .catch(function(error){
-            res.status(500).send('Couldn\'t sensors measurements from database');
-            console.log('error in /measurements/sensor/raw ' + sim, error);
-        });
+            database.complexQueries.getSensorRawMeasurements(sim, type, start, end)
+            .then(function(data){
+                res.status(200).send(data);
+            })
+            .catch(function(error){
+                res.status(500).send('Couldn\'t sensors measurements from database');
+                console.log('error in /measurements/sensor/raw ' + sim, error);
+            });
+        } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     // get place measurements of a specified type without any processing.
-    app.post('/measurements/place/raw', function(req, res) {
+    app.get('/measurements/place/raw', function(req, res) {
         var place_id = req.body.place_id;
         var type = req.body.type;
         var start = req.body.start;
@@ -299,7 +308,7 @@ module.exports = function(app, debug){
         })
         .catch(function(error){
             res.status(500).send('Couldn\'t sensors measurements from database');
-            console.log('error in /measurements/sensor/raw ' + place_id, error);
+            console.log('error in /measurements/place/raw ' + place_id, error);
         });
     });
 
