@@ -13,7 +13,7 @@ api:
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
       - UPDATER_RANGE_START=2200
-      - UPDATER_RANGE_SIZE=2
+      - UPDATER_RANGE_SIZE=10
       - NODE_ENV=development
    volumes:
       - ./:/pheromon
