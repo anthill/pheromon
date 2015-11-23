@@ -212,9 +212,7 @@ sudo usermod -s /usr/sbin/nologin sensorSSH;
 ```
 
 
-## Licence :
-
-**MIT**
+## Licence MIT
 
 ## Contribute :
 
