@@ -8,12 +8,16 @@ var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
 var database = require('../database');
 var Updater = require('./updater.js');
+var PRIVATE = require('../PRIVATE.json');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
 // Updater port range
 var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10);
 var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10);
+var UPDATER_SENSOR_PORT = 9632;
+var UPDATER_SERVER_IP = 'sensorSSH@'+PRIVATE.ip; // to change
+var UPDATER_FILE = './updaterTest'; // Ansible playbook file
 
 module.exports = function(authToken, io){
 
@@ -60,14 +64,14 @@ module.exports = function(authToken, io){
                     database.Sensors.getAll()
                     .then(function(sensors) {
                         try {
-                            updater.startUpdate('./updaterTest', // to change
+                            updater.startUpdate(UPDATER_FILE,
                             cmd.to.map(function (sim) {
                                 return sensors.find(function (sensor) {
                                     return sensor.sim === sim;
                                 });
                             }),
-                            'useless@localhost',
-                            22); // DEBUG !!! to change too !
+                            UPDATER_SERVER_IP,
+                            UPDATER_SENSOR_PORT);
                         }
                         catch (err) {
                             console.log('Could not start the update', err, err.stack);

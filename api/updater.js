@@ -77,6 +77,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
                     sensor.id,
                     '(' + (sensors.filter(function (s) {return s.state !== 'PENDING';}).length + 1) +
                     '/' + sensors.length + ')');
+
         mqttClient.publish(sensor.id,
             'opentunnel ' + serverPort + ' ' + sensorPort + ' ' + address,
             {qos: 1});
@@ -131,6 +132,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
             return new Error('Update already started');
 
 
+        // If not a good port number --> default value
         if ((sensorPort & 0xFFFF) !== sensorPort)
             sensorPort = 9632;
         
