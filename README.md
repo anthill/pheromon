@@ -155,6 +155,7 @@ You can send [commands](https://github.com/anthill/pheromon/blob/master/api/clie
 
 You can run [Pheromon tests](https://github.com/anthill/pheromon/blob/master/tests/ReadMe.md) in a dedicated docker.
 
+
 First build the container:
 ````
 docker-compose -f compose-test.yml build
@@ -165,7 +166,55 @@ Once built, you can use
 npm run test
 ```
 
-## Licence MIT
+
+## Prepare the server and docker for the updater
+
+* Create a user
+
+```sh
+sudo useradd sensorSSH;
+sudo passwd sensorSSH;
+```
+
+* Create ssh keys for the user
+
+```sh
+su sensorSSH -c 'ssh-keygen -t rsa -b 4096';
+```
+
+* Add te sensor public key to the authorized_keys and vice-versa
+
+
+* Add group docker to the user
+
+```sh
+sudo usermod -G docker sensorSSH;
+```
+
+* Add a volume with the private key of the user (read only is enough)
+
+  * Idem for the known_hosts
+
+
+* Add theses lines to `/etc/ssh/sshd_config`
+
+```
+AllowTcpForwarding yes
+GatewayPorts yes
+```
+
+
+* Disable and chroot-jail the user
+
+```sh
+sudo usermod -R /home/sensorSSH sensorSSH;
+sudo usermod -s /usr/sbin/nologin sensorSSH;
+```
+
+
+## Licence :
+
+**MIT**
 
 ## Contribute :
 
