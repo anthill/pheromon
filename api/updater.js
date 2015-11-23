@@ -66,6 +66,10 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
 
     mqttClient.subscribe('cmdResult/#');
 
+    mqttClient.on('reconnect', function () {
+        mqttClient.subscribe('cmdResult/#');
+    });
+
     var port2sensor = []; // [{port:number, sensor:object}, {port:number, sensor:object}, ...]
 
     var sensors = [];
