@@ -7,7 +7,7 @@ var spawn = require('child_process').spawn;
 var initDB = require('./init-db.js');
 
 var dbInitP = initDB();
-var apiConnectP = tryConnectTo('http://api:4000');
+var apiConnectP = tryConnectTo('http://localhost:4000');
 
 Promise.all([dbInitP, apiConnectP])
 .then(function(){

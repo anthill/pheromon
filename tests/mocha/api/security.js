@@ -11,7 +11,7 @@ var expect = chai.expect;
 
 var prepareAPI = require('../../../tools/prepareAPI.js');
 
-var origin = 'http://api:4000';
+var origin = 'http://localhost:4000'; // api
 // var origin = 'http://192.168.59.103:4000';
 var api;
 

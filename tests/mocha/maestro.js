@@ -21,7 +21,7 @@ var sendReq = require('../../tools/sendNodeReq');
 var makeMap = require('../../tools/makeMap');
 
 var prepareAPI = require('../../tools/prepareAPI.js');
-var apiOrigin = 'http://api:4000';
+var apiOrigin = 'http://localhost:4000'; // api
 var api = prepareAPI(sendReq, apiOrigin);
 
 var socket = io(apiOrigin);
@@ -30,7 +30,7 @@ var checkSensor = require('../../api/utils/checkSensor.js');
 
 function createFakeSensor(simId){
     return new Promise(function(resolve, reject){
-        var newSensor = mqtt.connect('mqtt://broker:1883', {
+        var newSensor = mqtt.connect('mqtt://localhost:1883', { // connect to broker
             username: simId,
             password: PRIVATE.token,
             clientId: simId
