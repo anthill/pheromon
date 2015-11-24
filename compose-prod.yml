@@ -15,6 +15,7 @@ api:
       - NODE_ENV=production
    volumes:
       - ./:/pheromon
+      - /data/pheromon/backups:/pheromon/data/backups
    tty: true
    restart: always
 broker:
