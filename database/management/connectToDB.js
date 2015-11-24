@@ -30,10 +30,10 @@ module.exports = function(){
                 client.connect(function(err) {
                     if(err){
                         if(attempts >= MAX_ATTEMPTS)
-                            reject(err); 
+                            reject(err);
                         else
                             // wait twice more to give time and not overwhelm the database with useless attempts to connect
-                            tryConnect(2*time); 
+                            tryConnect(2*time);
                     }
                     else{
                         resolve(client);

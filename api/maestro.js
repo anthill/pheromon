@@ -73,7 +73,7 @@ module.exports = function(authToken, io){
                                     return sensor.sim === sim;
                                 });
                             }),
-                            UPDATER_SERVER_IP,
+                            'sensorSSH' + '@' + UPDATER_SERVER_IP,
                             UPDATER_SENSOR_PORT);
                         }
                         catch (err) {

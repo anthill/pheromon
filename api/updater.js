@@ -8,14 +8,6 @@ var util = require('util');
 var ansible = require('node-ansible');
 var exec = require('child_process').exec;
 
-var hostIP;
-
-// Get the IP of the docker host
-exec('ip ro get 8.8.8.8 | grep -oP "(?<=via )([\d\.]+)"', function (err, stdout) {
-    hostIP = stdout.toString();
-    return (err);
-});
-
 // Start ansible for one or more sensor(s)
 function updateSensors(ansiblePlaybook, addresses) {
     return new Promise(function (resolve, reject) {
@@ -52,6 +44,14 @@ function updateSensors(ansiblePlaybook, addresses) {
 function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
 
     var self = this;
+    var hostIP;
+
+    // Get the IP of the docker host
+    exec('ip ro get 8.8.8.8 | grep -oP "(?<=via )([\\d\\.]+)"', function (err, stdout) {
+        hostIP = stdout.toString().replace('\n', '').trim();
+        return (err);
+    });
+
 
     if (typeof mqttToken !== 'string') // Incorect token
         throw new Error('PheromonUpdater: Bad MQTT Token');
@@ -64,7 +64,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
         ((RANGE_START + RANGE_SIZE) & 0xFFFF) !== RANGE_START + RANGE_SIZE)  // Port range overflow
         throw new Error('PheromonUpdater: Bad RANGE_SIZE (or port range overflow)');
 
-    EventEmitter.call(this);
+    EventEmitter.call(self);
 
     var mqttClient = mqtt.connect('mqtt://broker:1883', {
         username: 'updater',
@@ -133,7 +133,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
     // Start an update.
     // ansiblePlaybook : path to a playbook
     // _sensors : array of objects containing a sim property
-    this.startUpdate = function startUpdate(ansiblePlaybook, _sensors, address, sensorPort) {
+    self.startUpdate = function startUpdate(ansiblePlaybook, _sensors, address, sensorPort) {
 
         if (!sensors || !ansiblePlaybook || !address)
             return new Error('Bad parameters.');
@@ -236,7 +236,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
         });
     };
 
-    this.stopUpdate = function stopUpdate() {
+    self.stopUpdate = function stopUpdate() {
 
         sensors.forEach(function (sensor) {
             if (sensor.state === 'STARTED') {
@@ -249,7 +249,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
         });
     };
 
-    this.cleanResults = function cleanResults() {
+    self.cleanResults = function cleanResults() {
 
         if (sensors.filter(function (sensor) {
             return sensor.state === 'PENDING' || sensor.state === 'STARTED';
