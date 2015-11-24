@@ -298,18 +298,18 @@ module.exports = function(app, debug){
 
     // get place measurements of a specified type without any processing.
     app.get('/measurements/place/raw', function(req, res) {
-        var place_id = req.query.place_id;
+        var id = req.query.id;
         var type = req.query.type;
         var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);
         var end = (req.query.end === undefined) ? undefined : new Date(req.query.end);
 
-        database.complexQueries.getPlaceRawMeasurements(place_id, type, start, end)
+        database.complexQueries.getPlaceRawMeasurements(id, type, start, end)
         .then(function(data){
             res.status(200).send(data);
         })
         .catch(function(error){
             res.status(500).send('Couldn\'t sensors measurements from database');
-            console.log('error in /measurements/place/raw ' + place_id, error);
+            console.log('error in /measurements/place/raw ' + id, error);
         });
     });
 
