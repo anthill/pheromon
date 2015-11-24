@@ -11,7 +11,7 @@ var exec = require('child_process').exec;
 var hostIP;
 
 // Get the IP of the docker host
-exec("ip ro get 8.8.8.8 | grep -oP '(?<=via )([\d\.]+)'", function (err, stdout) {
+exec('ip ro get 8.8.8.8 | grep -oP "(?<=via )([\d\.]+)"', function (err, stdout) {
     hostIP = stdout.toString();
     return (err);
 });
