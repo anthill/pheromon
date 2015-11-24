@@ -32,7 +32,7 @@ module.exports = function(authToken, io){
     });
 
     maestro.on('reconnect', function() {
-        debug("reconnecting maestro");
+        debug('reconnecting maestro');
         maestro.subscribe('init/#');
         maestro.subscribe('disconnection/#');
         maestro.subscribe('status/#');
