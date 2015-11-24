@@ -224,9 +224,10 @@ module.exports = function(app, debug){
 
     // get latest measurement of one type for some sensors
     app.get('/sensorsLatestMeasurement/', function(req, res){
-       if(req.query.s === PRIVATE.secret || DEBUG) {  
-            var type = req.body.type;
-            var sims = req.body.sims;
+        if(req.query.s === PRIVATE.secret || DEBUG) { 
+            
+            var type = req.query.type;
+            var sims = req.query.sims.split(',');
 
             database.complexQueries.sensorsLatestMeasurement(sims, type)
             .then(function(data){
@@ -234,17 +235,17 @@ module.exports = function(app, debug){
             })
             .catch(function(error){
                 console.log('error in /sensorsLatestMeasurement', error);
-                res.status(500).send('Error in post /sensorsLatestMeasurement/');
+                res.status(500).send('Error in get /sensorsLatestMeasurement/');
             });
         } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
     // get various measurements of various types for various place
     app.get('/measurements/places', function(req, res){
-        var ids = req.body.ids;
-        var types = req.body.types;
-        var start = req.body.start;
-        var end = req.body.end;
+        var ids = req.query.ids.split(',');
+        var types = req.query.types.split(',');
+        var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);
+        var end = (req.query.end === undefined) ? undefined : new Date(req.query.end);
 
         
         database.complexQueries.getPlaceMeasurements(ids, types, start, end)
@@ -260,10 +261,10 @@ module.exports = function(app, debug){
     // get various measurements of various types for various sensors
     app.get('/measurements/sensors', function(req, res){
         if(req.query.s === PRIVATE.secret || DEBUG) {  
-            var sims = req.body.sims;
-            var types = req.body.types;
-            var start = req.body.start;
-            var end = req.body.end;
+            var sims = req.query.sims.split(',');
+            var types = req.query.types.split(',');
+            var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);
+            var end = (req.query.end === undefined) ? undefined : new Date(req.query.end);
 
             database.complexQueries.getSensorsMeasurements(sims, types, start, end)
             .then(function(data){
@@ -279,10 +280,10 @@ module.exports = function(app, debug){
     // get sensor measurements of a specified type without any processing.
     app.get('/measurements/sensor/raw', function(req, res) {
         if(req.query.s === PRIVATE.secret || DEBUG) {  
-            var sim = req.body.sim;
-            var type = req.body.type;
-            var start = req.body.start;
-            var end = req.body.end;
+            var sim = req.query.sim;
+            var type = req.query.type;
+            var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);
+            var end = (req.query.end === undefined) ? undefined : new Date(req.query.end);
 
             database.complexQueries.getSensorRawMeasurements(sim, type, start, end)
             .then(function(data){
@@ -297,10 +298,10 @@ module.exports = function(app, debug){
 
     // get place measurements of a specified type without any processing.
     app.get('/measurements/place/raw', function(req, res) {
-        var place_id = req.body.place_id;
-        var type = req.body.type;
-        var start = req.body.start;
-        var end = req.body.end;
+        var place_id = req.query.place_id;
+        var type = req.query.type;
+        var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);
+        var end = (req.query.end === undefined) ? undefined : new Date(req.query.end);
 
         database.complexQueries.getPlaceRawMeasurements(place_id, type, start, end)
         .then(function(data){

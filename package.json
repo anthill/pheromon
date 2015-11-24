@@ -10,7 +10,7 @@
     "dev": "node_modules/gulp/bin/gulp.js dev",
     "prod": "node_modules/gulp/bin/gulp.js prod", 
     "lint": "eslint ./",
-    "test": "docker-compose -f compose-test.yml up",
+    "test": "docker-compose -f compose-test.yml up --force-recreate",
     "validate": "npm ls"
   },
   "repository": {
