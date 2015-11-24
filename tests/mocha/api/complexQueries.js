@@ -246,7 +246,7 @@ describe('Verify API', function() {
 
         it('/measurements/place/raw', function() {
             return api.placeRawMeasurements({
-                place_id: 1,
+                id: 1,
                 type: 'trajectories'
             })
             .then(function(measurements) {
