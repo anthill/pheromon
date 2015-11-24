@@ -19,12 +19,12 @@ var sendReq = require('../../../tools/sendNodeReq.js');
 var makeMap = require('../../../tools/makeMap.js');
 
 var prepareAPI = require('../../../tools/prepareAPI.js');
-var apiOrigin = 'http://localhost:4000'; // api
+var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
 
 // function createFakeSensor(simId){
 //     return new Promise(function(resolve, reject){
-//         var newSensor = mqtt.connect('mqtt://localhost:1883', { // broker
+//         var newSensor = mqtt.connect('mqtt://broker:1883', { // broker
 //             username: simId,
 //             password: PRIVATE.token,
 //             clientId: simId

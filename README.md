@@ -182,7 +182,7 @@ sudo passwd sensorSSH;
 su sensorSSH -c 'ssh-keygen -t rsa -b 4096';
 ```
 
-* Add te sensor public key to the authorized_keys and vice-versa
+* Add the sensor public key to the authorized_keys and vice-versa
 
 
 * Add group docker to the user
@@ -204,10 +204,9 @@ GatewayPorts yes
 ```
 
 
-* Disable and chroot-jail the user
+* Disable the user (chrooting it would be great)
 
 ```sh
-sudo usermod -R /home/sensorSSH sensorSSH;
 sudo usermod -s /usr/sbin/nologin sensorSSH;
 ```
 

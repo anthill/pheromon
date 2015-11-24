@@ -1,0 +1,6 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+  - name: create a file
+    shell: "touch /exampleFile"

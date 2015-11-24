@@ -12,18 +12,20 @@ var PRIVATE = require('../PRIVATE.json');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
-// Updater port range
-var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10);
-var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10);
-var UPDATER_SENSOR_PORT = 9632;
-var UPDATER_SERVER_IP = 'sensorSSH@'+PRIVATE.ip; // to change
-var UPDATER_FILE = './updaterTest'; // Ansible playbook file
+// Updater variables
+var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10) || 2200;
+var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
+var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || './';
+var UPDATER_SENSOR_PORT = process.env.UPDATER_SENSOR_PORT || '9632';
+// See PRIVATE.json
+var UPDATER_SERVER_IP = PRIVATE.ip || 'localhost';
+
 
 module.exports = function(authToken, io){
 
     var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
 
-    var maestro = mqtt.connect('mqtt://localhost:1883', {
+    var maestro = mqtt.connect('mqtt://broker:1883', {
         username: 'maestro',
         password: authToken,
         clientId: 'maestro'
@@ -61,10 +63,11 @@ module.exports = function(authToken, io){
                 // Start the updater instead of sending the message
                 if (commandLine[0] === 'startupdate') {
 
+                    var playbook = commandLine[1] || 'default';
                     database.Sensors.getAll()
                     .then(function(sensors) {
                         try {
-                            updater.startUpdate(UPDATER_FILE,
+                            updater.startUpdate(UPDATER_PLAYBOOK_FOLDER + playbook,
                             cmd.to.map(function (sim) {
                                 return sensors.find(function (sensor) {
                                     return sensor.sim === sim;

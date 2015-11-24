@@ -1,0 +1,20 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+  - name: get the new version of 6brain
+    git:
+      repo: https://github.com/anthill/6brain.git
+      dest: "/home/pi/6brain"
+      update: yes
+      version: master
+
+  - name: update dependencies
+    npm:
+      path: "/home/pi/6brain"
+
+  - name: restart and enable 6brain
+    service:
+      name: 6brain
+      state: restarted
+      enabled: true

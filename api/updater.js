@@ -6,7 +6,15 @@ var EventEmitter = require('events').EventEmitter;
 var mqtt = require('mqtt');
 var util = require('util');
 var ansible = require('node-ansible');
+var exec = require('child_process').exec;
 
+var hostIP;
+
+// Get the IP of the docker host
+exec("ip ro get 8.8.8.8 | grep -oP '(?<=via )([\d\.]+)'", function (err, stdout) {
+    hostIP = stdout.toString();
+    return (err);
+});
 
 // Start ansible for one or more sensor(s)
 function updateSensors(ansiblePlaybook, addresses) {
@@ -58,7 +66,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
 
     EventEmitter.call(this);
 
-    var mqttClient = mqtt.connect('mqtt://localhost:1883', {
+    var mqttClient = mqtt.connect('mqtt://broker:1883', {
         username: 'updater',
         password: mqttToken,
         clientId: 'updater'
@@ -195,7 +203,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
                         clearTimeout(sensor.timeout);
 
                     // Start the update of the sensor
-                    updateSensors(ansiblePlaybook, ['127.0.0.1:' + (port2sensor.find(function (o) {
+                    updateSensors(ansiblePlaybook, [hostIP + ':' + (port2sensor.find(function (o) {
                             return o.sensor && o.sensor.id === sensor.id;
                         }).port).toString(10)])
 

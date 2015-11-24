@@ -1,26 +1,34 @@
 api:
    build: ./
    command: nodemon --watch api --watch database api/api.js
-   net: host
-   # ports:
-   #    - "3900:3900"
+   links:
+      - dbdev:db
+      - broker
+   ports:
+      - "3900:3900"
    environment:
       - VIRTUAL_HOST=pheromon.ants.builders
       - VIRTUAL_PORT=3900
-      - POSTGRES_HOST=localhost
-      - POSTGRES_PORT=5432
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
+      - NODE_ENV=development
+      # Updater variables
       - UPDATER_RANGE_START=2200
       - UPDATER_RANGE_SIZE=10
-      - NODE_ENV=development
+      - UPDATER_PLAYBOOK_FOLDER="/pheromon/updateFiles/"
+      - UPDATER_SENSORS_PORT=9632
    volumes:
       - ./:/pheromon
+      # Ansible playbooks for the updater
+      - ./updateFiles/:/pheromon/updateFiles/:ro
+      # SSH configuration
       - /home/sensorSSH/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+      - /home/sensorSSH/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
       - /home/sensorSSH/.ssh/known_hosts:/root/.ssh/known_hosts
       - /etc/ssh/ssh_config:/etc/ssh/ssh_config:ro
    tty: true
+
 broker:
    build: .
    command: nodemon --watch broker broker/index.js
@@ -36,19 +44,16 @@ broker:
    volumes:
       - ./:/pheromon
    tty: true
+
 dbdev:
    image: postgres:9.4
    environment:
-      - POSTGRES_HOST=localhost
-      - POSTGRES_PORT=5432
       - POSTGRES_PASSWORD=elements
-   ports:
-      - "5432:5432"
+      - NODE_ENV=development
    volumes:
       - ./data:/var/lib/postgresql
    tty: true
+
 redis:
    image: redis:3
-   ports:
-      - "6379:6379"
    log_driver: "none" 

@@ -14,7 +14,7 @@ var database = require('../../database');
 var sendReq = require('../../tools/sendNodeReq');
 
 var prepareAPI = require('../../tools/prepareAPI.js');
-var apiOrigin = 'http://localhost:4000'; // api
+var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
 
 
@@ -28,7 +28,7 @@ describe('Broker Testing', function() {
     it('Broker should not authenticate sensor with fake token', function () {
 
         var promise = new Promise(function(resolve, reject){
-            fakeSensor = mqtt.connect('mqtt://localhost:1883', // Connect to broker
+            fakeSensor = mqtt.connect('mqtt://broker:1883', // Connect to broker
                 {
                     username: simId,
                     password: 'dummyCode',
