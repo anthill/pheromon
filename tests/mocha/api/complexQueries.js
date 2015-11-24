@@ -18,9 +18,11 @@ var database = require('../../../database');
 var sendReq = require('../../../tools/sendNodeReq.js');
 var makeMap = require('../../../tools/makeMap.js');
 
+var PRIVATE = require('../../../PRIVATE.json');
 var prepareAPI = require('../../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
+var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.secret);
 
 // function createFakeSensor(simId){
 //     return new Promise(function(resolve, reject){
@@ -155,8 +157,8 @@ describe('Verify API', function() {
         });
 
         it('/sensorsLatestMeasurement', function () {
-            return api.sensorsLatestMeasurement({
-                sims: ['sim01'],
+            return apiSecret.sensorsLatestMeasurement({
+                sims: ['sim01','sim02'],
                 type: 'wifi'
             })
             .then(function(affluences){
@@ -201,7 +203,7 @@ describe('Verify API', function() {
         });
 
         it('/measurements/sensors - Single type', function () {
-            return api.measurementsSensors({
+            return apiSecret.measurementsSensors({
                 sims: ['sim01'],
                 types: ['wifi']
             })
@@ -211,7 +213,7 @@ describe('Verify API', function() {
         });
 
         it('/measurements/sensors - Multiple types', function () {
-            return api.measurementsSensors({
+            return apiSecret.measurementsSensors({
                 sims: ['sim01', 'sim02'],
                 types: ['bluetooth', 'wifi']
             })
@@ -221,7 +223,7 @@ describe('Verify API', function() {
         });
 
         it('/measurements/sensors - Date range', function () {
-            return api.measurementsSensors({
+            return apiSecret.measurementsSensors({
                 sims: ['sim01'],
                 types: ['wifi'],
                 start: new Date("2015-10-15T11:23:19.766Z"),
@@ -233,7 +235,7 @@ describe('Verify API', function() {
         });
 
         it('/measurements/sensor/raw', function() {
-            return api.sensorRawMeasurements({
+            return apiSecret.sensorRawMeasurements({
                 sim: 'sim01',
                 type: 'trajectories'
             })

@@ -11,7 +11,6 @@ module.exports = function (method, url, data){
             headers = {'Content-Type': 'application/json;charset=UTF-8'};
             data = JSON.stringify(data);
         }
-
         request({
             method: method.toUpperCase(),
             url: url,

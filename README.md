@@ -44,7 +44,7 @@ git clone git@github.com:anthill/pheromon.git
 cd pheromon
 ```
 
-* Copy / Create the file `core/PRIVATE.json` containing
+* Copy / Create the file `PRIVATE.json` containing
 
 ```
 {

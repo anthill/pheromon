@@ -10,7 +10,7 @@
     "dev": "node_modules/gulp/bin/gulp.js dev",
     "prod": "node_modules/gulp/bin/gulp.js prod", 
     "lint": "eslint ./",
-    "test": "docker-compose -f compose-test.yml up",
+    "test": "docker-compose -f compose-test.yml up --force-recreate",
     "validate": "npm ls"
   },
   "repository": {
@@ -50,7 +50,7 @@
     "mqtt": "^1.4.1",
     "node-schedule": "^0.2.9",
     "pg": "^4.3.0",
-    "pheromon-codecs": "0.0.4",
+    "pheromon-codecs": "0.0.5",
     "pokemon-names": "^1.0.0",
     "react": "^0.13.3",
     "redis": "^1.0.0",
