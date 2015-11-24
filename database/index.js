@@ -375,7 +375,7 @@ var toExport = {
         },
 
         // Returns place measurements of a specified type without any processing.
-        getPlaceRawMeasurements: function(place_id, type, start, end) {
+        getPlaceRawMeasurements: function(id, type, start, end) {
             return databaseP.then(function(db){
 
                 // if no dates provided, assume we want all
@@ -390,7 +390,7 @@ var toExport = {
                         output.type
                     )
                     .where(
-                        sensor.installed_at.equals(place_id),
+                        sensor.installed_at.equals(id),
                         output.type.equals(type),
                         measurement.date.between(_start, _end)
                     )

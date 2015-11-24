@@ -10,7 +10,7 @@ pheromon:
       # - BACKUP=backups/save.txt.gz
    volumes:
       - ./:/pheromon/
-      # - /data/yourProjectName/backups:/pheromon/data/backups
+      - /data/pheromon/backups:/pheromon/data/backups
    tty: true
 db:
    image: postgres:9.4

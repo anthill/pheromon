@@ -193,6 +193,120 @@ describe('Verify API refuses unauthorized operation with no token', function() {
 
             });
         });
+
+        describe('Get Sensor', function(){
+
+            it('/sensor/get', function () {
+
+                var sensorP = api.getSensor('290');// random value
+                               
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
+            });
+        });
+
+        describe('Get All Sensors', function(){
+
+            it('/sensor/getAll', function () {
+                
+                var sensorP = api.getAllSensors();
+
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
+            });
+        });
+
+        describe('Get Sensors Latest Measurements', function(){
+
+            it('/sensorsLatestMeasurement', function () {
+                
+                var sensorP = api.sensorsLatestMeasurement({
+                    sims: ['sim01','sim02'],
+                    type: 'wifi'
+                });
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
+            });
+        });
+
+        describe('Get Sensors Measurements - single type', function(){
+            
+            it('/measurements/sensors - Single type', function () {
+                
+                var sensorP = api.measurementsSensors({
+                    sims: ['sim01'],
+                    types: ['wifi']
+                });
+                
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
+            });
+        });
+
+        describe('Get Sensors Measurements - Multiple types', function(){
+            
+            it('/measurements/sensors - Multiple types', function () {
+            
+                var sensorP = api.measurementsSensors({
+                    sims: ['sim01', 'sim02'],
+                    types: ['bluetooth', 'wifi']
+                });
+
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
+            });
+        });
+
+        describe('Get Sensors Measurements - Date range', function(){
+            
+            it('/measurements/sensors - Date range', function () {
+                
+                var sensorP = api.measurementsSensors({
+                    sims: ['sim01'],
+                    types: ['wifi'],
+                    start: new Date("2015-10-15T11:23:19.766Z"),
+                    end: new Date("2015-10-15T14:23:19.766Z")
+                });
+
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
+            });
+        });
+
+        describe('Get Sensor Measurements', function(){
+            
+            it('/measurements/sensor/raw', function() {
+            
+                var sensorP = api.sensorRawMeasurements({
+                    sim: 'sim01',
+                    type: 'trajectories'
+                });
+
+                expect(sensorP).to.be.rejectedWith('HTTP error');
+
+                return sensorP.catch(function(error){
+                    expect(error.HTTPstatus).to.deep.equal(403);
+                });
+            });
+        });
     });
 });
 

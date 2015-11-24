@@ -8,6 +8,8 @@
 
 **Learn more about 6element in our [dedicated page](http://ants.builders/pages/6element.html) or in [this Medium article](https://medium.com/ants-blog/6element-534ffbe2a60f)**.
 
+**Use our open API, you can consult the [dedicated wiki](https://github.com/anthill/pheromon/wiki/API-documentation)**.
+
 ![Image Alt](https://docs.google.com/drawings/d/1a-9oJr7eGid59iTj12dici8-Qb83j9Y7QbTz34jCo_M/pub?w=960&h=720)
 
 Pheromon communicates with sensors over TCP using MQTT protocol. The MQTT broker dispatches the messages depending on the publish/subscribe status of various clients on various subjects. For example, a meteorological sensor will publish on the topics `rain` and `temperature` while a sensor measuring peoples fluxes will publish on `wifidevices` and `bluetoothdevices`. Meanwhile, the admin interface can publish to all sensors on the `all` topic, or to one particular sensor on `mySensorId` topic.
@@ -44,7 +46,7 @@ git clone git@github.com:anthill/pheromon.git
 cd pheromon
 ```
 
-* Copy / Create the file `core/PRIVATE.json` containing
+* Copy / Create the file `PRIVATE.json` containing
 
 ```
 {

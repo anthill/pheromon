@@ -28,6 +28,8 @@ api:
       - /home/sensorSSH/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
       - /home/sensorSSH/.ssh/known_hosts:/root/.ssh/known_hosts
       - /etc/ssh/ssh_config:/etc/ssh/ssh_config:ro
+      # Database backups
+      - /data/pheromon/backups:/pheromon/data/backups
    tty: true
    restart: always
 

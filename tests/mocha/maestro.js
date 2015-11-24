@@ -23,6 +23,7 @@ var makeMap = require('../../tools/makeMap');
 var prepareAPI = require('../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
+var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.secret);
 
 var socket = io(apiOrigin);
 
@@ -137,7 +138,7 @@ describe('Maestro testing', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function () {
                     setTimeout(function(){
-                        resolve(api.getAllSensors()
+                        resolve(apiSecret.getAllSensors()
                         .then(function(sensors){
                             expect(sensors[0].sim).to.deep.equal('simNumber1');
                         }));
@@ -146,8 +147,7 @@ describe('Maestro testing', function(){
 
                 setTimeout(function () { // Wait for maestro to connect
                     fakeSensor.publish('init/' + simId, '');
-                }, 500);
-
+                }, 300);
             });
 
         });
@@ -182,7 +182,7 @@ describe('Maestro testing', function(){
             
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
-                    resolve(api.getSensor(simId)
+                    resolve(apiSecret.getSensor(simId)
                     .then(function(sensor){
                         var outputs = makeMap(sensor.outputs, 'type');
                         expect(outputs.get('wifi').status).to.deep.equal('recording');
@@ -224,7 +224,7 @@ describe('Maestro testing', function(){
                 return new Promise(function(resolve, reject){
                     setTimeout(function(){
 
-                        resolve(api.measurementsSensors(data)
+                        resolve(apiSecret.measurementsSensors(data)
                         .then(function(measurements){
                             expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);
@@ -271,7 +271,7 @@ describe('Maestro testing', function(){
                 return new Promise(function(resolve, reject){
                     setTimeout(function(){
 
-                        resolve(api.sensorRawMeasurements(data)
+                        resolve(apiSecret.sensorRawMeasurements(data)
                         .then(function(measurements){
                             expect(measurements[0].value[0].signal_strength).to.deep.equal(-35);
                             expect(measurements[1].value[0].signal_strength).to.deep.equal(-80);
