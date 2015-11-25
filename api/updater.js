@@ -154,10 +154,15 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
         if ((sensorPort & 0xFFFF) !== sensorPort)
             sensorPort = 9632;
         
+        mqttClient.removeAllListeners('message');
 
         console.log('==========',
                     'starting update for sensors :',
                     _sensors.map(function (s) {return s.sim;}),
+                    '==========');
+        console.log('==========',
+                    'using playbook :',
+                    ansiblePlaybook+'.yml',
                     '==========');
 
         sensors = _sensors.map(function (sensor) {
@@ -219,7 +224,8 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
                         self.emit('success', sensor);
 
                         // Free the port and start the update for a new sensor
-                        mqttClient.publish(sensor.id, 'closetunnel', {qos: 1});
+                        mqttClient.publish(sensor.id, 'closetunnel');
+                        mqttClient.publish(sensor.id, 'reboot');
                         startNewUpdate(sensor, sensorPort, address);
 
                         mqttClient.publish('cmdResult/'+sensor.id, JSON.stringify({command: 'startUpdate', result: 'SUCCESS'}));
@@ -232,7 +238,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
                         console.error(error);
 
                         // Free the port and start the update for a new sensor
-                        mqttClient.publish(sensor.id, 'closetunnel', {qos: 1});
+                        mqttClient.publish(sensor.id, 'closetunnel');
                         startNewUpdate(sensor, sensorPort, address);
 
                         mqttClient.publish('cmdResult/'+sensor.id, JSON.stringify({command: 'startUpdate', result: 'FAIL'}));
@@ -243,6 +249,8 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
     };
 
     self.stopUpdate = function stopUpdate() {
+
+        mqttClient.removeAllListeners('message');
 
         sensors.forEach(function (sensor) {
             if (sensor.state === 'STARTED') {

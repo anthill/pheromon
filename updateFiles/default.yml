@@ -16,5 +16,5 @@
   - name: restart and enable 6brain
     service:
       name: 6brain
-      state: restarted
+      state: started
       enabled: true
