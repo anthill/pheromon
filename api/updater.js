@@ -72,7 +72,10 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
         clientId: 'updater'
     });
 
-    mqttClient.subscribe('cmdResult/#');
+    mqttClient.on('connect', function () {
+        mqttClient.subscribe('cmdResult/#');
+        self.emit('connected');
+    });
 
     mqttClient.on('reconnect', function () {
         mqttClient.subscribe('cmdResult/#');
@@ -133,15 +136,18 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
     // Start an update.
     // ansiblePlaybook : path to a playbook
     // _sensors : array of objects containing a sim property
+    // address : server IP to send to the sensor.
     self.startUpdate = function startUpdate(ansiblePlaybook, _sensors, address, sensorPort) {
 
-        if (!sensors || !ansiblePlaybook || !address)
-            return new Error('Bad parameters.');
+        if (!_sensors || !_sensors.length || _sensors.find(function (s) {return s.sim === undefined;}) ||
+            !ansiblePlaybook ||
+            !address)
+            throw new Error('Bad parameters.');
 
         if (sensors.find(function (s) {
             return s.state === 'PENDING' || s.state === 'STARTING';
         }) !== undefined)
-            return new Error('Update already started');
+            throw new Error('Update already started');
 
 
         // If not a good port number --> default value
