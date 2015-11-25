@@ -18,15 +18,6 @@ module.exports = function(authToken, io){
         clientId: 'maestro'
     });
 
-    maestro.on('reconnect', function() {
-        debug("reconnecting maestro");
-        maestro.subscribe('init/#');
-        maestro.subscribe('disconnection/#');
-        maestro.subscribe('status/#');
-        maestro.subscribe('measurement/#');
-        maestro.subscribe('cmdResult/#');
-    });
-
     maestro.on('connect', function () {
 
         maestro.subscribe('init/#');
