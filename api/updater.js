@@ -259,7 +259,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
 
         if (sensors.filter(function (sensor) {
             return sensor.state === 'PENDING' || sensor.state === 'STARTED';
-        }).length !== 0) {
+        }).length === 0) {
             sensors = [];
             port2sensor = [];
         }

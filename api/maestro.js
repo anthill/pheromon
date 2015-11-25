@@ -76,6 +76,7 @@ module.exports = function(authToken, io){
                     database.Sensors.getAll()
                     .then(function(sensors) {
                         try {
+                            updater.cleanResults();
                             updater.startUpdate(UPDATER_PLAYBOOK_FOLDER + playbook,
                             cmd.to.map(function (sim) {
                                 return sensors.find(function (sensor) {
