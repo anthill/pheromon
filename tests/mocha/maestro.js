@@ -296,6 +296,73 @@ describe('Maestro testing', function(){
             });
         });
 
+        it('Maestro should query an url and forward the result when /url', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    var subtopics = topic.split('/');
+                    var main = subtopics[0];
+                    var type = subtopics[1];
+
+                    if(main === simId || 'all') {
+                        expect(type.to.deep.equal('data'));
+                        resolve();
+                    }
+                });
+
+                socket.emit('url/' + simId, {
+                    url: 'http://ants.builders',
+                    method: 'GET',
+                    index: 1
+                });
+
+            });
+        });
+
+        it('Maestro should query an url and forward the error when /url', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    var subtopics = topic.split('/');
+                    var main = subtopics[0];
+                    var type = subtopics[1];
+
+                    if(main === simId || 'all') {
+                        expect(type.to.deep.equal('error'));
+                        resolve();
+                    }
+                });
+
+                socket.emit('url/' + simId, {
+                    url: 'http://ants.builderdds',
+                    method: 'GET',
+                    index: 1
+                });
+
+            });
+        });
+
+        it('Maestro should publish on simId/data when receiving a bin measurement', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    var subtopics = topic.split('/');
+                    var main = subtopics[0];
+                    var type = subtopics[1];
+
+                    if(main === simId || 'all') {
+                        expect(type.to.deep.equal('data'));
+                        expect(message[0].id.to.deep.equal('myBinId'));
+                        resolve();
+                    }
+                });
+
+                socket.emit('measurement/' + simId + '/bin', {
+                    date: Date.now(),
+                    value: [{ id: 'myBinId'}],
+                    index: 1
+                });
+
+            });
+        });             
+
     });
 });
 
