@@ -6,6 +6,7 @@ var decoder = require('./decodeMessage');
 var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
+var sendReq = require('../tools/sendReq');
 var database = require('../database');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
@@ -112,6 +113,14 @@ module.exports = function(authToken, io){
                         break;
                             
                     case 'measurement':
+
+                        /* measurement is
+                            {
+                                date:
+                                value: [{}]
+                                (index:) -> reference to the local pending promise
+                            }
+                        */
                         
                         decoder.decodeMessage(message, type)
                         .then(function(data){
@@ -129,18 +138,36 @@ module.exports = function(authToken, io){
                                         date: measurement.date
                                     })
                                     .then(function() {
-                                        if (type === 'wifi'){ // for now
-                                            io.emit('data', {
-                                                installed_at: sensor.installed_at,
-                                                type: type,
-                                                value: measurement.value,
-                                                date: measurement.date
-                                            });
+                                        switch(type){
+                                            case 'wifi':
+                                                io.emit('data', {
+                                                    installed_at: sensor.installed_at,
+                                                    type: type,
+                                                    value: measurement.value,
+                                                    date: measurement.date
+                                                });
+                                                break;
+
+                                            case 'bin':
+                                                maestro.publish(sensor.sim + '/data', {
+                                                    isSuccessful: true,
+                                                    measurement: measurement.index
+                                                });
+                                                break;
+
                                         }
                                         console.log('measurement of type', type, 'updated');
                                     })
                                     .catch(function(err) {
                                         console.log('error : cannot store measurement in DB :', err);
+
+                                        if (type === 'bin'){
+                                            maestro.publish(sensor.sim + '/error', {
+                                                error: err,
+                                                isSuccessful: false,
+                                                index: message.index
+                                            });
+                                        }
                                     });
                                 });
                             }
@@ -167,6 +194,34 @@ module.exports = function(authToken, io){
                             console.log('error : cannot update sensor in DB :', err);
                         });
                         break;
+
+                    case 'url':
+                        var parsed = JSON.parse(message);
+
+                        /* message is
+                            {
+                                url:
+                                method:
+                                data:
+                                index: -> reference to the local pending promise
+                            }
+                        */
+
+                        sendReq(message.method, message.url, message.data)
+                        .then(function(response){
+                            maestro.publish(sensor.sim + '/data', {
+                                response: response,
+                                isSuccessful: true,
+                                index: message.index
+                            });
+                        })
+                        .catch(function(error){
+                            maestro.publish(sensor.sim + '/error', {
+                                error: error,
+                                isSuccessful: false,
+                                index: message.index
+                            });
+                        });
 
                 }
             })
