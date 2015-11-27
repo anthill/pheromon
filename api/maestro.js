@@ -148,10 +148,12 @@ module.exports = function(authToken, io){
                                                 });
                                                 break;
 
+                                            // THIS 6ELEMENT SPECIFIC CODE :/
                                             case 'bin':
-                                                maestro.publish(sensor.sim + '/data', {
+                                                /* we need to send a websocket msg to pass the info to 6element server */
+                                                maestro.publish(sensor.sim + '/6bin', {
                                                     isSuccessful: true,
-                                                    measurement: measurement.index
+                                                    index: measurement.index
                                                 });
                                                 break;
 
@@ -161,11 +163,12 @@ module.exports = function(authToken, io){
                                     .catch(function(err) {
                                         console.log('error : cannot store measurement in DB :', err);
 
+                                        // THIS 6ELEMENT SPECIFIC CODE :/
                                         if (type === 'bin'){
-                                            maestro.publish(sensor.sim + '/error', {
+                                            maestro.publish(sensor.sim + '/6bin', {
                                                 error: err,
                                                 isSuccessful: false,
-                                                index: message.index
+                                                index: measurement.index
                                             });
                                         }
                                     });
@@ -203,20 +206,21 @@ module.exports = function(authToken, io){
                                 url:
                                 method:
                                 data:
+                                origin: -> who asked ?
                                 index: -> reference to the local pending promise
                             }
                         */
 
                         sendReq(message.method, message.url, message.data)
                         .then(function(response){
-                            maestro.publish(sensor.sim + '/data', {
-                                response: response,
+                            maestro.publish(sensor.sim + '/' + message.origin, {
+                                data: response,
                                 isSuccessful: true,
                                 index: message.index
                             });
                         })
                         .catch(function(error){
-                            maestro.publish(sensor.sim + '/error', {
+                            maestro.publish(sensor.sim + '/' + message.origin, {
                                 error: error,
                                 isSuccessful: false,
                                 index: message.index
