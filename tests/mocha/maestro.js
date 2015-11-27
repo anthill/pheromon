@@ -31,7 +31,7 @@ var checkSensor = require('../../api/utils/checkSensor.js');
 
 function createFakeSensor(simId){
     return new Promise(function(resolve, reject){
-        var newSensor = mqtt.connect('mqtt://broker:1883', {
+        var newSensor = mqtt.connect('mqtt://broker:1883', { // connect to broker
             username: simId,
             password: PRIVATE.token,
             clientId: simId
@@ -135,16 +135,21 @@ describe('Maestro testing', function(){
 
         it('Maestro should register unknown sensor', function () {
 
-            fakeSensor.publish('init/' + simId, '');
-            
             return new Promise(function(resolve, reject){
-                setTimeout(function(){
-                    resolve(apiSecret.getAllSensors()
-                    .then(function(sensors){
-                        expect(sensors[0].sim).to.deep.equal('simNumber1');
-                    }));
-                }, 200);
+                fakeSensor.on('message', function () {
+                    setTimeout(function(){
+                        resolve(apiSecret.getAllSensors()
+                        .then(function(sensors){
+                            expect(sensors[0].sim).to.deep.equal('simNumber1');
+                        }));
+                    }, 200);
+                });
+
+                setTimeout(function () { // Wait for maestro to connect
+                    fakeSensor.publish('init/' + simId, '');
+                }, 300);
             });
+
         });
 
         it('Maestro should send back init command when asked', function () {
@@ -289,10 +294,12 @@ describe('Maestro testing', function(){
                     }
                 });
 
-                socket.emit('cmd', {
-                    command: 'myCommand',
-                    to: [simId]
-                });
+                setTimeout(function () { // Wait for sensor to connect
+                    socket.emit('cmd', {
+                        command: 'myCommand',
+                        to: [simId]
+                    });
+                }, 250);
 
             });
         });

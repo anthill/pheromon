@@ -99,5 +99,5 @@ server.listen(PORT, function () {
 
 process.on('uncaughtException', function(e){
     console.error('uncaught', e, e.stack);
-    process.kill();
+    process.exit(1);
 });
