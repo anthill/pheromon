@@ -20,22 +20,22 @@ module.exports = function(authToken, io){
 
     maestro.on('connect', function () {
 
-        maestro.subscribe('init/#');
-        maestro.subscribe('disconnection/#');
-        maestro.subscribe('status/#');
-        maestro.subscribe('measurement/#');
-        maestro.subscribe('cmdResult/#');
+        maestro.subscribe('init/#', {qos: 1});
+        maestro.subscribe('disconnection/#', {qos: 1});
+        maestro.subscribe('status/#', {qos: 1});
+        maestro.subscribe('measurement/#', {qos: 1});
+        maestro.subscribe('cmdResult/#', {qos: 1});
 
         // wrapper of the mqtt.publish() function
         maestro.distribute = function(message){
             database.Sensors.getAll()
             .then(function(sensors){
                 if (message.to.length === sensors.length)
-                    maestro.publish('all', message.command);
+                    maestro.publish('all', message.command, {qos: 1});
                     
                 else
                     message.to.forEach(function(sim){
-                        maestro.publish(sim, message.command);
+                        maestro.publish(sim, message.command, {qos: 1});
                     });
             });
         };
