@@ -14,7 +14,7 @@ api:
       - NODE_ENV=test
    volumes:
       - ./:/pheromon
-   log_driver: "none" 
+   log_driver: "none"
 broker:
    build: .
    command: nodemon --watch broker broker/index.js
