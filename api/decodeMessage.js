@@ -46,7 +46,9 @@ function decodeMessage(message, type) {
             break;
 
             default:
-                reject(new Error('measurement type not supported by decode'));
+                console.log('Measurement only encoded by MQTT');
+                resolve(JSON.parse(message.toString()));
+                // reject(new Error('measurement type not supported by decode'));
         }
     });
 }
@@ -76,7 +78,7 @@ function extractMeasurementsFromData(data, type) {
             });
 
         default:
-            return null;
+            return [data];
     }
 }
 
