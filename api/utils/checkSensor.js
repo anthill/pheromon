@@ -43,10 +43,8 @@ module.exports = function(sim, type){
         debug('outputs in check Sensor', sensor.outputs);
         
         // if type exists and was not referenced in DB and is not a sensor type, create it
-        if (type && !outputs.has(type) && !SENSOR_STATUS.has(type)){ 
-            console.log('SIM', sim);
+        if (type && !outputs.has(type) && !SENSOR_STATUS.has(type))
             return database.Sensors.addOutput(sim, type);
-        }
         else // do nothing
             return sensor;
 

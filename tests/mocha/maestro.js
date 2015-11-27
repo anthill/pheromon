@@ -68,7 +68,7 @@ describe('Maestro testing', function(){
             return database.Sensors.deleteAll();
         });
 
-        describe('checkSensor utils', function() {
+        describe('checkSensor', function() {
         
             var sensor = {
                 name: 'Sensor1',
@@ -77,7 +77,7 @@ describe('Maestro testing', function(){
 
             var sim2sensor = {};
 
-            it('checkSensor should register unknown sensor', function () {
+            it('should register unknown sensor', function () {
                 return checkSensor(sensor.sim)
                 .then(function(){
                     return database.Sensors.getAll()
@@ -87,7 +87,7 @@ describe('Maestro testing', function(){
                 });
             });
 
-            it('checkSensor should not register known sensor', function () {
+            it('should not register known sensor', function () {
                 return checkSensor(sensor.sim)
                 .then(function(){
                     return database.Sensors.getAll()
@@ -97,7 +97,7 @@ describe('Maestro testing', function(){
                 });
             });
 
-            it('checkSensor should not add already existing output', function () {
+            it('should not add already existing output', function () {
                 return checkSensor(sensor.sim, 'wifi')
                 .then(function(){
                     return checkSensor(sensor.sim, 'wifi');
@@ -116,7 +116,7 @@ describe('Maestro testing', function(){
 
     });
 
-    describe('Fake Sensor', function() {
+    describe('Maestro', function() {
 
         var fakeSensor;
         var i = 0;
@@ -132,7 +132,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should register unknown sensor', function () {
+        it('should register unknown sensor', function () {
 
             fakeSensor.publish('init/' + simId, '');
             
@@ -146,7 +146,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should send back init command when asked', function () {
+        it('should send back init command when asked', function () {
             // sensor sends '' on topic 'init/simId'
             // then receives 'init params' on topic 'simId'
 
@@ -170,7 +170,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should register output status update in DB', function () {
+        it('should register output status update in DB', function () {
 
             fakeSensor.publish('status/' + simId + '/wifi', 'recording');            
             
@@ -188,7 +188,7 @@ describe('Maestro testing', function(){
 
         // add test for client status
 
-        it('Pushing wifi measurements should register measurements in DB', function () {
+        it('should register measurements in DB when receiving wifi measurements', function () {
 
             var measurement = {
                 date: new Date(),
@@ -230,7 +230,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Pushing trajectories measurements should register measurements in DB', function () {
+        it('should register measurements in DB when receiving trajectories', function () {
 
             var trajectories =
             [
@@ -278,7 +278,7 @@ describe('Maestro testing', function(){
         });
 
 
-        it('Emitting commands through socket should send command to sensors', function(){
+        it('should send command to sensors when receiving commands through socket', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
 
@@ -296,7 +296,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should query an url and forward the result when /url', function(){
+        it('should forward the result when receiving a url via MQTT)', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
                     var subtopics = topic.split('/');
@@ -327,7 +327,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should query an url and forward the error when /url', function(){
+        it('should forward the error when receiving a invalid url via MQTT', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
                     var subtopics = topic.split('/');
@@ -356,7 +356,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should publish on simId/6bin when receiving a bin measurement', function(){
+        it('should publish on simId/6bin when receiving a bin measurement', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
                     var subtopics = topic.split('/');
@@ -383,7 +383,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should publish on simId/6bin when a bin measurement is not valid', function(){
+        it('should publish on simId/6bin when a bin measurement is not valid', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
                     var subtopics = topic.split('/');
