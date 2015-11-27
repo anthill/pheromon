@@ -37,8 +37,8 @@ function createFakeSensor(simId){
         });
 
         newSensor.on('connect', function(){
-            newSensor.subscribe(simId);
-            newSensor.subscribe('all');
+            newSensor.subscribe(simId + '/#');
+            newSensor.subscribe('all/#');
             resolve(newSensor);
         });
     });
@@ -301,19 +301,28 @@ describe('Maestro testing', function(){
                 fakeSensor.on('message', function(topic, message){
                     var subtopics = topic.split('/');
                     var main = subtopics[0];
-                    var type = subtopics[1];
+                    var destination = subtopics[1];
+
+                    var parsed = JSON.parse(message.toString());
 
                     if(main === simId || 'all') {
-                        expect(type.to.deep.equal('data'));
+                        expect(destination).to.deep.equal('test');
+                        expect(parsed.data).to.exist;
+                        expect(parsed.isSuccessful).to.be.true;
                         resolve();
                     }
+                    else
+                        reject();
                 });
 
-                socket.emit('url/' + simId, {
-                    url: 'http://ants.builders',
+                fakeSensor.publish('url/' + simId, JSON.stringify({
+                    url: 'https://pheromon.ants.builders/place/getAll',
                     method: 'GET',
+                    origin: 'test',
                     index: 1
-                });
+                }));
+
+            // fakeSensor.publish('init/' + simId, '');
 
             });
         });
@@ -323,45 +332,83 @@ describe('Maestro testing', function(){
                 fakeSensor.on('message', function(topic, message){
                     var subtopics = topic.split('/');
                     var main = subtopics[0];
-                    var type = subtopics[1];
+                    var destination = subtopics[1];
+
+                    var parsed = JSON.parse(message.toString());
 
                     if(main === simId || 'all') {
-                        expect(type.to.deep.equal('error'));
+                        expect(destination).to.deep.equal('test');
+                        expect(parsed.error).to.exist;
+                        expect(parsed.isSuccessful).to.be.false;
                         resolve();
                     }
+                    else
+                        reject();
                 });
 
-                socket.emit('url/' + simId, {
-                    url: 'http://ants.builderdds',
+                fakeSensor.publish('url/' + simId, JSON.stringify({
+                    url: 'https://pheromon.ants.builders/fakeRoute',
                     method: 'GET',
+                    origin: 'test',
                     index: 1
-                });
+                }));
 
             });
         });
 
-        it('Maestro should publish on simId/data when receiving a bin measurement', function(){
+        it('Maestro should publish on simId/6bin when receiving a bin measurement', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
                     var subtopics = topic.split('/');
                     var main = subtopics[0];
-                    var type = subtopics[1];
+                    var destination = subtopics[1];
+
+                    var parsed = JSON.parse(message.toString());
 
                     if(main === simId || 'all') {
-                        expect(type.to.deep.equal('data'));
-                        expect(message[0].id.to.deep.equal('myBinId'));
+                        expect(destination).to.deep.equal('6bin');
+                        expect(parsed.isSuccessful).to.be.true;
                         resolve();
                     }
+                    else
+                        reject();
                 });
 
-                socket.emit('measurement/' + simId + '/bin', {
-                    date: Date.now(),
-                    value: [{ id: 'myBinId'}],
+                fakeSensor.publish('measurement/' + simId + '/bin', JSON.stringify({
+                    date: new Date(Date.now()).toISOString(),
+                    value: [{ id: 'myBinId' }],
                     index: 1
-                });
+                }));
 
             });
-        });             
+        });
+
+        it('Maestro should publish on simId/6bin when a bin measurement is not valid', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    var subtopics = topic.split('/');
+                    var main = subtopics[0];
+                    var destination = subtopics[1];
+
+                    var parsed = JSON.parse(message.toString());
+
+                    if(main === simId || 'all') {
+                        expect(destination).to.deep.equal('6bin');
+                        expect(parsed.isSuccessful).to.be.false;
+                        resolve();
+                    }
+                    else
+                        reject();
+                });
+
+                // the following measurement is not valid, since it doesn't have a value field
+                fakeSensor.publish('measurement/' + simId + '/bin', JSON.stringify({
+                    date: new Date(Date.now()).toISOString(),
+                    index: 1
+                }));
+
+            });
+        });               
 
     });
 });

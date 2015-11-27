@@ -6,7 +6,7 @@ var decoder = require('./decodeMessage');
 var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
-var sendReq = require('../tools/sendReq');
+var sendReq = require('../tools/sendNodeReq');
 var database = require('../database');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
@@ -26,6 +26,7 @@ module.exports = function(authToken, io){
         maestro.subscribe('status/#');
         maestro.subscribe('measurement/#');
         maestro.subscribe('cmdResult/#');
+        maestro.subscribe('url/#');
 
         // wrapper of the mqtt.publish() function
         maestro.distribute = function(message){
@@ -148,13 +149,13 @@ module.exports = function(authToken, io){
                                                 });
                                                 break;
 
-                                            // THIS 6ELEMENT SPECIFIC CODE :/
+                                            // THIS IS 6ELEMENT SPECIFIC CODE :/
                                             case 'bin':
                                                 /* we need to send a websocket msg to pass the info to 6element server */
-                                                maestro.publish(sensor.sim + '/6bin', {
+                                                maestro.publish(sensor.sim + '/6bin', JSON.stringify({
                                                     isSuccessful: true,
                                                     index: measurement.index
-                                                });
+                                                }));
                                                 break;
 
                                         }
@@ -163,13 +164,13 @@ module.exports = function(authToken, io){
                                     .catch(function(err) {
                                         console.log('error : cannot store measurement in DB :', err);
 
-                                        // THIS 6ELEMENT SPECIFIC CODE :/
+                                        // THIS IS 6ELEMENT SPECIFIC CODE :/
                                         if (type === 'bin'){
-                                            maestro.publish(sensor.sim + '/6bin', {
+                                            maestro.publish(sensor.sim + '/6bin', JSON.stringify({
                                                 error: err,
                                                 isSuccessful: false,
                                                 index: measurement.index
-                                            });
+                                            }));
                                         }
                                     });
                                 });
@@ -201,7 +202,7 @@ module.exports = function(authToken, io){
                     case 'url':
                         var parsed = JSON.parse(message);
 
-                        /* message is
+                        /* parsed message is
                             {
                                 url:
                                 method:
@@ -211,20 +212,22 @@ module.exports = function(authToken, io){
                             }
                         */
 
-                        sendReq(message.method, message.url, message.data)
-                        .then(function(response){
-                            maestro.publish(sensor.sim + '/' + message.origin, {
-                                data: response,
+                        sendReq(parsed.method, parsed.url, parsed.data)
+                        .then(function(data){
+                            var response = {
+                                data: data,
                                 isSuccessful: true,
                                 index: message.index
-                            });
+                            };
+                            maestro.publish(sensor.sim + '/' + parsed.origin, JSON.stringify(response));
                         })
                         .catch(function(error){
-                            maestro.publish(sensor.sim + '/' + message.origin, {
+                            var response = {
                                 error: error,
                                 isSuccessful: false,
                                 index: message.index
-                            });
+                            };
+                            maestro.publish(sensor.sim + '/' + parsed.origin, JSON.stringify(response));
                         });
 
                 }
