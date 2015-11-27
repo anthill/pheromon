@@ -2,7 +2,7 @@
 
 // maestro: mqtt client on the API side of Pheromon
 var mqtt = require('mqtt');
-var decoder = require('./decodeMessage');
+var decoder = require('./utils/decodeMessage');
 var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
