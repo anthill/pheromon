@@ -10,6 +10,7 @@ function decodeMessage(message, type) {
 
         switch (type) {
             case 'wifi':
+            case 'wifi_old':
             case 'bluetooth':
                 sigCodec.decode(message)
                 .then(resolve)
@@ -58,6 +59,7 @@ function decodeMessage(message, type) {
 function extractMeasurementsFromData(data, type) {
     switch (type) {
         case 'wifi':
+        case 'wifi_old':
         case 'bluetooth':
             return [ // wifi and bluetooth messages correspond to only one measurement
                 {

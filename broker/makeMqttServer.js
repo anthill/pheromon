@@ -8,14 +8,19 @@ var pubsubsettings = {
   type: 'redis',
   redis: require('redis'),
   db: 12,
+  host: process.env.REDIS_PORT_6379_TCP_ADDR,
   port: process.env.REDIS_PORT_6379_TCP_PORT,
-  return_buffers: true, // to handle binary payloads
-  host: process.env.REDIS_PORT_6379_TCP_ADDR
+  return_buffers: true
 };
 
 var moscaSettings = {
   port: 1883,
-  backend: pubsubsettings
+  backend: pubsubsettings,
+  persistence: {
+    factory: mosca.persistence.Redis,
+    host: process.env.REDIS_PORT_6379_TCP_ADDR,
+    port: process.env.REDIS_PORT_6379_TCP_PORT
+  }
 };
 
 module.exports = function(authToken){

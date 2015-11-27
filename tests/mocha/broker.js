@@ -28,7 +28,7 @@ describe('Broker', function() {
     it('should not authenticate sensor with fake token', function () {
 
         var promise = new Promise(function(resolve, reject){
-            fakeSensor = mqtt.connect('mqtt://broker:1883',
+            fakeSensor = mqtt.connect('mqtt://broker:1883', // Connect to broker
                 {
                     username: simId,
                     password: 'dummyCode',

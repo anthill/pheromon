@@ -23,6 +23,7 @@ var makeMap = require('../../tools/makeMap');
 var prepareAPI = require('../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
+var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.secret);
 
 var socket = io(apiOrigin);
 
@@ -30,7 +31,7 @@ var checkSensor = require('../../api/utils/checkSensor.js');
 
 function createFakeSensor(simId){
     return new Promise(function(resolve, reject){
-        var newSensor = mqtt.connect('mqtt://broker:1883', {
+        var newSensor = mqtt.connect('mqtt://broker:1883', { // connect to broker
             username: simId,
             password: PRIVATE.token,
             clientId: simId
@@ -134,16 +135,21 @@ describe('Maestro testing', function(){
 
         it('should register unknown sensor', function () {
 
-            fakeSensor.publish('init/' + simId, '');
-            
             return new Promise(function(resolve, reject){
-                setTimeout(function(){
-                    resolve(api.getAllSensors()
-                    .then(function(sensors){
-                        expect(sensors[0].sim).to.deep.equal('simNumber1');
-                    }));
-                }, 200);
+                fakeSensor.on('message', function () {
+                    setTimeout(function(){
+                        resolve(apiSecret.getAllSensors()
+                        .then(function(sensors){
+                            expect(sensors[0].sim).to.deep.equal('simNumber1');
+                        }));
+                    }, 200);
+                });
+
+                setTimeout(function () { // Wait for maestro to connect
+                    fakeSensor.publish('init/' + simId, '');
+                }, 300);
             });
+
         });
 
         it('should send back init command when asked', function () {
@@ -176,7 +182,7 @@ describe('Maestro testing', function(){
             
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
-                    resolve(api.getSensor(simId)
+                    resolve(apiSecret.getSensor(simId)
                     .then(function(sensor){
                         var outputs = makeMap(sensor.outputs, 'type');
                         expect(outputs.get('wifi').status).to.deep.equal('recording');
@@ -218,7 +224,7 @@ describe('Maestro testing', function(){
                 return new Promise(function(resolve, reject){
                     setTimeout(function(){
 
-                        resolve(api.measurementsSensors(data)
+                        resolve(apiSecret.measurementsSensors(data)
                         .then(function(measurements){
                             expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);
@@ -265,7 +271,7 @@ describe('Maestro testing', function(){
                 return new Promise(function(resolve, reject){
                     setTimeout(function(){
 
-                        resolve(api.sensorRawMeasurements(data)
+                        resolve(apiSecret.sensorRawMeasurements(data)
                         .then(function(measurements){
                             expect(measurements[0].value[0].signal_strength).to.deep.equal(-35);
                             expect(measurements[1].value[0].signal_strength).to.deep.equal(-80);
@@ -288,10 +294,12 @@ describe('Maestro testing', function(){
                     }
                 });
 
-                socket.emit('cmd', {
-                    command: 'myCommand',
-                    to: [simId]
-                });
+                setTimeout(function () { // Wait for sensor to connect
+                    socket.emit('cmd', {
+                        command: 'myCommand',
+                        to: [simId]
+                    });
+                }, 250);
 
             });
         });

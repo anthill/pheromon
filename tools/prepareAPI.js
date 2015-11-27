@@ -1,5 +1,18 @@
 'use strict';
 
+// Concats every paramater in a url postifx string
+var makeSearchString = function (obj){
+
+    if(obj === undefined) return '';
+    
+    // http://stackoverflow.com/a/3608791
+    return '?' + Object.keys(obj).map(function(k){
+        return encodeURI(k) + '=' + encodeURI(obj[k]);
+    })
+    .join('&');
+};
+
+
 module.exports = function(request, origin, token){
 
     origin = origin || '';
@@ -21,10 +34,10 @@ module.exports = function(request, origin, token){
             return request('DELETE', origin + '/sensor/deleteAll' + tokenString);
         },
         getSensor: function(sim){
-            return request('GET', origin + '/sensor/get/' + sim);
+            return request('GET', origin + '/sensor/get/' + sim + tokenString);
         },
         getAllSensors: function(){
-            return request('GET', origin + '/sensor/getAll');
+            return request('GET', origin + '/sensor/getAll' + tokenString);
         },
 
         // PLACES
@@ -46,8 +59,6 @@ module.exports = function(request, origin, token){
         getAllPlaces: function(){
             return request('GET', origin + '/place/getAll');
         },
-        
-        // TO UPDATE
         placeLatestMeasurement: function(placeId, type){
             return request('GET', origin + '/placeLatestMeasurement/' + placeId + '/' + type);
         },
@@ -55,22 +66,22 @@ module.exports = function(request, origin, token){
             return request('GET', origin + '/placesLatestMeasurement/' + type);
         },
         sensorsLatestMeasurement: function(data){
-            return request('POST', origin + '/sensorsLatestMeasurement/', data);
+            return request('GET', origin + '/sensorsLatestMeasurement' + makeSearchString(Object.assign({s: token}, data)));
         },
         measurementsPlaces: function(data){
-            return request('POST', origin + '/measurements/places', data);
+            return request('GET', origin + '/measurements/places' + makeSearchString(data));
         },
         measurementsSensors: function(data){
-            return request('POST', origin + '/measurements/sensors', data);
+            return request('GET', origin + '/measurements/sensors' + makeSearchString(Object.assign({s: token}, data)));
         },
         getAllPlacesInfos: function(){
             return request('GET', origin + '/allPlacesInfos');
         },
         sensorRawMeasurements: function (data){
-            return request('POST', origin + '/measurements/sensor/raw', data);
+            return request('GET', origin + '/measurements/sensor/raw' + makeSearchString(Object.assign({s: token}, data)));
         },
         placeRawMeasurements: function (data){
-            return request('POST', origin + '/measurements/place/raw', data);
+            return request('GET', origin + '/measurements/place/raw' + makeSearchString(data));
         }
     };
 };
