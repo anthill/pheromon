@@ -26,7 +26,7 @@ var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.secret);
 
 // function createFakeSensor(simId){
 //     return new Promise(function(resolve, reject){
-//         var newSensor = mqtt.connect('mqtt://broker:1883', {
+//         var newSensor = mqtt.connect('mqtt://broker:1883', { // broker
 //             username: simId,
 //             password: PRIVATE.token,
 //             clientId: simId

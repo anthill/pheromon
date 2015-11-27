@@ -7,10 +7,23 @@ var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
 var database = require('../database');
+var Updater = require('./updater.js');
+var PRIVATE = require('../PRIVATE.json');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
+// Updater variables
+var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10) || 2200;
+var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
+var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || './';
+var UPDATER_SENSOR_PORT = process.env.UPDATER_SENSOR_PORT || '9632';
+// See PRIVATE.json
+var UPDATER_SERVER_IP = PRIVATE.ip || 'localhost';
+
+
 module.exports = function(authToken, io){
+
+    var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
 
     var maestro = mqtt.connect('mqtt://broker:1883', {
         username: 'maestro',
@@ -43,7 +56,43 @@ module.exports = function(authToken, io){
         io.on('connection', function(socket) {
             socket.on('cmd', function(cmd) {
                 console.log('admin client data received');
-                maestro.distribute(cmd);
+
+                var commandLine = cmd.command.toLowerCase().split(' ');
+
+                // Special case : updates
+                // Start the updater instead of sending the message
+                if (commandLine[0] === 'startupdate') {
+
+                    var playbook = commandLine[1] || 'default';
+                    database.Sensors.getAll()
+                    .then(function(sensors) {
+                        try {
+                            updater.cleanResults();
+                            updater.startUpdate(UPDATER_PLAYBOOK_FOLDER + playbook,
+                            cmd.to.map(function (sim) {
+                                return sensors.find(function (sensor) {
+                                    return sensor.sim === sim;
+                                });
+                            }),
+                            'sensorSSH' + '@' + UPDATER_SERVER_IP,
+                            UPDATER_SENSOR_PORT);
+                        }
+                        catch (err) {
+                            console.log('Could not start the update', err, err.stack);
+                            cmd.to.forEach(function (sim) {
+                                maestro.publish('cmdResult/' + sim + '/', {command: 'startUpdate', result: err});
+                            });
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log('Error :', err, err.stack);
+                    });
+                }
+                else if (commandLine[0] === 'stopupdate') {
+                    updater.stopUpdate();
+                }
+                else
+                    maestro.distribute(cmd);
             });
         });
 
@@ -110,7 +159,7 @@ module.exports = function(authToken, io){
                             });
                         }
                         break;
-                            
+
                     case 'measurement':
                         
                         decoder.decodeMessage(message, type)
