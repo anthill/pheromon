@@ -385,7 +385,8 @@ describe('Maestro testing', function(){
                 fakeSensor.publish('measurement/' + simId + '/bin', JSON.stringify({
                     date: new Date(Date.now()).toISOString(),
                     value: [{ id: 'myBinId' }],
-                    index: 1
+                    index: 1,
+                    origin: '6bin'
                 }));
 
             });
@@ -412,7 +413,8 @@ describe('Maestro testing', function(){
                 // the following measurement is not valid, since it doesn't have a value field
                 fakeSensor.publish('measurement/' + simId + '/bin', JSON.stringify({
                     date: new Date(Date.now()).toISOString(),
-                    index: 1
+                    index: 1,
+                    origin: '6bin'
                 }));
 
             });

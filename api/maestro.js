@@ -169,6 +169,7 @@ module.exports = function(authToken, io){
                                 date:
                                 value: [{}]
                                 (index:) -> reference to the local pending promise
+                                (origin:) -> so that pheromon knows it needs to send back smg
                             }
                         */
                         
@@ -201,7 +202,7 @@ module.exports = function(authToken, io){
                                             // THIS IS 6ELEMENT SPECIFIC CODE :/
                                             case 'bin':
                                                 /* we need to send a websocket msg to pass the info to 6element server */
-                                                maestro.publish(sensor.sim + '/6bin', JSON.stringify({
+                                                maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
                                                     isSuccessful: true,
                                                     index: measurement.index
                                                 }));
@@ -215,7 +216,7 @@ module.exports = function(authToken, io){
 
                                         // THIS IS 6ELEMENT SPECIFIC CODE :/
                                         if (type === 'bin'){
-                                            maestro.publish(sensor.sim + '/6bin', JSON.stringify({
+                                            maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
                                                 error: err,
                                                 isSuccessful: false,
                                                 index: measurement.index
