@@ -51,7 +51,7 @@
     "node-ansible": "^0.5.2",
     "node-schedule": "^0.2.9",
     "pg": "^4.3.0",
-    "pheromon-codecs": "0.0.5",
+    "pheromon-codecs": "0.0.6",
     "pokemon-names": "^1.0.0",
     "react": "^0.13.3",
     "redis": "^1.0.0",
