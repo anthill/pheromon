@@ -6,6 +6,12 @@ var trajCodec = require('pheromon-codecs').trajectories;
 // Decode a message in function of its type
 function decodeMessage(message, type) {
 
+
+    var trajectoriesCodecOptions = {
+        precisionSignalStrength: 1,
+        precisionDate: 30
+    }
+
     return new Promise(function (resolve, reject) {
 
         switch (type) {
@@ -29,7 +35,7 @@ function decodeMessage(message, type) {
             break;
 
             case 'trajectories':
-                trajCodec.decode(message)
+                trajCodec.decode(message, trajectoriesCodecOptions)
                 .then(resolve)
                 .catch(reject);
                 /*
