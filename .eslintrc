@@ -34,7 +34,8 @@
         no-spaced-func: 0,
         consistent-return: 0,
         no-loop-func: 1,
-        no-console: 0
+        no-console: 0,
+        no-redeclare: 1
     },
     "env": {
         "es6": true,

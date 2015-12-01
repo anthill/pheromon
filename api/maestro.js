@@ -2,10 +2,11 @@
 
 // maestro: mqtt client on the API side of Pheromon
 var mqtt = require('mqtt');
-var decoder = require('./decodeMessage');
+var decoder = require('./utils/decodeMessage');
 var checkSensor = require('./utils/checkSensor.js');
 var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
+var sendReq = require('../tools/sendNodeReq');
 var database = require('../database');
 var Updater = require('./updater.js');
 var PRIVATE = require('../PRIVATE.json');
@@ -38,6 +39,7 @@ module.exports = function(authToken, io){
         maestro.subscribe('status/#', {qos: 1});
         maestro.subscribe('measurement/#', {qos: 1});
         maestro.subscribe('cmdResult/#', {qos: 1});
+        maestro.subscribe('url/#', {qos: 1});
 
         // wrapper of the mqtt.publish() function
         maestro.distribute = function(message){
@@ -161,6 +163,15 @@ module.exports = function(authToken, io){
                         break;
 
                     case 'measurement':
+
+                        /* measurement is
+                            {
+                                date:
+                                value: [{}]
+                                (index:) -> reference to the local pending promise
+                                (origin:) -> so that pheromon knows it needs to send back smg
+                            }
+                        */
                         
                         decoder.decodeMessage(message, type)
                         .then(function(data){
@@ -178,18 +189,39 @@ module.exports = function(authToken, io){
                                         date: measurement.date
                                     })
                                     .then(function() {
-                                        if (type === 'wifi'){ // for now
-                                            io.emit('data', {
-                                                installed_at: sensor.installed_at,
-                                                type: type,
-                                                value: measurement.value,
-                                                date: measurement.date
-                                            });
+                                        switch(type){
+                                            case 'wifi':
+                                                io.emit('data', {
+                                                    installed_at: sensor.installed_at,
+                                                    type: type,
+                                                    value: measurement.value,
+                                                    date: measurement.date
+                                                });
+                                                break;
+
+                                            // THIS IS 6ELEMENT SPECIFIC CODE :/
+                                            case 'bin':
+                                                /* we need to send a websocket msg to pass the info to 6element server */
+                                                maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
+                                                    isSuccessful: true,
+                                                    index: measurement.index
+                                                }));
+                                                break;
+
                                         }
                                         console.log('measurement of type', type, 'updated');
                                     })
                                     .catch(function(err) {
                                         console.log('error : cannot store measurement in DB :', err);
+
+                                        // THIS IS 6ELEMENT SPECIFIC CODE :/
+                                        if (type === 'bin'){
+                                            maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
+                                                error: err,
+                                                isSuccessful: false,
+                                                index: measurement.index
+                                            }));
+                                        }
                                     });
                                 });
                             }
@@ -216,6 +248,37 @@ module.exports = function(authToken, io){
                             console.log('error : cannot update sensor in DB :', err);
                         });
                         break;
+
+                    case 'url':
+                        var parsed = JSON.parse(message);
+
+                        /* parsed message is
+                            {
+                                url:
+                                method:
+                                data:
+                                origin: -> who asked ?
+                                index: -> reference to the local pending promise
+                            }
+                        */
+
+                        sendReq(parsed.method, parsed.url, parsed.data)
+                        .then(function(data){
+                            var response = {
+                                data: data,
+                                isSuccessful: true,
+                                index: message.index
+                            };
+                            maestro.publish(sensor.sim + '/' + parsed.origin, JSON.stringify(response));
+                        })
+                        .catch(function(error){
+                            var response = {
+                                error: error,
+                                isSuccessful: false,
+                                index: message.index
+                            };
+                            maestro.publish(sensor.sim + '/' + parsed.origin, JSON.stringify(response));
+                        });
 
                 }
             })

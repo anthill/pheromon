@@ -18,14 +18,14 @@ var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
 
 
-describe('Broker Testing', function() {
+describe('Broker', function() {
         
     this.timeout(2000);
 
     var fakeSensor;
     var simId = 'simNumber1';
 
-    it('Broker should not authenticate sensor with fake token', function () {
+    it('should not authenticate sensor with fake token', function () {
 
         var promise = new Promise(function(resolve, reject){
             fakeSensor = mqtt.connect('mqtt://broker:1883', // Connect to broker

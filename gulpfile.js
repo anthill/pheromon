@@ -41,7 +41,8 @@ function browserifyShare(name){
     var b = browserify({
         cache: {},
         packageCache: {},
-        fullPaths: true
+        fullPaths: true,
+        debug: true
     });
     
     b.add( join('.', 'api', 'clients', name, 'src', 'main.js') );

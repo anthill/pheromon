@@ -155,7 +155,7 @@ You can send [commands](https://github.com/anthill/pheromon/blob/master/api/clie
 
 ## Unitary tests
 
-You can run [Pheromon tests](https://github.com/anthill/pheromon/blob/master/tests/ReadMe.md) in a dedicated docker.
+You can run Pheromon tests in a dedicated docker.
 
 
 First build the container:
