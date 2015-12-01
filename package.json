@@ -47,7 +47,7 @@
     "leaflet": "^0.7.3",
     "moment": "^2.10.3",
     "mosca": "^0.32.0",
-    "mqtt": "^1.4.1",
+    "mqtt": "1.6.0",
     "node-ansible": "^0.5.2",
     "node-schedule": "^0.2.9",
     "pg": "^4.3.0",
