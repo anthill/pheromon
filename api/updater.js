@@ -93,9 +93,9 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
                     '(' + (sensors.filter(function (s) {return s.state !== 'PENDING';}).length + 1) +
                     '/' + sensors.length + ')');
 
-        mqttClient.publish(sensor.id,
-            'opentunnel ' + serverPort + ' ' + sensorPort + ' ' + address,
-            {qos: 1});
+        var tunnelCmd = 'opentunnel ' + serverPort + ' ' + sensorPort + ' ' + address;
+        console.log(tunnelCmd);
+        mqttClient.publish(sensor.id, tunnelCmd, {qos: 1});
 
         sensor.timeout = setTimeout(function () {
             self.emit('timeout', sensor.id);
@@ -151,8 +151,9 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
 
 
         // If not a good port number --> default value
+        // @4rzael hexa trick
         if ((sensorPort & 0xFFFF) !== sensorPort)
-            sensorPort = 9632;
+            sensorPort = 22;
         
         mqttClient.removeAllListeners('message');
 

@@ -17,7 +17,7 @@ var SENSOR_STATUS = require('./utils/sensorStatus.js');
 var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10) || 2200;
 var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
 var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || './';
-var UPDATER_SENSOR_PORT = process.env.UPDATER_SENSOR_PORT || '9632';
+var UPDATER_SENSOR_PORT = process.env.UPDATER_SENSOR_PORT || '22';
 // See PRIVATE.json
 var UPDATER_SERVER_IP = PRIVATE.ip || 'localhost';
 
