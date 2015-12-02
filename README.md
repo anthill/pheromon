@@ -53,7 +53,8 @@ cd pheromon
     "mapbox_token": ..., // token for your mapbox account
     "map_id": ..., // id of your map background
     "secret": ..., // token you should use to protect the access to your Admin client or database API
-    "token": ... // MQTT for the broker to authenticate sensor
+    "token": ... // MQTT for the broker to authenticate sensor,
+    "ip": ...
 }
 ```
 
@@ -199,6 +200,7 @@ sudo usermod -G docker sensorSSH;
 sudo usermod -s /usr/sbin/nologin sensorSSH;
 ```
 
+add `"ip": "kerrigan"` in pheromon `PRIVATE.json` where kerrigan is the name of the host in `.ssh/config` 
 
 ## Licence MIT
 
