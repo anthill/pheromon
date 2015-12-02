@@ -174,7 +174,7 @@ npm run test
 * Create a user
 
 ```sh
-sudo useradd sensorSSH;
+sudo useradd -m sensorSSH;
 sudo passwd sensorSSH;
 ```
 
