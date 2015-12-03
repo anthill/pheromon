@@ -116,8 +116,6 @@ module.exports = function(authToken, io){
 
                 switch(main){
                     case 'init':
-                        var date = new Date();
-
                         database.Sensors.update(sensor.sim, {client_status: 'connected'}) // this is to set the sensor to 'CONNECTED' in D
                         .then(function() {
                             io.emit('status', {sensorId: sensor.id});
@@ -252,7 +250,7 @@ module.exports = function(authToken, io){
                     case 'url':
                         var parsed = JSON.parse(message);
 
-                        /* parsed message is
+                        /* Parsed message is
                             {
                                 url:
                                 method:

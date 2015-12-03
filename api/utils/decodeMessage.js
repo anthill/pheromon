@@ -10,7 +10,7 @@ function decodeMessage(message, type) {
     var trajectoriesCodecOptions = {
         precisionSignalStrength: 1,
         precisionDate: 30
-    }
+    };
 
     return new Promise(function (resolve, reject) {
 
