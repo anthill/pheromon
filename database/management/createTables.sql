@@ -67,5 +67,10 @@ CREATE TABLE IF NOT EXISTS measurements (
 CREATE TRIGGER updated_at_measurements BEFORE UPDATE ON measurements FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 CREATE INDEX type ON outputs (type);
+CREATE INDEX sensor_id ON outputs (sensor_id);
 CREATE INDEX project ON sensors (project);
+CREATE INDEX installed_at ON sensors (installed_at);
+CREATE INDEX sim ON sensors (sim);
+CREATE INDEX output_id ON measurements (output_id);
+CREATE INDEX date ON measurements ("date");
 
