@@ -209,7 +209,10 @@ module.exports = function(authToken, io){
                                             // THIS IS 6ELEMENT SPECIFIC CODE :/
                                             case 'bin':
                                                 /* we need to send a websocket msg to pass the info to 6element server */
-                                                io.emit('bin', measurement.value);
+                                                io.emit('bin', {
+                                                    installed_at: sensor.installed_at,
+                                                    bin: measurement.value
+                                                });
 
                                                 maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
                                                     isSuccessful: true,
