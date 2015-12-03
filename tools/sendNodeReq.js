@@ -19,8 +19,21 @@ module.exports = function (method, url, data){
             body: data
         }, function(error, response, body){
             if (!error) {
-                if(response.statusCode < 400)
-                    resolve(JSON.parse(body));
+                if(response.statusCode < 400) {
+                    try
+                        { resolve(JSON.parse(body)); }
+                    catch (e){
+                        reject(Object.assign(
+                            new Error('Couldnt parse JSON ' + body + e),
+                                {
+                                    HTTPstatus: response.statusCode,
+                                    text: body,
+                                    error: error
+                                }
+                            )
+                        );
+                    }
+                }
                 else {
                     reject(Object.assign(
                         new Error('HTTP error because of bad status code ' + body),
