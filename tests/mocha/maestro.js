@@ -296,8 +296,11 @@ describe('Maestro testing', function(){
 
                 setTimeout(function () { // Wait for sensor to connect
                     socket.emit('cmd', {
-                        command: 'myCommand',
-                        to: [simId]
+                        token: PRIVATE.cmdToken,
+                        cmd: {
+                            command: 'myCommand',
+                            to: [simId]
+                        }
                     });
                 }, 250);
 

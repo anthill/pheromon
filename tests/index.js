@@ -13,8 +13,8 @@ Promise.all([dbInitP, apiConnectP])
 .then(function(){
     console.log('Running tests');
 
-    // var mochaTests = spawn('mocha', ['--recursive', 'tests/mocha/'], {stdio: 'inherit'});
-    var mochaTests = spawn('mocha', ['--recursive', 'tests/mocha/maestro.js'], {stdio: 'inherit'});
+    var mochaTests = spawn('mocha', ['--recursive', 'tests/mocha/'], {stdio: 'inherit'});
+    // var mochaTests = spawn('mocha', ['--recursive', 'tests/mocha/maestro.js'], {stdio: 'inherit'});
 
     mochaTests.on('exit', process.exit);
 });
