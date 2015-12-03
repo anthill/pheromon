@@ -201,6 +201,9 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
                 return s.id === sim;
             });
 
+            if (!sensor || !parsed)
+                return;
+
             if (parsed.command === 'opentunnel' && parsed.result === 'OK') {
                 if (sensor.state === 'PENDING') {
                     self.emit('start', sensor);
