@@ -284,7 +284,7 @@ module.exports = function(authToken, io){
                             var response = {
                                 data: data,
                                 isSuccessful: true,
-                                index: message.index
+                                index: parsed.index
                             };
                             maestro.publish(sensor.sim + '/' + parsed.origin, JSON.stringify(response));
                         })
@@ -292,7 +292,7 @@ module.exports = function(authToken, io){
                             var response = {
                                 error: error,
                                 isSuccessful: false,
-                                index: message.index
+                                index: parsed.index
                             };
                             maestro.publish(sensor.sim + '/' + parsed.origin, JSON.stringify(response));
                         });
