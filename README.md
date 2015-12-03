@@ -53,7 +53,8 @@ cd pheromon
     "mapbox_token": ..., // token for your mapbox account
     "map_id": ..., // id of your map background
     "secret": ..., // token you should use to protect the access to your Admin client or database API
-    "token": ... // MQTT for the broker to authenticate sensor
+    "token": ... // MQTT for the broker to authenticate sensor,
+    "ip": ...
 }
 ```
 
@@ -155,7 +156,7 @@ You can send [commands](https://github.com/anthill/pheromon/blob/master/api/clie
 
 ## Unitary tests
 
-You can run [Pheromon tests](https://github.com/anthill/pheromon/blob/master/tests/ReadMe.md) in a dedicated docker.
+You can run Pheromon tests in a dedicated docker.
 
 
 First build the container:
@@ -174,7 +175,7 @@ npm run test
 * Create a user
 
 ```sh
-sudo useradd sensorSSH;
+sudo useradd -m sensorSSH;
 sudo passwd sensorSSH;
 ```
 
@@ -199,6 +200,7 @@ sudo usermod -G docker sensorSSH;
 sudo usermod -s /usr/sbin/nologin sensorSSH;
 ```
 
+add `"ip": "kerrigan"` in pheromon `PRIVATE.json` where kerrigan is the name of the host in `.ssh/config` 
 
 ## Licence MIT
 

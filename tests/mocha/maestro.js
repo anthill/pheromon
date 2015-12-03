@@ -38,8 +38,8 @@ function createFakeSensor(simId){
         });
 
         newSensor.on('connect', function(){
-            newSensor.subscribe(simId);
-            newSensor.subscribe('all');
+            newSensor.subscribe(simId + '/#');
+            newSensor.subscribe('all/#');
             resolve(newSensor);
         });
     });
@@ -69,7 +69,7 @@ describe('Maestro testing', function(){
             return database.Sensors.deleteAll();
         });
 
-        describe('checkSensor utils', function() {
+        describe('checkSensor', function() {
         
             var sensor = {
                 name: 'Sensor1',
@@ -78,7 +78,7 @@ describe('Maestro testing', function(){
 
             var sim2sensor = {};
 
-            it('checkSensor should register unknown sensor', function () {
+            it('should register unknown sensor', function () {
                 return checkSensor(sensor.sim)
                 .then(function(){
                     return database.Sensors.getAll()
@@ -88,7 +88,7 @@ describe('Maestro testing', function(){
                 });
             });
 
-            it('checkSensor should not register known sensor', function () {
+            it('should not register known sensor', function () {
                 return checkSensor(sensor.sim)
                 .then(function(){
                     return database.Sensors.getAll()
@@ -98,7 +98,7 @@ describe('Maestro testing', function(){
                 });
             });
 
-            it('checkSensor should not add already existing output', function () {
+            it('should not add already existing output', function () {
                 return checkSensor(sensor.sim, 'wifi')
                 .then(function(){
                     return checkSensor(sensor.sim, 'wifi');
@@ -117,7 +117,7 @@ describe('Maestro testing', function(){
 
     });
 
-    describe('Fake Sensor', function() {
+    describe('Maestro', function() {
 
         var fakeSensor;
         var i = 0;
@@ -133,7 +133,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should register unknown sensor', function () {
+        it('should register unknown sensor', function () {
 
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function () {
@@ -152,7 +152,7 @@ describe('Maestro testing', function(){
 
         });
 
-        it('Maestro should send back init command when asked', function () {
+        it('should send back init command when asked', function () {
             // sensor sends '' on topic 'init/simId'
             // then receives 'init params' on topic 'simId'
 
@@ -176,7 +176,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Maestro should register output status update in DB', function () {
+        it('should register output status update in DB', function () {
 
             fakeSensor.publish('status/' + simId + '/wifi', 'recording');            
             
@@ -194,7 +194,7 @@ describe('Maestro testing', function(){
 
         // add test for client status
 
-        it('Pushing wifi measurements should register measurements in DB', function () {
+        it('should register measurements in DB when receiving wifi measurements', function () {
 
             var measurement = {
                 date: new Date(),
@@ -236,7 +236,7 @@ describe('Maestro testing', function(){
             });
         });
 
-        it('Pushing trajectories measurements should register measurements in DB', function () {
+        it('should register measurements in DB when receiving trajectories', function () {
 
             var trajectories =
             [
@@ -284,7 +284,7 @@ describe('Maestro testing', function(){
         });
 
 
-        it('Emitting commands through socket should send command to sensors', function(){
+        it('should send command to sensors when receiving commands through socket', function(){
             return new Promise(function(resolve, reject){
                 fakeSensor.on('message', function(topic, message){
 
@@ -303,6 +303,122 @@ describe('Maestro testing', function(){
 
             });
         });
+
+        it('should forward the result when receiving a url via MQTT)', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    var subtopics = topic.split('/');
+                    var main = subtopics[0];
+                    var destination = subtopics[1];
+
+                    var parsed = JSON.parse(message.toString());
+
+                    if(main === simId || 'all') {
+                        expect(destination).to.deep.equal('test');
+                        expect(parsed.data).to.exist;
+                        expect(parsed.isSuccessful).to.be.true;
+                        resolve();
+                    }
+                    else
+                        reject();
+                });
+
+                fakeSensor.publish('url/' + simId, JSON.stringify({
+                    url: 'https://pheromon.ants.builders/place/getAll',
+                    method: 'GET',
+                    origin: 'test',
+                    index: 1
+                }));
+
+            // fakeSensor.publish('init/' + simId, '');
+
+            });
+        });
+
+        it('should forward the error when receiving a invalid url via MQTT', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    var subtopics = topic.split('/');
+                    var main = subtopics[0];
+                    var destination = subtopics[1];
+
+                    var parsed = JSON.parse(message.toString());
+
+                    if(main === simId || 'all') {
+                        expect(destination).to.deep.equal('test');
+                        expect(parsed.error).to.exist;
+                        expect(parsed.isSuccessful).to.be.false;
+                        resolve();
+                    }
+                    else
+                        reject();
+                });
+
+                fakeSensor.publish('url/' + simId, JSON.stringify({
+                    url: 'https://pheromon.ants.builders/fakeRoute',
+                    method: 'GET',
+                    origin: 'test',
+                    index: 1
+                }));
+
+            });
+        });
+
+        it('should publish on simId/6bin when receiving a bin measurement', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    var subtopics = topic.split('/');
+                    var main = subtopics[0];
+                    var destination = subtopics[1];
+
+                    var parsed = JSON.parse(message.toString());
+
+                    if(main === simId || 'all') {
+                        expect(destination).to.deep.equal('6bin');
+                        expect(parsed.isSuccessful).to.be.true;
+                        resolve();
+                    }
+                    else
+                        reject();
+                });
+
+                fakeSensor.publish('measurement/' + simId + '/bin', JSON.stringify({
+                    date: new Date(Date.now()).toISOString(),
+                    value: [{ id: 'myBinId' }],
+                    index: 1,
+                    origin: '6bin'
+                }));
+
+            });
+        });
+
+        it('should publish on simId/6bin when a bin measurement is not valid', function(){
+            return new Promise(function(resolve, reject){
+                fakeSensor.on('message', function(topic, message){
+                    var subtopics = topic.split('/');
+                    var main = subtopics[0];
+                    var destination = subtopics[1];
+
+                    var parsed = JSON.parse(message.toString());
+
+                    if(main === simId || 'all') {
+                        expect(destination).to.deep.equal('6bin');
+                        expect(parsed.isSuccessful).to.be.false;
+                        resolve();
+                    }
+                    else
+                        reject();
+                });
+
+                // the following measurement is not valid, since it doesn't have a value field
+                fakeSensor.publish('measurement/' + simId + '/bin', JSON.stringify({
+                    date: new Date(Date.now()).toISOString(),
+                    index: 1,
+                    origin: '6bin'
+                }));
+
+            });
+        });               
 
     });
 });

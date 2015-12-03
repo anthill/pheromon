@@ -382,3 +382,13 @@ socket.on('status', function (msg) {
     updatingID = id;
     refreshView();
 });
+
+socket.on('data', function (msg) {
+
+    // GET UPDATING SENSOR ID
+    var id = msg.sensorId;
+    console.log('UPDATING STATUS', id);
+    
+    updatingID = id;
+    refreshView();
+});
