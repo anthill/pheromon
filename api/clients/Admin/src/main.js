@@ -11,6 +11,8 @@ var prepareAPI = require('../../../../tools/prepareAPI.js');
 var sendReq = require('../../../../tools/sendReq.js');
 var makeMap = require('../../../../tools/makeMap.js');
 
+var PRIVATE = require('../../../../PRIVATE.json');
+
 var dbStatusMap = require('./dbStatusMap.js');
 
 var socket = io();
@@ -298,8 +300,11 @@ function sendCommand(command, selectedAntSet){
     });
 
     socket.emit('cmd', {
-        command: command,
-        to: antSims
+        token: PRIVATE.cmdToken,
+        cmd: {
+            command: command,
+            to: antSims
+        }
     });
 
     console.log('Sending command', command, ' to ', antSims.join(' '));

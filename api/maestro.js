@@ -56,45 +56,52 @@ module.exports = function(authToken, io){
         };
 
         io.on('connection', function(socket) {
-            socket.on('cmd', function(cmd) {
-                console.log('admin client data received');
+            socket.on('cmd', function(msg) {
 
-                var commandLine = cmd.command.toLowerCase().split(' ');
+                // check cmd token
+                if (msg.token === PRIVATE.cmdToken){
+                    console.log('cmd was received with correct token');
+                    var cmd = msg.cmd;
 
-                // Special case : updates
-                // Start the updater instead of sending the message
-                if (commandLine[0] === 'startupdate') {
+                    var commandLine = cmd.command.toLowerCase().split(' ');
 
-                    var playbook = commandLine[1] || 'default';
-                    database.Sensors.getAll()
-                    .then(function(sensors) {
-                        try {
-                            updater.cleanResults();
-                            updater.startUpdate(UPDATER_PLAYBOOK_FOLDER + playbook,
-                            cmd.to.map(function (sim) {
-                                return sensors.find(function (sensor) {
-                                    return sensor.sim === sim;
+                    // Special case : updates
+                    // Start the updater instead of sending the message
+                    if (commandLine[0] === 'startupdate') {
+
+                        var playbook = commandLine[1] || 'default';
+                        database.Sensors.getAll()
+                        .then(function(sensors) {
+                            try {
+                                updater.cleanResults();
+                                updater.startUpdate(UPDATER_PLAYBOOK_FOLDER + playbook,
+                                cmd.to.map(function (sim) {
+                                    return sensors.find(function (sensor) {
+                                        return sensor.sim === sim;
+                                    });
+                                }),
+                                'sensorSSH' + '@' + UPDATER_SERVER_IP,
+                                UPDATER_SENSOR_PORT);
+                            }
+                            catch (err) {
+                                console.log('Could not start the update', err, err.stack);
+                                cmd.to.forEach(function (sim) {
+                                    maestro.publish('cmdResult/' + sim + '/', {command: 'startUpdate', result: err});
                                 });
-                            }),
-                            'sensorSSH' + '@' + UPDATER_SERVER_IP,
-                            UPDATER_SENSOR_PORT);
-                        }
-                        catch (err) {
-                            console.log('Could not start the update', err, err.stack);
-                            cmd.to.forEach(function (sim) {
-                                maestro.publish('cmdResult/' + sim + '/', {command: 'startUpdate', result: err});
-                            });
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log('Error :', err, err.stack);
-                    });
-                }
-                else if (commandLine[0] === 'stopupdate') {
-                    updater.stopUpdate();
+                            }
+                        })
+                        .catch(function (err) {
+                            console.log('Error :', err, err.stack);
+                        });
+                    }
+                    else if (commandLine[0] === 'stopupdate')
+                        updater.stopUpdate();
+                    else
+                        maestro.distribute(cmd);
                 }
                 else
-                    maestro.distribute(cmd);
+                    console.log('cmd was received with wrong token');
+                
             });
         });
 
@@ -202,6 +209,8 @@ module.exports = function(authToken, io){
                                             // THIS IS 6ELEMENT SPECIFIC CODE :/
                                             case 'bin':
                                                 /* we need to send a websocket msg to pass the info to 6element server */
+                                                io.emit('bin', measurement.value);
+
                                                 maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
                                                     isSuccessful: true,
                                                     index: measurement.index
