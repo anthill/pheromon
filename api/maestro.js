@@ -128,7 +128,14 @@ module.exports = function(authToken, io){
                         database.Sensors.update(sensor.sim, {client_status: 'connected'}) // this is to set the sensor to 'CONNECTED' in D
                         .then(function() {
                             io.emit('status', {sensorId: sensor.id});
-                            var cmd = ['init', sensor.period, sensor.start_hour, sensor.stop_hour, date.toISOString()].join(' ');
+                            var cmd = [
+                                'init',
+                                sensor.period,
+                                sensor.start_hour,
+                                sensor.stop_hour,
+                                date.toISOString(),
+                                sensor.installed_at
+                            ].join(' ');
                             maestro.publish(sim, cmd);
 
                             console.log('sensor init');
