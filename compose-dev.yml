@@ -17,7 +17,7 @@ api:
       - UPDATER_RANGE_START=2200
       - UPDATER_RANGE_SIZE=10
       - UPDATER_PLAYBOOK_FOLDER=/pheromon/updateFiles/
-      - UPDATER_SENSORS_PORT=9632
+      - UPDATER_SENSORS_PORT=22
    volumes:
       - ./:/pheromon
       # Ansible playbooks for the updater
