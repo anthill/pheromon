@@ -77,10 +77,6 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
         self.emit('connected');
     });
 
-    mqttClient.on('reconnect', function () {
-        mqttClient.subscribe('cmdResult/#');
-    });
-
     var port2sensor = []; // [{port:number, sensor:object}, {port:number, sensor:object}, ...]
 
     var sensors = [];
@@ -205,6 +201,9 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
             var sensor = sensors.find(function(s) {
                 return s.id === sim;
             });
+
+            if (!sensor || !parsed)
+                return;
 
             if (parsed.command === 'opentunnel' && parsed.result === 'OK') {
                 if (sensor.state === 'PENDING') {
