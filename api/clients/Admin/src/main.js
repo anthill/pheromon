@@ -294,83 +294,79 @@ function refreshView(){
 }
 
 function sendCommand(command, selectedAntSet){
-    var antSims = [];
-    selectedAntSet.forEach(function(id){
-        antSims.push(topLevelStore.sensorMap.get(id).sim);
-    });
+    if (command.length > 0 && selectedAntSet.size > 0){
+        var antSims = [];
+        selectedAntSet.forEach(function(id){
+            antSims.push(topLevelStore.sensorMap.get(id).sim);
+        });
 
-    socket.emit('cmd', {
-        token: PRIVATE.cmd_token,
-        cmd: {
-            command: command,
-            to: antSims
+        socket.emit('cmd', {
+            token: PRIVATE.cmd_token,
+            cmd: {
+                command: command,
+                to: antSims
+            }
+        });
+
+        console.log('Sending command', command, ' to ', antSims.join(' '));
+
+        // Update last command
+
+        updateSensorInDb(antSims.map(function (sim) {
+            return {
+                sim: sim,
+                field: 'latest_input',
+                value: command.split(' ')[0]
+            };
+        }));
+
+        updateSensorInDb(antSims.map(function (sim) {
+            return {
+                sim: sim,
+                field: 'latest_output',
+                value: '  '
+            };
+        }));
+
+
+        // Update sensor's config if needed
+
+        var sims = antSims;
+        var value;
+        var field;
+
+        if (command.match(/changeperiod (\d{1,5})/)) {
+            field = 'period';
+            value = parseInt(command.match(/changeperiod (\d{1,5})/)[1]);
         }
-    });
+        else if (command.match(/changestarttime (\d{1,2})/)) {
+            field = 'start_hour'; // hour, not time ... That's tricky
+            var tmpStart = parseInt(command.match(/changestarttime (\d{1,2})/)[1]);
 
-    console.log('Sending command', command, ' to ', antSims.join(' '));
+            if (tmpStart >= 0 && tmpStart < 24)
+                value = tmpStart;
+        }
+        else if (command.match(/changestoptime (\d{1,2})/)) {
+            field = 'stop_hour';
+            var tmpStop = parseInt(command.match(/changestoptime (\d{1,2})/)[1]);
 
-    // Update last command
+            if (tmpStop >= 0 && tmpStop < 24)
+                value = tmpStop;
+        }
+        else // send to nobody
+            sims = [];
 
-    updateSensorInDb(antSims.map(function (sim) {
-        return {
-            sim: sim,
-            field: 'latest_input',
-            value: command.split(' ')[0]
-        };
-    }));
+        // update everybody
 
-    updateSensorInDb(antSims.map(function (sim) {
-        return {
-            sim: sim,
-            field: 'latest_output',
-            value: '  '
-        };
-    }));
-
-
-    // Update sensor's config if needed
-
-    var sims = antSims;
-    var value;
-    var field;
-
-    if (command.match(/changeperiod (\d{1,5})/)) {
-        field = 'period';
-        value = parseInt(command.match(/changeperiod (\d{1,5})/)[1]);
+        updateSensorInDb(sims.map(function (sim) {
+            return {
+                sim: sim,
+                value: value,
+                field: field
+            };
+        }));
     }
-    else if (command.match(/changestarttime (\d{1,2})/)) {
-        field = 'start_hour'; // hour, not time ... That's tricky
-        var tmpStart = parseInt(command.match(/changestarttime (\d{1,2})/)[1]);
-
-        if (tmpStart >= 0 && tmpStart < 24)
-            value = tmpStart;
-    }
-    else if (command.match(/changestoptime (\d{1,2})/)) {
-        field = 'stop_hour';
-        var tmpStop = parseInt(command.match(/changestoptime (\d{1,2})/)[1]);
-
-        if (tmpStop >= 0 && tmpStop < 24)
-            value = tmpStop;
-    }
-    else // send to nobody
-        sims = [];
-
-    // update everybody
-
-    updateSensorInDb(sims.map(function (sim) {
-        return {
-            sim: sim,
-            value: value,
-            field: field
-        };
-    }));
-
-    // sims.forEach(function (sim) {
-    //     updateSensorInDb([{
-    //         sim: sim,
-    //         delta: delta
-    //     }]);
-    // });
+    
 }
 
 
