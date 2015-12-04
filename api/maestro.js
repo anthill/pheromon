@@ -61,43 +61,47 @@ module.exports = function(authToken, io){
                 // check cmd token
                 if (msg.token === PRIVATE.cmd_token){
                     console.log('cmd was received with correct token');
+                    
                     var cmd = msg.cmd;
 
-                    var commandLine = cmd.command.toLowerCase().split(' ');
+                    // check command is not empty
+                    if (cmd.command.length > 0) {
+                        var commandLine = cmd.command.toLowerCase().split(' ');
 
-                    // Special case : updates
-                    // Start the updater instead of sending the message
-                    if (commandLine[0] === 'startupdate') {
+                        // Special case : updates
+                        // Start the updater instead of sending the message
+                        if (commandLine[0] === 'startupdate') {
 
-                        var playbook = commandLine[1] || 'default';
-                        database.Sensors.getAll()
-                        .then(function(sensors) {
-                            try {
-                                updater.cleanResults();
-                                updater.startUpdate(UPDATER_PLAYBOOK_FOLDER + playbook,
-                                cmd.to.map(function (sim) {
-                                    return sensors.find(function (sensor) {
-                                        return sensor.sim === sim;
+                            var playbook = commandLine[1] || 'default';
+                            database.Sensors.getAll()
+                            .then(function(sensors) {
+                                try {
+                                    updater.cleanResults();
+                                    updater.startUpdate(UPDATER_PLAYBOOK_FOLDER + playbook,
+                                    cmd.to.map(function (sim) {
+                                        return sensors.find(function (sensor) {
+                                            return sensor.sim === sim;
+                                        });
+                                    }),
+                                    'sensorSSH' + '@' + UPDATER_SERVER_IP,
+                                    UPDATER_SENSOR_PORT);
+                                }
+                                catch (err) {
+                                    console.log('Could not start the update', err, err.stack);
+                                    cmd.to.forEach(function (sim) {
+                                        maestro.publish('cmdResult/' + sim + '/', {command: 'startUpdate', result: err});
                                     });
-                                }),
-                                'sensorSSH' + '@' + UPDATER_SERVER_IP,
-                                UPDATER_SENSOR_PORT);
-                            }
-                            catch (err) {
-                                console.log('Could not start the update', err, err.stack);
-                                cmd.to.forEach(function (sim) {
-                                    maestro.publish('cmdResult/' + sim + '/', {command: 'startUpdate', result: err});
-                                });
-                            }
-                        })
-                        .catch(function (err) {
-                            console.log('Error :', err, err.stack);
-                        });
+                                }
+                            })
+                            .catch(function (err) {
+                                console.log('Error :', err, err.stack);
+                            });
+                        }
+                        else if (commandLine[0] === 'stopupdate')
+                            updater.stopUpdate();
+                        else
+                            maestro.distribute(cmd);
                     }
-                    else if (commandLine[0] === 'stopupdate')
-                        updater.stopUpdate();
-                    else
-                        maestro.distribute(cmd);
                 }
                 else
                     console.log('cmd was received with wrong token');
