@@ -17,7 +17,7 @@ var SENSOR_STATUS = require('./utils/sensorStatus.js');
 var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10) || 2200;
 var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
 var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || './';
-var UPDATER_SENSOR_PORT = parseInt(process.env.UPDATER_SENSOR_PORT) || 22;
+var UPDATER_SENSORS_PORT = parseInt(process.env.UPDATER_SENSORS_PORT, 10) || 22;
 // See PRIVATE.json
 var UPDATER_SERVER_IP = PRIVATE.ip || 'localhost';
 
@@ -81,7 +81,7 @@ module.exports = function(authToken, io){
                                     });
                                 }),
                                 'sensorSSH' + '@' + UPDATER_SERVER_IP,
-                                UPDATER_SENSOR_PORT);
+                                UPDATER_SENSORS_PORT);
                             }
                             catch (err) {
                                 console.log('Could not start the update', err, err.stack);
