@@ -194,11 +194,6 @@ su sensorSSH -c 'ssh-keygen -t rsa -b 4096';
 sudo usermod -G docker sensorSSH;
 ```
 
-* Add a volume with the private key of the user (read only is enough)
-
-  * Idem for the known_hosts
-
-
 * Add theses lines to `/etc/ssh/sshd_config`
 
 ```
