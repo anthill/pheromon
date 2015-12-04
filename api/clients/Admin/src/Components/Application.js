@@ -155,7 +155,10 @@ var App = React.createClass({
                 placeIDMap: placeIDMap.delete(placeName),
                 onChangePlace: props.onChangePlace,
                 onChangeSensor: props.onChangeSensor,
-                onRemoveSensor: props.onRemoveSensor
+                onRemoveSensor: function(data){
+                    self.updateAntSelection(sensor.id);
+                    props.onRemoveSensor(data);
+                }
             }));
         });
 
