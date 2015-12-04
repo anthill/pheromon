@@ -194,6 +194,14 @@ su sensorSSH -c 'ssh-keygen -t rsa -b 4096';
 sudo usermod -G docker sensorSSH;
 ```
 
+* Add theses lines to `/etc/ssh/sshd_config`
+
+```
+AllowTcpForwarding yes
+GatewayPorts yes
+```
+
+
 * Disable the user (chrooting it would be great)
 
 ```sh
