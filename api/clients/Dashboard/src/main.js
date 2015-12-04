@@ -13,7 +13,7 @@ var api = prepareAPI(sendReq);
 
 var errlog = console.error.bind(console);
 
-var PRIVATE = require('../../../../PRIVATE.json');
+var PRIVATE = require('../../../../PRIVATE/mapbox.json');
 
 var BORDEAUX_COORDS = [44.84, -0.57];
 
@@ -28,7 +28,7 @@ day = new Date(day).toString() !== 'Invalid Date' ? day : undefined;
 
 var topLevelStore = {
     day: day,
-    mapBoxToken: PRIVATE.mapbox_token,
+    mapBoxToken: PRIVATE.token,
     mapId: PRIVATE.map_id,
     mapCenter: BORDEAUX_COORDS,
     placeMap: undefined,

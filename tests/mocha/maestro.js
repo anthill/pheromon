@@ -14,7 +14,7 @@ var assert = chai.assert;
 var io = require('socket.io-client');
 
 var request = require('request');
-var PRIVATE = require('../../PRIVATE.json');
+var PRIVATE = require('../../PRIVATE/secret.json');
 
 var database = require('../../database');
 var sendReq = require('../../tools/sendNodeReq');
@@ -23,7 +23,7 @@ var makeMap = require('../../tools/makeMap');
 var prepareAPI = require('../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
-var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.secret);
+var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.html_token);
 
 var socket = io(apiOrigin);
 
@@ -33,7 +33,7 @@ function createFakeSensor(simId){
     return new Promise(function(resolve, reject){
         var newSensor = mqtt.connect('mqtt://broker:1883', { // connect to broker
             username: simId,
-            password: PRIVATE.token,
+            password: PRIVATE.mqtt_token,
             clientId: simId
         });
 
@@ -296,7 +296,7 @@ describe('Maestro testing', function(){
 
                 setTimeout(function () { // Wait for sensor to connect
                     socket.emit('cmd', {
-                        token: PRIVATE.cmdToken,
+                        token: PRIVATE.cmd_token,
                         cmd: {
                             command: 'myCommand',
                             to: [simId]

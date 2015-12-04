@@ -9,7 +9,7 @@ var makeMap = require('../tools/makeMap');
 var sendReq = require('../tools/sendNodeReq');
 var database = require('../database');
 var Updater = require('./updater.js');
-var PRIVATE = require('../PRIVATE.json');
+var PRIVATE = require('../PRIVATE/secret.json');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
@@ -19,7 +19,7 @@ var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
 var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || './';
 var UPDATER_SENSOR_PORT = parseInt(process.env.UPDATER_SENSOR_PORT) || 22;
 // See PRIVATE.json
-var UPDATER_SERVER_IP = PRIVATE.ip || 'localhost';
+var UPDATER_SERVER_IP = PRIVATE.server_ip || 'localhost';
 
 
 module.exports = function(authToken, io){
@@ -59,7 +59,7 @@ module.exports = function(authToken, io){
             socket.on('cmd', function(msg) {
 
                 // check cmd token
-                if (msg.token === PRIVATE.cmdToken){
+                if (msg.token === PRIVATE.cmd_token){
                     console.log('cmd was received with correct token');
                     var cmd = msg.cmd;
 

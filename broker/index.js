@@ -7,9 +7,9 @@
 require('es6-shim');
 var makeMqttServer = require('./makeMqttServer.js');
 
-var PRIVATE = require('../PRIVATE.json');
+var PRIVATE = require('../PRIVATE/secret.json');
 
-makeMqttServer(PRIVATE.token)
+makeMqttServer(PRIVATE.mqtt_token)
 .then(function(){
     console.log('MQTT broker ready');
 })

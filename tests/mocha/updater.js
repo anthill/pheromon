@@ -11,7 +11,7 @@ chai.use(chaiAsPromised);
 var expect = chai.expect;
 var assert = chai.assert;
 
-var PRIVATE = require('../../PRIVATE.json');
+var PRIVATE = require('../../PRIVATE/secret.json');
 var Updater = require('../../api/updater.js');
 
 describe('Updater', function(){
@@ -25,7 +25,7 @@ describe('Updater', function(){
     before('Initialising mqtt clients', function(){
         mqttListener = mqtt.connect('mqtt://broker:1883', {
             username: 'updateTester',
-            password: PRIVATE.token,
+            password: PRIVATE.mqtt_token,
             clientId: 'updateTester'
         });
 
@@ -35,7 +35,7 @@ describe('Updater', function(){
     });
 
     beforeEach('Recreating a new Updater', function () {
-        updater = new Updater(PRIVATE.token, 2200, 10);
+        updater = new Updater(PRIVATE.mqtt_token, 2200, 10);
     });
 
     afterEach('Cancelling the update', function(){

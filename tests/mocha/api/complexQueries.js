@@ -18,28 +18,11 @@ var database = require('../../../database');
 var sendReq = require('../../../tools/sendNodeReq.js');
 var makeMap = require('../../../tools/makeMap.js');
 
-var PRIVATE = require('../../../PRIVATE.json');
+var PRIVATE = require('../../../PRIVATE/secret.json');
 var prepareAPI = require('../../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
 var api = prepareAPI(sendReq, apiOrigin);
-var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.secret);
-
-// function createFakeSensor(simId){
-//     return new Promise(function(resolve, reject){
-//         var newSensor = mqtt.connect('mqtt://broker:1883', { // broker
-//             username: simId,
-//             password: PRIVATE.token,
-//             clientId: simId
-//         });
-
-//         newSensor.on('connect', function(){
-//             newSensor.subscribe(simId);
-//             newSensor.subscribe('all');
-//             resolve(newSensor);
-//         });
-//     });
-// }
-
+var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.html_token);
 
 describe('Verify API', function() {
     this.timeout(2000);

@@ -11,7 +11,7 @@ var prepareAPI = require('../../../../tools/prepareAPI.js');
 var sendReq = require('../../../../tools/sendReq.js');
 var makeMap = require('../../../../tools/makeMap.js');
 
-var PRIVATE = require('../../../../PRIVATE.json');
+var PRIVATE = require('../../../../PRIVATE/secret.json');
 
 var dbStatusMap = require('./dbStatusMap.js');
 
@@ -300,7 +300,7 @@ function sendCommand(command, selectedAntSet){
     });
 
     socket.emit('cmd', {
-        token: PRIVATE.cmdToken,
+        token: PRIVATE.cmd_token,
         cmd: {
             command: command,
             to: antSims

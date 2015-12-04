@@ -18,7 +18,7 @@ var schedule = require('node-schedule');
 var debug = require('../tools/debug');
 var routes = require('./routes.js');
 
-var PRIVATE = require('../PRIVATE.json');
+var PRIVATE = require('../PRIVATE/secret.json');
 var DEBUG = process.env.NODE_ENV === 'development';
 
 var server = new http.Server(app);
@@ -26,7 +26,7 @@ var io = require('socket.io')(server);
 io.set('origins', '*:*');
 
 // Creating API-side MQTT client: maestro !
-require('./maestro')(PRIVATE.token, io);
+require('./maestro')(PRIVATE.mqtt_token, io);
 
 var PORT = process.env.VIRTUAL_PORT;
 
@@ -72,7 +72,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/Admin', function(req, res){ // maybe not necessary
-    if(req.query.s === PRIVATE.secret || DEBUG)
+    if(req.query.s === PRIVATE.html_token || DEBUG)
         res.sendFile(path.join(__dirname, './clients/Admin/index.html'));
     else
         res.status(403).send({success: false, message: 'No token provided.'});

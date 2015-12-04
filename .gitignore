@@ -12,7 +12,7 @@ sensor/vision/data/*
 
 *-browserify-bundle.js
 
-PRIVATE.json
+PRIVATE/*.json
 
 npm-debug.log
 
