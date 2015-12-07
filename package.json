@@ -35,7 +35,6 @@
     "better-log": "^1.1.0",
     "body-parser": "^1.10.1",
     "browserify": "^10.2.0",
-    "chai-as-promised": "^5.1.0",
     "compression": "^1.4.4",
     "dygraphs": "^1.1.1",
     "es6-shim": "^0.31.2",
