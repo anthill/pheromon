@@ -70,7 +70,7 @@ function extractMeasurementsFromData(data, type) {
             return [ // wifi and bluetooth messages correspond to only one measurement
                 {
                     value: data.devices.map(function (measurement) {
-                        return measurement.signal_strength;
+                        return measurement;
                     }),
                     date: data.date
                 }];
