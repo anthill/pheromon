@@ -1,8 +1,6 @@
 'use strict';
 require('es6-shim');
 
-var sigCodec = require('pheromon-codecs').signalStrengths;
-
 var mqtt = require('mqtt');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
