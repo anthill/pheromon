@@ -106,15 +106,7 @@
 .client {
 	position: relative;
 	text-align: center;
-}
-
-.status div div:first-child{
 	font-weight: 600;
-}
-
-.client div div:last-child{
-	position: absolute; top: 0.7em; right: 0; border: 1px solid #FF5252; padding: .1em;
-	font-size: 0.6em; color: #FF5252;
 }
 
 .ant.disconnected .client {
