@@ -274,7 +274,6 @@ var toExport = {
 
                 var query = sensor
                     .select(
-                        sensor.sim,
                         measurement.date,
                         measurement
                             .literal('json_array_length(measurements.value)')
@@ -384,7 +383,6 @@ var toExport = {
 
                 var query = sensor
                     .select(
-                        sensor.sim,
                         measurement.date,
                         measurement.value,
                         output.type
