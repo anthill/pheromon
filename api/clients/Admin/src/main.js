@@ -247,7 +247,7 @@ function refreshData(){
                                 var isConnected = wasUpdatedRecently || receivedMeasurementRecently;
                 
                                 if (!isConnected){
-                                    sensor.client_status = 'DISCONNECTED';
+                                    sensor.client_status = 'disconnected';
                                     sensor.signal_status = 'NODATA';
                                     sensor.outputs.forEach(function(output){
                                         output.status = 'NODATA';
@@ -256,7 +256,7 @@ function refreshData(){
                             }
                             else
                                 sensor.lastMeasurementDate = '';
-                            
+
                             resolve();
                         })
                         .catch(function (err) {
@@ -264,11 +264,10 @@ function refreshData(){
                             resolve(); // We can't just call reject and stop the refreshing of the page
                         });
                     }));
-                    
-                    sensor.client_status = dbStatusMap.get(sensor.client_status.toLowerCase());
-                    sensor.signal_status = dbStatusMap.get(sensor.signal_status.toLowerCase());
-
                 }
+
+                sensor.client_status = dbStatusMap.get(sensor.client_status.toLowerCase());
+                sensor.signal_status = dbStatusMap.get(sensor.signal_status.toLowerCase());
             });
 
             Promise.all(measurementsPs)
@@ -385,9 +384,7 @@ socket.on('status', function (msg) {
 socket.on('data', function (msg) {
 
     // GET UPDATING SENSOR ID
-    var id = msg.sensorId;
-    console.log('RECEIVING DATA', id);
+    console.log('RECEIVING DATA', msg);
     
-    updatingID = id;
     refreshData();
 });

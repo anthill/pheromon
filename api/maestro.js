@@ -200,12 +200,17 @@ module.exports = function(authToken, io){
                             if (measurements) {
                                 measurements.forEach(function (measurement) {
 
-                                    database.Measurements.create({
+                                    var createMeasurementP = database.Measurements.create({
                                         output_id: outputId,
                                         value: measurement.value,
                                         date: measurement.date
-                                    })
-                                    .then(function() {
+                                    });
+
+                                    var updateSensorStatusP;
+                                    if (sensor.client_status === 'disconnected')
+                                        updateSensorStatusP = database.Sensors.update(sensor.sim, {client_status: 'connected'});
+                                    
+                                    Promise.all([createMeasurementP, updateSensorStatusP]).then(function() {
                                         switch(type){
                                             case 'wifi':
                                                 io.emit('data', {
@@ -229,9 +234,9 @@ module.exports = function(authToken, io){
                                                     index: measurement.index
                                                 }));
                                                 break;
-
                                         }
                                         console.log('measurement of type', type, 'updated');
+
                                     })
                                     .catch(function(err) {
                                         console.log('error : cannot store measurement in DB :', err);
@@ -362,7 +367,7 @@ module.exports = function(authToken, io){
                     fakeSensor.publish('measurement/' + fakeSim + '/wifi', encoded);
                 });
 
-            }, 20000);
+            }, 10000);
         })
         .catch(function(error){
             console.log('Couldnt connect the sensor', error);
