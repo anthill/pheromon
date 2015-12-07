@@ -318,7 +318,7 @@ module.exports = function(authToken, io){
 
     });
 
-    // Fake sensor creation
+    // Fake sensor creation => use this to fake the behavior you need
     if (process.env.NODE_ENV === 'development'){
         var fakeSim = 'fakeSim';
 
