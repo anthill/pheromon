@@ -13,6 +13,8 @@ var PRIVATE = require('../PRIVATE/secret.json');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
+var sigCodec = require('pheromon-codecs').signalStrengths;
+
 var createFakeSensor = require('../tools/createFakeSensor');
 
 // Updater variables
@@ -332,9 +334,35 @@ module.exports = function(authToken, io){
                     fakeSensor.publish('status/'+ fakeSim +'/wifi', 'recording');
                     fakeSensor.publish('status/'+ fakeSim +'/bluetooth', 'recording');
                     fakeSensor.publish('cmdResult/' + fakeSim, JSON.stringify({command: 'status', result: 'OK'}));
-                }
-                
+                } 
             });
+
+            setInterval(function(){
+                var measurement = {
+                    date: new Date(),
+                    devices: [{
+                        signal_strength: -10,
+                        ID: 'myID1'
+                    },
+                    {
+                        signal_strength: -19,
+                        ID: 'myID2'
+                    },
+                    {
+                        signal_strength: -39,
+                        ID: 'myID3'
+                    }]
+                };
+
+                console.log('Measurement created');
+
+                sigCodec.encode(measurement)
+                .then(function(encoded){
+                    console.log('publishing');
+                    fakeSensor.publish('measurement/' + fakeSim + '/wifi', encoded);
+                });
+
+            }, 5000);
         })
         .catch(function(error){
             console.log('Couldnt connect the sensor', error);

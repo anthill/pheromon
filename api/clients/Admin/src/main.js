@@ -254,6 +254,9 @@ function refreshData(){
                                     });
                                 }
                             }
+                            else
+                                sensor.lastMeasurementDate = '';
+                            
                             resolve();
                         })
                         .catch(function (err) {
@@ -383,7 +386,7 @@ socket.on('data', function (msg) {
 
     // GET UPDATING SENSOR ID
     var id = msg.sensorId;
-    console.log('UPDATING STATUS', id);
+    console.log('RECEIVING DATA', id);
     
     updatingID = id;
     refreshData();

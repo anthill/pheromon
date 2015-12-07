@@ -16,6 +16,7 @@ module.exports = function(simId, authToken){
             console.log('Fake sensor connected');
             newSensor.subscribe(simId + '/#');
             newSensor.subscribe('all/#');
+
             resolve(newSensor);
         });
 
