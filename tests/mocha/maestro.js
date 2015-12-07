@@ -29,6 +29,11 @@ var socket = io(apiOrigin);
 
 var checkSensor = require('../../api/utils/checkSensor.js');
 
+var trajectoriesCodecOptions = {
+    precisionSignalStrength: 1,
+    precisionDate: 30
+};
+
 function createFakeSensor(simId){
     return new Promise(function(resolve, reject){
         var newSensor = mqtt.connect('mqtt://broker:1883', { // connect to broker
@@ -226,7 +231,7 @@ describe('Maestro testing', function(){
 
                         resolve(apiSecret.measurementsSensors(data)
                         .then(function(measurements){
-                            expect(measurements[0].value[0]).to.deep.equal(-39); // signal strengths are sorted when encoded.
+                            expect(measurements[0].value[0].signal_strength).to.deep.equal(-39); // signal strengths are sorted when encoded.
                             expect(measurements[0].entry).to.equal(3);
                             expect(Date.parse(measurements[0].date)).to.be.a('number');
                         }));
@@ -259,7 +264,7 @@ describe('Maestro testing', function(){
                 ]
             ];
 
-            return trajCodec.encode(trajectories)
+            return trajCodec.encode(trajectories, trajectoriesCodecOptions)
             .then(function(encoded){
                 fakeSensor.publish('measurement/' + simId + '/trajectories', encoded);
 
