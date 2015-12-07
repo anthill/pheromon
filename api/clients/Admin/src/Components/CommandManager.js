@@ -57,7 +57,6 @@ var CommandManager = React.createClass({
     render: function() {
         var self = this;
         var props = this.props;
-        console.log('open', props.isOpen);
 
         var classes = [
             'command-manager',

@@ -362,7 +362,7 @@ module.exports = function(authToken, io){
                     fakeSensor.publish('measurement/' + fakeSim + '/wifi', encoded);
                 });
 
-            }, 5000);
+            }, 20000);
         })
         .catch(function(error){
             console.log('Couldnt connect the sensor', error);
