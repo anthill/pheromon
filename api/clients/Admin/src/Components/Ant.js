@@ -149,7 +149,10 @@ var Ant = React.createClass({
                 React.DOM.li({className: 'low-importance light'}, 
                     React.DOM.div({},
                         React.DOM.div({}, 'Last Data'),
-                        React.DOM.div({}, moment(props.ant.lastMeasurementDate).fromNow())
+                        React.DOM.div({}, props.ant.lastMeasurementDate === '' ?
+                            'No measurement'
+                            : moment(props.ant.lastMeasurementDate).fromNow()
+                        )
                     ),
                     React.DOM.div({},
                         React.DOM.div({}, 'Updated'),

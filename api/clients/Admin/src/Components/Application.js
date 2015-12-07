@@ -156,7 +156,8 @@ var App = React.createClass({
                 onChangePlace: props.onChangePlace,
                 onChangeSensor: props.onChangeSensor,
                 onRemoveSensor: function(data){
-                    self.updateAntSelection(sensor.id);
+                    if (self.state.selectedAntSet.has(sensor.id))
+                        self.updateAntSelection(sensor.id);
                     props.onRemoveSensor(data);
                 }
             }));

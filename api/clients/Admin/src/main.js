@@ -73,11 +73,11 @@ function updatePlaceInDb(datas) {
     Promise.all(queryP)
     .then(function() {
         console.log('Places database updated successfully (updatePlaceDb)');
-        refreshView();
+        refreshData();
     })
     .catch(function(err){
         console.log('Places database didn\'t update correctly (updatePlaceDb)', err);
-        refreshView();
+        refreshData();
     });
 }
 
@@ -105,11 +105,11 @@ function updateSensorInDb(datas) {
     .then(function() {
         // console.log("results", results);
         console.log('Sensor database updated successfully (updateSensorDb)');
-        refreshView();
+        refreshData();
     })
     .catch(function(err){
         console.log('Sensor database didn\'t update correctly (updateSensorDb)', err);
-        refreshView();
+        refreshData();
     });
 }
 
@@ -120,11 +120,11 @@ function createPlaceInDb(data) {
     api.createPlace(data)
     .then(function() {
         console.log('Places database created successfully (createPlaceDb)');
-        refreshView();
+        refreshData();
     })
     .catch(function(err){
         console.log('Places database didn\'t create correctly (createPlaceDb)', err);
-        refreshView();
+        refreshData();
     });
 }
 
@@ -140,11 +140,11 @@ function deletePlaceFromDb(data) {
     })
     .then(function() {
         console.log('Place deleted successfully');
-        refreshView();
+        refreshData();
     })
     .catch(function(err){
         console.log('Place didn\'t delete correctly', err);
-        refreshView();
+        refreshData();
     });
 }
 
@@ -155,11 +155,11 @@ function deleteSensorFromDb(data) {
     api.deleteSensor(data.sim)
     .then(function() {
         console.log('Sensor deleted successfully');
-        refreshView();
+        refreshData();
     })
     .catch(function(err){
         console.log('Sensor didn\'t delete correctly', err);
-        refreshView();
+        refreshData();
     });
 }
 
@@ -170,18 +170,20 @@ function createSensorInDb(data) {
     api.createSensor(data)
     .then(function() {
         console.log('Sensor database created successfully (createSensorDb)');
-        refreshView();
+        refreshData();
     })
     .catch(function(err){
         console.log('Sensor database didn\'t create correctly (createSensorDb)', err);
-        refreshView();
+        refreshData();
     });
 }
 
 var updatingID;
 
-function refreshView(){
-    //dsds
+function refreshData(){
+    
+    console.log('Refresh data');
+
     var placesP = api.getAllPlacesInfos();
     var sensorsP = api.getAllSensors();
 
@@ -191,8 +193,8 @@ function refreshView(){
         var places = results[0];
         var sensors = results[1];
 
-        console.log('places', places);
-        console.log('sensors', sensors);
+        // console.log('places', places);
+        // console.log('sensors', sensors);
 
         if (places){
             // sorting places alphabetically
@@ -227,7 +229,6 @@ function refreshView(){
             var measurementsPs = [];
 
             sensorMap.forEach(function (sensor){
-                console.log('MAIN sensor outputs', sensor.outputs);
                 sensor.outputs = makeMap(sensor.outputs, 'type');
 
                 if (sensor.installed_at) {
@@ -240,21 +241,22 @@ function refreshView(){
 
                                 sensor.lastMeasurementDate = measurements[measurements.length - 1].date;
 
-                                var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR || 
-                                new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
+                                var wasUpdatedRecently = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR;
+                                var receivedMeasurementRecently = new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
+
+                                var isConnected = wasUpdatedRecently || receivedMeasurementRecently;
                 
-                                if (isConnected){
-                                    sensor.client_status = dbStatusMap.get(sensor.client_status);
-                                    sensor.signal_status = dbStatusMap.get(sensor.signal_status.toLowerCase());
-                                }
-                                else{
-                                    sensor.client_status = 'DISCONNECTED';
+                                if (!isConnected){
+                                    sensor.client_status = 'disconnected';
                                     sensor.signal_status = 'NODATA';
                                     sensor.outputs.forEach(function(output){
                                         output.status = 'NODATA';
                                     });
                                 }
                             }
+                            else
+                                sensor.lastMeasurementDate = '';
+
                             resolve();
                         })
                         .catch(function (err) {
@@ -263,6 +265,9 @@ function refreshView(){
                         });
                     }));
                 }
+
+                sensor.client_status = dbStatusMap.get(sensor.client_status.toLowerCase());
+                sensor.signal_status = dbStatusMap.get(sensor.signal_status.toLowerCase());
             });
 
             Promise.all(measurementsPs)
@@ -274,7 +279,6 @@ function refreshView(){
                     updatingAnt.isUpdating = true;
 
                     updatingID = undefined;
-                    console.log('updatingAnt', updatingAnt.isUpdating);
 
                     setTimeout(function(){
                         resetUpdate(updatingAnt);
@@ -288,52 +292,34 @@ function refreshView(){
                 console.log('An error happened :', err);
             });
         }
-        render();
+        else
+            render();
     })
     .catch(errlog);
 }
 
 function sendCommand(command, selectedAntSet){
     if (command.length > 0 && selectedAntSet.size > 0){
-        var antSims = [];
+        var sims = [];
         selectedAntSet.forEach(function(id){
-            antSims.push(topLevelStore.sensorMap.get(id).sim);
+            sims.push(topLevelStore.sensorMap.get(id).sim);
         });
 
         socket.emit('cmd', {
             token: PRIVATE.cmd_token,
             cmd: {
                 command: command,
-                to: antSims
+                to: sims
             }
         });
 
-        console.log('Sending command', command, ' to ', antSims.join(' '));
-
-        // Update last command
-
-        updateSensorInDb(antSims.map(function (sim) {
-            return {
-                sim: sim,
-                field: 'latest_input',
-                value: command.split(' ')[0]
-            };
-        }));
-
-        updateSensorInDb(antSims.map(function (sim) {
-            return {
-                sim: sim,
-                field: 'latest_output',
-                value: '  '
-            };
-        }));
-
+        console.log('Sending command', command, ' to ', sims.join(' '));
 
         // Update sensor's config if needed
 
-        var sims = antSims;
         var value;
         var field;
+        var toUpdate = [];
 
         if (command.match(/changeperiod (\d{1,5})/)) {
             field = 'period';
@@ -353,18 +339,29 @@ function sendCommand(command, selectedAntSet){
             if (tmpStop >= 0 && tmpStop < 24)
                 value = tmpStop;
         }
-        else // send to nobody
-            sims = [];
-
-        // update everybody
-
-        updateSensorInDb(sims.map(function (sim) {
-            return {
+        // fill toUpdate with everything that needs update
+        sims.forEach(function(sim){
+            toUpdate.push({
                 sim: sim,
                 value: value,
                 field: field
-            };
-        }));
+            });
+
+            toUpdate.push({
+                sim: sim,
+                field: 'latest_input',
+                value: command.split(' ')[0]
+            });
+
+            toUpdate.push({
+                sim: sim,
+                field: 'latest_output',
+                value: '  '
+            });
+        });
+        console.log('toUpdate', toUpdate, toUpdate.length);
+        // update everything
+        updateSensorInDb(toUpdate);
     }
     
 }
@@ -372,7 +369,7 @@ function sendCommand(command, selectedAntSet){
 
 
 // Initial rendering
-refreshView();
+refreshData();
 
 socket.on('status', function (msg) {
 
@@ -381,15 +378,13 @@ socket.on('status', function (msg) {
     console.log('UPDATING STATUS', id);
     
     updatingID = id;
-    refreshView();
+    refreshData();
 });
 
 socket.on('data', function (msg) {
 
     // GET UPDATING SENSOR ID
-    var id = msg.sensorId;
-    console.log('UPDATING STATUS', id);
+    console.log('RECEIVING DATA', msg);
     
-    updatingID = id;
-    refreshView();
+    refreshData();
 });

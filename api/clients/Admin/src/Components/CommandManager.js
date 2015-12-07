@@ -45,6 +45,15 @@ var CommandManager = React.createClass({
     //     clearButton.removeEventListener('click', this.clearInput);
     // },
 
+    componentDidUpdate: function(){
+        var textInput = React.findDOMNode(this.refs.myTextInput);
+
+        if (this.props.isOpen)
+            textInput.focus();
+        else
+            textInput.blur();           
+    },
+
     render: function() {
         var self = this;
         var props = this.props;
@@ -63,7 +72,7 @@ var CommandManager = React.createClass({
 
         var header = React.DOM.div({}, 'Send command to: ' + antNames.join(' '));
         
-        var input = React.DOM.input({  
+        var input = React.DOM.input({
                 placeholder: 'Type command',
                 ref: 'myTextInput',
                 onKeyUp: function(event){

@@ -13,6 +13,10 @@ var PRIVATE = require('../PRIVATE/secret.json');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
+var sigCodec = require('pheromon-codecs').signalStrengths;
+
+var createFakeSensor = require('../tools/createFakeSensor');
+
 // Updater variables
 var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10) || 2200;
 var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
@@ -196,12 +200,17 @@ module.exports = function(authToken, io){
                             if (measurements) {
                                 measurements.forEach(function (measurement) {
 
-                                    database.Measurements.create({
+                                    var createMeasurementP = database.Measurements.create({
                                         output_id: outputId,
                                         value: measurement.value,
                                         date: measurement.date
-                                    })
-                                    .then(function() {
+                                    });
+
+                                    var updateSensorStatusP;
+                                    if (sensor.client_status === 'disconnected')
+                                        updateSensorStatusP = database.Sensors.update(sensor.sim, {client_status: 'connected'});
+                                    
+                                    Promise.all([createMeasurementP, updateSensorStatusP]).then(function() {
                                         switch(type){
                                             case 'wifi':
                                                 io.emit('data', {
@@ -225,9 +234,9 @@ module.exports = function(authToken, io){
                                                     index: measurement.index
                                                 }));
                                                 break;
-
                                         }
                                         console.log('measurement of type', type, 'updated');
+
                                     })
                                     .catch(function(err) {
                                         console.log('error : cannot store measurement in DB :', err);
@@ -308,6 +317,62 @@ module.exports = function(authToken, io){
         console.log('Maestro ready');
 
     });
+
+    // Fake sensor creation => use this to fake the behavior you need
+    if (process.env.NODE_ENV === 'development'){
+        var fakeSim = 'fakeSim';
+
+        createFakeSensor(fakeSim, authToken)
+        .then(function(fakeSensor){
+            fakeSensor.publish('init/' + fakeSim, '');
+
+            fakeSensor.on('message', function(topic, buffer) {
+                var destination = topic.split('/')[1];
+
+                var message = buffer.toString();
+                var commandArgs = message.split(' ');
+                var command = (commandArgs.length >= 1) ? commandArgs[0] : undefined;
+
+                console.log("data received :", message, 'destination', destination);
+
+                if (command === 'status'){
+                    fakeSensor.publish('status/'+ fakeSim +'/wifi', 'recording');
+                    fakeSensor.publish('status/'+ fakeSim +'/bluetooth', 'recording');
+                    fakeSensor.publish('cmdResult/' + fakeSim, JSON.stringify({command: 'status', result: 'OK'}));
+                } 
+            });
+
+            setInterval(function(){
+                var measurement = {
+                    date: new Date(),
+                    devices: [{
+                        signal_strength: -10,
+                        ID: 'myID1'
+                    },
+                    {
+                        signal_strength: -19,
+                        ID: 'myID2'
+                    },
+                    {
+                        signal_strength: -39,
+                        ID: 'myID3'
+                    }]
+                };
+
+                console.log('Measurement created');
+
+                sigCodec.encode(measurement)
+                .then(function(encoded){
+                    console.log('publishing');
+                    fakeSensor.publish('measurement/' + fakeSim + '/wifi', encoded);
+                });
+
+            }, 10000);
+        })
+        .catch(function(error){
+            console.log('Couldnt connect the sensor', error);
+        });
+    }
 
     return maestro;
 };
