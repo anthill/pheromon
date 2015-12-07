@@ -46,17 +46,7 @@ git clone git@github.com:anthill/pheromon.git
 cd pheromon
 ```
 
-* Copy / Create the file `PRIVATE.json` containing
-
-```
-{
-    "mapbox_token": ..., // token for your mapbox account
-    "map_id": ..., // id of your map background
-    "secret": ..., // token you should use to protect the access to your Admin client or database API
-    "token": ... // MQTT for the broker to authenticate sensor,
-    "ip": ...
-}
-```
+* Copy / Create the files `PRIVATE/*.json`
 
 * Install dependencies locally (this is mainly to enable gulp and automated lint functionality)
 
@@ -209,6 +199,37 @@ sudo usermod -s /usr/sbin/nologin sensorSSH;
 ```
 
 add `"ip": "kerrigan"` in pheromon `PRIVATE.json` where kerrigan is the name of the host in `.ssh/config` 
+
+## PRIVATE files
+
+There are 2 PRIVATE files:
+
+- `secret.json`: **this file is very sensitive**. Leaking it would potentially allow people to access your db, server, sensors, etc... It should not be required in non protected clients. Here, the only client that requires it is `Admin`, whose access is protected by `html_token`.
+```
+{
+    "server_ip": ..., // your server ip, used by the sensor updater
+    "html_token": ..., // token you should use to protect the access to your Admin client or database API
+    "mqtt_token": ..., // MQTT for the broker to authenticate sensor
+    "cmd_token": ... // token to allow cmd sending to sensor
+}
+```
+
+`server_ip` is used in `api/maestro.js`.
+
+`html_token` is used in `api/api.js` and `api/routes.js`.
+
+`mqtt_token` is used in `api/api.js` and `broker/index.js`.
+
+`cmd_token` is used in `api/maestro.js` and `api/clients/Admin/src/main.js`.
+
+- `mapbox.json` : this file is not very sensitive. It only contains mapbox infos
+```
+{
+    "token": ..., // token for your mapbox account
+    "map_id": ..., // id of your map background
+}
+```
+Both `mapbox.json` fields are used in `api/clients/Dashboard/src/main.js`.
 
 ## Licence MIT
 

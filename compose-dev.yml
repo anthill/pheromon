@@ -16,17 +16,17 @@ api:
       # Updater variables
       - UPDATER_RANGE_START=2200
       - UPDATER_RANGE_SIZE=10
-      - UPDATER_PLAYBOOK_FOLDER=/pheromon/updateFiles/
+      - UPDATER_PLAYBOOK_FOLDER="/pheromon/updateFiles/"
       - UPDATER_SENSORS_PORT=22
    volumes:
       - ./:/pheromon
       # Ansible playbooks for the updater
-      - ./updateFiles/:/pheromon/updateFiles/:ro
+      #- ./updateFiles/:/pheromon/updateFiles/:ro
       # SSH configuration
-      - /home/sensorSSH/.ssh/id_rsa:/root/.ssh/id_rsa:ro
-      - /home/sensorSSH/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
-      - /home/sensorSSH/.ssh/known_hosts:/root/.ssh/known_hosts
-      - /etc/ssh/ssh_config:/etc/ssh/ssh_config:ro
+      #- /home/sensorSSH/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+      #- /home/sensorSSH/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
+      #- /home/sensorSSH/.ssh/known_hosts:/root/.ssh/known_hosts
+      #- /etc/ssh/ssh_config:/etc/ssh/ssh_config:ro
    tty: true
 
 broker:

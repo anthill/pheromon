@@ -8,7 +8,7 @@ chai.use(chaiAsPromised);
 var expect = chai.expect;
 
 var request = require('request');
-var PRIVATE = require('../../PRIVATE.json');
+var PRIVATE = require('../../PRIVATE/secret.json');
 
 var database = require('../../database');
 var sendReq = require('../../tools/sendNodeReq');

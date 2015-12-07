@@ -1,14 +1,14 @@
 'use strict';
 
 var database = require('../database');
-var PRIVATE = require('../PRIVATE.json');
+var PRIVATE = require('../PRIVATE/secret.json');
 var DEBUG = process.env.NODE_ENV === 'development';
 
 module.exports = function(app, debug){
 
     // --------------> sensor
     app.post('/sensor/create', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) {
+        if(req.query.s === PRIVATE.html_token || DEBUG) {
             
             console.log('creating sensor', req.body);
 
@@ -25,7 +25,7 @@ module.exports = function(app, debug){
     });
 
     app.post('/sensor/update', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) {
+        if(req.query.s === PRIVATE.html_token || DEBUG) {
             var sim = req.body.sim;
 
             database.Sensors.update(sim, req.body.delta)
@@ -40,7 +40,7 @@ module.exports = function(app, debug){
     });
 
     app.get('/sensor/get/:sim', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) {
+        if(req.query.s === PRIVATE.html_token || DEBUG) {
             var sim = req.params.sim;
             console.log('requesting sensor sim', sim);
 
@@ -57,7 +57,7 @@ module.exports = function(app, debug){
     });
 
     app.get('/sensor/getAll', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) { 
+        if(req.query.s === PRIVATE.html_token || DEBUG) { 
             database.Sensors.getAll()
             .then(function(data){
                 // debug('All sensors', data);
@@ -71,7 +71,7 @@ module.exports = function(app, debug){
     });
 
     app.delete('/sensor/delete/:sim', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) { 
+        if(req.query.s === PRIVATE.html_token || DEBUG) { 
             var sim = req.params.sim;
             console.log('deleting', sim);
 
@@ -87,7 +87,7 @@ module.exports = function(app, debug){
     });
 
     app.delete('/sensor/deleteAll', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) {     
+        if(req.query.s === PRIVATE.html_token || DEBUG) {     
             console.log('deleting all sensors');
 
             database.Sensors.deleteAll()
@@ -103,7 +103,7 @@ module.exports = function(app, debug){
 
     // --------------> place
     app.post('/place/create', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) {       
+        if(req.query.s === PRIVATE.html_token || DEBUG) {       
             console.log('creating place', req.body);
 
             database.Places.create(req.body)
@@ -119,7 +119,7 @@ module.exports = function(app, debug){
     });
 
     app.post('/place/update', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) { 
+        if(req.query.s === PRIVATE.html_token || DEBUG) { 
             var id = req.body.id;
 
             database.Places.update(id, req.body.delta) // req.body.delta : {name,lat,lon}
@@ -161,7 +161,7 @@ module.exports = function(app, debug){
     });
 
     app.delete('/place/delete/:id', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) { 
+        if(req.query.s === PRIVATE.html_token || DEBUG) { 
             var id = req.params.id;
             console.log('deleting place id', id);
 
@@ -177,7 +177,7 @@ module.exports = function(app, debug){
     });
 
     app.delete('/place/deleteAll', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) {  
+        if(req.query.s === PRIVATE.html_token || DEBUG) {  
             console.log('deleting all sensors');
 
             database.Places.deleteAll()
@@ -224,7 +224,7 @@ module.exports = function(app, debug){
 
     // get latest measurement of one type for some sensors
     app.get('/sensorsLatestMeasurement/', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) { 
+        if(req.query.s === PRIVATE.html_token || DEBUG) { 
             
             var type = req.query.type;
             var sims = req.query.sims.split(',');
@@ -260,7 +260,7 @@ module.exports = function(app, debug){
 
     // get various measurements of various types for various sensors
     app.get('/measurements/sensors', function(req, res){
-        if(req.query.s === PRIVATE.secret || DEBUG) {  
+        if(req.query.s === PRIVATE.html_token || DEBUG) {  
             var sims = req.query.sims.split(',');
             var types = req.query.types.split(',');
             var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);
@@ -279,7 +279,7 @@ module.exports = function(app, debug){
 
     // get sensor measurements of a specified type without any processing.
     app.get('/measurements/sensor/raw', function(req, res) {
-        if(req.query.s === PRIVATE.secret || DEBUG) {  
+        if(req.query.s === PRIVATE.html_token || DEBUG) {  
             var sim = req.query.sim;
             var type = req.query.type;
             var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);

@@ -17,7 +17,8 @@ before_install:
  - sudo service docker restart ; sleep 10
 
 before_script:
- - mv PRIVATE.json.template PRIVATE.json
+ - mv PRIVATE/secret.json.template PRIVATE/secret.json
+ - mv PRIVATE/mapbox.json.template PRIVATE/mapbox.json
 
 script:
 - npm run test
