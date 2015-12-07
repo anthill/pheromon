@@ -4,7 +4,6 @@ require('es6-shim');
 var sigCodec = require('pheromon-codecs').signalStrengths;
 var trajCodec = require('pheromon-codecs').trajectories;
 
-var mqtt = require('mqtt');
 var chai = require('chai');
 var chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
@@ -19,6 +18,7 @@ var PRIVATE = require('../../PRIVATE/secret.json');
 var database = require('../../database');
 var sendReq = require('../../tools/sendNodeReq');
 var makeMap = require('../../tools/makeMap');
+var createFakeSensor = require('../../tools/createFakeSensor');
 
 var prepareAPI = require('../../tools/prepareAPI.js');
 var apiOrigin = 'http://api:4000';
@@ -28,22 +28,6 @@ var apiSecret = prepareAPI(sendReq, apiOrigin, PRIVATE.html_token);
 var socket = io(apiOrigin);
 
 var checkSensor = require('../../api/utils/checkSensor.js');
-
-function createFakeSensor(simId){
-    return new Promise(function(resolve, reject){
-        var newSensor = mqtt.connect('mqtt://broker:1883', { // connect to broker
-            username: simId,
-            password: PRIVATE.mqtt_token,
-            clientId: simId
-        });
-
-        newSensor.on('connect', function(){
-            newSensor.subscribe(simId + '/#');
-            newSensor.subscribe('all/#');
-            resolve(newSensor);
-        });
-    });
-}
 
 describe('Maestro testing', function(){
 
@@ -127,7 +111,7 @@ describe('Maestro testing', function(){
         beforeEach('Creating Fake Sensor', function(){
             i++;
             simId = 'simNumber' + i;
-            return createFakeSensor(simId)
+            return createFakeSensor(simId, PRIVATE.mqtt_token)
             .then(function(sensor){
                 fakeSensor = sensor;
             });

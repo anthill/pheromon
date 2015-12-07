@@ -13,6 +13,8 @@ var PRIVATE = require('../PRIVATE/secret.json');
 
 var SENSOR_STATUS = require('./utils/sensorStatus.js');
 
+var createFakeSensor = require('../tools/createFakeSensor');
+
 // Updater variables
 var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10) || 2200;
 var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
@@ -308,6 +310,36 @@ module.exports = function(authToken, io){
         console.log('Maestro ready');
 
     });
+
+    // Fake sensor creation
+    if (process.env.NODE_ENV === 'development'){
+        var fakeSim = 'fakeSim';
+
+        createFakeSensor(fakeSim, authToken)
+        .then(function(fakeSensor){
+            fakeSensor.publish('init/' + fakeSim, '');
+
+            fakeSensor.on('message', function(topic, buffer) {
+                var destination = topic.split('/')[1];
+
+                var message = buffer.toString();
+                var commandArgs = message.split(' ');
+                var command = (commandArgs.length >= 1) ? commandArgs[0] : undefined;
+
+                console.log("data received :", message, 'destination', destination);
+
+                if (command === 'status'){
+                    fakeSensor.publish('status/'+ fakeSim +'/wifi', 'recording');
+                    fakeSensor.publish('status/'+ fakeSim +'/bluetooth', 'recording');
+                    fakeSensor.publish('cmdResult/' + fakeSim, JSON.stringify({command: 'status', result: 'OK'}));
+                }
+                
+            });
+        })
+        .catch(function(error){
+            console.log('Couldnt connect the sensor', error);
+        });
+    }
 
     return maestro;
 };
