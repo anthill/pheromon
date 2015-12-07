@@ -227,27 +227,25 @@ function refreshView(){
             var measurementsPs = [];
 
             sensorMap.forEach(function (sensor){
-                console.log('MAIN sensor outputs', sensor.outputs);
                 sensor.outputs = makeMap(sensor.outputs, 'type');
 
                 if (sensor.installed_at) {
                     measurementsPs.push(new Promise(function (resolve) {
                         api.measurementsPlaces({ids: [sensor.installed_at], types: ['wifi']})
                         .then(function (measurements) {
+                            console.log('COUCOU');
 
                             // check last time the sensor was active
                             if (measurements && measurements.length){
 
                                 sensor.lastMeasurementDate = measurements[measurements.length - 1].date;
 
-                                var isConnected = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR || 
-                                new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
+                                var wasUpdatedRecently = new Date().getTime() - new Date(sensor.updated_at).getTime() <= 12 * HOUR;
+                                var receivedMeasurementRecently = new Date().getTime() - new Date(sensor.lastMeasurementDate || 0).getTime() <= 12 * HOUR;
+
+                                var isConnected = wasUpdatedRecently || receivedMeasurementRecently;
                 
-                                if (isConnected){
-                                    sensor.client_status = dbStatusMap.get(sensor.client_status);
-                                    sensor.signal_status = dbStatusMap.get(sensor.signal_status.toLowerCase());
-                                }
-                                else{
+                                if (!isConnected){
                                     sensor.client_status = 'DISCONNECTED';
                                     sensor.signal_status = 'NODATA';
                                     sensor.outputs.forEach(function(output){
@@ -262,6 +260,10 @@ function refreshView(){
                             resolve(); // We can't just call reject and stop the refreshing of the page
                         });
                     }));
+                    
+                    sensor.client_status = dbStatusMap.get(sensor.client_status.toLowerCase());
+                    sensor.signal_status = dbStatusMap.get(sensor.signal_status.toLowerCase());
+
                 }
             });
 
