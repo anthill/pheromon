@@ -333,7 +333,7 @@ module.exports = function(authToken, io){
                 var commandArgs = message.split(' ');
                 var command = (commandArgs.length >= 1) ? commandArgs[0] : undefined;
 
-                console.log("data received :", message, 'destination', destination);
+                console.log('data received :', message, 'destination', destination);
 
                 if (command === 'status'){
                     fakeSensor.publish('status/'+ fakeSim +'/wifi', 'recording');

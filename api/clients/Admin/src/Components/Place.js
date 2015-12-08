@@ -26,7 +26,6 @@ interface placeProps{
         name: string,
         sim: string,
         client_status: string,
-        signal_status: string,
         wifi_status: string,
         blue_status: string,
         updated_at: string

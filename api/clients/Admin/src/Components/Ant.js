@@ -18,7 +18,6 @@ interface AntProps{
         name: string,
         sim: string,
         client_status: string,
-        signal_status: string,
         outputs: [],
         updated_at: string,
         lastMeasurementDate: string,
@@ -112,11 +111,7 @@ var Ant = React.createClass({
                     )
                 ),
                 React.DOM.li({className: 'client dark'},
-                    React.DOM.div({},
-                        // React.DOM.div({}, 'Client Status'),
-                        React.DOM.div({}, props.ant.client_status),
-                        React.DOM.div({}, props.ant.signal_status)
-                    )
+                    props.ant.client_status
                 ),
                 React.DOM.li({className: 'sense light'},
                     React.DOM.div({},
@@ -169,6 +164,7 @@ var Ant = React.createClass({
                             'sim': props.ant.sim,
                             'value': null
                         };
+                        props.onSelectedAnts(props.ant.id);
                         props.onChangeSensor([dbData]);
                     }
                 },

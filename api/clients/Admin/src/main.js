@@ -248,7 +248,6 @@ function refreshData(){
                 
                                 if (!isConnected){
                                     sensor.client_status = 'disconnected';
-                                    sensor.signal_status = 'NODATA';
                                     sensor.outputs.forEach(function(output){
                                         output.status = 'NODATA';
                                     });
@@ -267,7 +266,6 @@ function refreshData(){
                 }
 
                 sensor.client_status = dbStatusMap.get(sensor.client_status.toLowerCase());
-                sensor.signal_status = dbStatusMap.get(sensor.signal_status.toLowerCase());
             });
 
             Promise.all(measurementsPs)
