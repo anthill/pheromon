@@ -20,8 +20,14 @@ RUN apt-get install -y python-dev
 RUN apt-get install -y python-pip
 RUN pip install ansible
 RUN mkdir /etc/ansible
+ # Ansible config
 RUN echo '[ssh_connection]' >> /etc/ansible/ansible.cfg
 RUN echo 'pipelining = True' >> /etc/ansible/ansible.cfg
+ # SSH config
+RUN echo '' >> /etc/ssh/ssh_config
+RUN echo 'Host *' >> /etc/ssh/ssh_config
+RUN echo '    StrictHostKeyChecking no' >> /etc/ssh/ssh_config
+RUN echo '    UserKnownHostsFile=/dev/null' >> /etc/ssh/ssh_config
 
 #COPY ./package.json /pheromon/package.json
 

@@ -262,10 +262,10 @@ module.exports = function(authToken, io){
                         break;
                     
                     case 'cmdResult':
-                        var parsed = JSON.parse(message);
+                        var parsedCommand = JSON.parse(message);
                         database.Sensors.update(sensor.sim, {
-                            latest_input: parsed.command,
-                            latest_output: parsed.result
+                            latest_input: parsedCommand.command,
+                            latest_output: parsedCommand.result
                         })
                         .then(function() {
                             io.emit('status', {sensorId: sensor.id});
@@ -277,7 +277,7 @@ module.exports = function(authToken, io){
                         break;
 
                     case 'url':
-                        var parsed = JSON.parse(message);
+                        var parsedUrl = JSON.parse(message);
 
                         /* Parsed message is
                             {
@@ -289,22 +289,22 @@ module.exports = function(authToken, io){
                             }
                         */
 
-                        sendReq(parsed.method, parsed.url, parsed.data)
+                        sendReq(parsedUrl.method, parsedUrl.url, parsedUrl.data)
                         .then(function(data){
                             var response = {
                                 data: data,
                                 isSuccessful: true,
-                                index: parsed.index
+                                index: parsedUrl.index
                             };
-                            maestro.publish(sensor.sim + '/' + parsed.origin, JSON.stringify(response));
+                            maestro.publish(sensor.sim + '/' + parsedUrl.origin, JSON.stringify(response));
                         })
                         .catch(function(error){
                             var response = {
                                 error: error,
                                 isSuccessful: false,
-                                index: parsed.index
+                                index: parsedUrl.index
                             };
-                            maestro.publish(sensor.sim + '/' + parsed.origin, JSON.stringify(response));
+                            maestro.publish(sensor.sim + '/' + parsedUrl.origin, JSON.stringify(response));
                         });
 
                 }
