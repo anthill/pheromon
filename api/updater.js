@@ -228,7 +228,9 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
                         mqttClient.publish(sensor.id, 'reboot');
                         startNewUpdate(sensor, sensorPort, address);
 
-                        mqttClient.publish('cmdResult/'+sensor.id, JSON.stringify({command: 'startUpdate', result: 'SUCCESS'}));
+                        setTimeout(function () {
+                           mqttClient.publish('cmdResult/'+sensor.id, JSON.stringify({command: 'startUpdate', result: 'SUCCESS'}));
+                        }, 5000);
                     })
 
                     .catch(function (error) {
@@ -241,7 +243,9 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
                         mqttClient.publish(sensor.id, 'closetunnel');
                         startNewUpdate(sensor, sensorPort, address);
 
-                        mqttClient.publish('cmdResult/'+sensor.id, JSON.stringify({command: 'startUpdate', result: 'FAIL'}));
+                        setTimeout(function () {
+                            mqttClient.publish('cmdResult/'+sensor.id, JSON.stringify({command: 'startUpdate', result: 'FAIL'}));
+                        }, 5000);
                     });
                 }
             }

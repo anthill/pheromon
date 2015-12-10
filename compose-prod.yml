@@ -15,7 +15,7 @@ api:
       - NODE_ENV=production
       # Updater variables
       - UPDATER_RANGE_START=2200
-      - UPDATER_RANGE_SIZE=50
+      - UPDATER_RANGE_SIZE=10
       - UPDATER_PLAYBOOK_FOLDER=/pheromon/updateFiles/
       - UPDATER_SENSORS_PORT=22
 
