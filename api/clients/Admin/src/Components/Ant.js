@@ -154,7 +154,9 @@ var Ant = React.createClass({
                             'sim': props.ant.sim,
                             'value': null
                         };
-                        props.onSelectedAnts(props.ant.id);
+                        
+                        if (props.isSelected)
+                            props.onSelectedAnts(props.ant.id);
                         props.onChangeSensor([dbData]);
                     }
                 },
