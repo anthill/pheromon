@@ -107,7 +107,7 @@ var Sensor = React.createClass({
             }) : undefined
         );
 
-        var sensorSim = React.DOM.li({}, props.sensor.sim);
+        var sensorSim = React.DOM.li({className: 'sensorSim'}, props.sensor.sim);
 
         var pokeNumber = pokemonNames.indexOf(props.sensor.name);
 

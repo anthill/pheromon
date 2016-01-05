@@ -23,6 +23,9 @@
 .place .placeName {
 	display: block; width: 100%; margin: 0 0.5em auto;
 	font-weight: bold; font-size: 1.5em;
+	-moz-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
 }
 
 .coords > * {
@@ -55,6 +58,12 @@
 
 .ant li > * {
 	display: block;
+}
+
+.ant li > *:first-child > *:nth-child(2), .ant li > *:nth-child(2) > *:nth-child(2){
+	-moz-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
 }
 
 .ant li div > * {
