@@ -18,6 +18,7 @@ api:
       - UPDATER_RANGE_SIZE=10
       - UPDATER_PLAYBOOK_FOLDER=/pheromon/updateFiles/
       - UPDATER_SENSORS_PORT=22
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
 
    volumes:
       - ./:/pheromon
