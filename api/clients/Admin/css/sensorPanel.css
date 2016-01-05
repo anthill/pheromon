@@ -32,10 +32,16 @@
 
 .sensor .name{
 	font-weight: bold;
+	-moz-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
 }
 
 .sensor .sensorSim {
 	text-align: left;
+	-moz-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
 }
 
 #sensorPanel .creator ul * {

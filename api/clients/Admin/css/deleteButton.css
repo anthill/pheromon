@@ -3,7 +3,7 @@
     border: 1px solid #212121;
     font-size: .9em; color: #FF5252;    
     background-color: #FF5252;
-    z-index: 10;
+    z-index: 0;
     cursor: pointer;
 }
 
@@ -21,7 +21,7 @@
 
     background-color: #00796B;
 
-    z-index: 11;
+    z-index: 1;
 }
 
 .delete .confirmation-box div:nth-child(2) {
