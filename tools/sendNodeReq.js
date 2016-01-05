@@ -26,7 +26,7 @@ module.exports = function (method, url, data){
                         reject(Object.assign(
                             new Error('Couldnt parse JSON ' + body + e),
                                 {
-                                    HTTPstatus: response.statusCode,
+                                    HTTPstatus: response ? response.statusCode : undefined,
                                     text: body,
                                     error: error
                                 }
@@ -38,7 +38,7 @@ module.exports = function (method, url, data){
                     reject(Object.assign(
                         new Error('HTTP error because of bad status code ' + body),
                         {
-                            HTTPstatus: response.statusCode,
+                            HTTPstatus: response ? response.statusCode : undefined,
                             text: body,
                             error: error
                         }
@@ -49,7 +49,7 @@ module.exports = function (method, url, data){
                 reject(Object.assign(
                         new Error('HTTP error'),
                         {
-                            HTTPstatus: response.statusCode,
+                            HTTPstatus: response ? response.statusCode : undefined,
                             text: body,
                             error: error
                         }
