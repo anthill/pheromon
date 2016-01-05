@@ -1,6 +1,6 @@
 api:
    build: ./
-   command: nodemon api/api.js
+   command: node api/api.js
    links:
       - db
       - broker
@@ -34,7 +34,7 @@ api:
 
 broker:
    build: .
-   command: nodemon broker/index.js
+   command: node broker/index.js
    links:
       - db
       - redis
