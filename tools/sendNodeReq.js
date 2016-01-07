@@ -57,17 +57,5 @@ module.exports = function (method, url, data){
             }
         });
 
-        setTimeout(function(){
-            reject(Object.assign(
-                new Error('Request timeout'),
-                    {
-                        HTTPstatus: 408,
-                        text: undefined,
-                        error: undefined
-                    }
-                )
-            );
-        }, 5000);
-
     });
 };

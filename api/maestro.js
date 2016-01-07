@@ -288,7 +288,13 @@ module.exports = function(authToken, io){
                             }
                         */
 
-                        sendReq(parsedUrl.method, parsedUrl.url, parsedUrl.data)
+                        var timeoutP = new Promise(function(resolve, reject){
+                            setTimeout(function(){
+                                reject('Timeout');
+                            }, 5000);
+                        });
+
+                        Promise.race([sendReq(parsedUrl.method, parsedUrl.url, parsedUrl.data), timeoutP])
                         .then(function(data){
                             var response = {
                                 data: data,
@@ -297,9 +303,8 @@ module.exports = function(authToken, io){
                             };
                             maestro.publish(sensor.sim + '/' + parsedUrl.origin, JSON.stringify(response));
                         })
-                        .catch(function(error){
+                        .catch(function(){
                             var response = {
-                                error: error,
                                 isSuccessful: false,
                                 index: parsedUrl.index
                             };
