@@ -124,7 +124,6 @@ module.exports = function(authToken, io){
 
             checkSensor(sim, type)
             .then(function(sensor){
-                debug('AFTER CHECK', sensor);
 
                 switch(main){
                     case 'init':

@@ -1,6 +1,6 @@
 api:
    build: ./
-   command: nodemon --watch api --watch database api/api.js
+   command: nodemon -L --watch api --watch database api/api.js
    links:
       - db
       - broker
@@ -16,7 +16,7 @@ api:
       # Updater variables
       - UPDATER_RANGE_START=2200
       - UPDATER_RANGE_SIZE=10
-      - UPDATER_PLAYBOOK_FOLDER="/pheromon/updateFiles/"
+      - UPDATER_PLAYBOOK_FOLDER=/pheromon/updateFiles/
       - UPDATER_SENSORS_PORT=22
    volumes:
       - ./:/pheromon
