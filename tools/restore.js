@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
 require('es6-shim');
 
 var child_process = require('child_process');
-var fs = require('fs')
+var fs = require('fs');
 var spawn = child_process.spawn;
 var zlib = require('zlib');
 
@@ -18,13 +18,13 @@ connectToDB()
 .then(function(){
     return dropAllTables()
     .catch(function(err){
-        console.error("Couldn't drop tables", err);
+        console.error('Could not drop tables', err);
         process.exit();
     })
     .then(function(){
-        console.log("Loading the data");
-        if (inputFile.includes("gz")) {
-            console.log("Gz format")
+        console.log('Loading the data');
+        if (inputFile.includes('gz')) {
+            console.log('Gz format');
             var gzip = zlib.createGunzip();
             var readStream = fs.createReadStream(inputFile);
             var proc = spawn('psql', ['-p', process.env.DB_PORT_5432_TCP_PORT, '-h', process.env.DB_PORT_5432_TCP_ADDR, '-U', process.env.POSTGRES_USER, '-d', process.env.POSTGRES_USER]);
@@ -38,21 +38,21 @@ connectToDB()
                     })
                     .on('error', function(error) {
                         reject(error);
-                    })
+                    });
             });
         }
         else
             spawn('psql', ['-p', process.env.DB_PORT_5432_TCP_PORT, '-h', process.env.DB_PORT_5432_TCP_ADDR, '-U', process.env.POSTGRES_USER, '-w', '-f', inputFile]);
     })
     .catch(function(err){
-        console.error("Couldn't load the data", err);
+        console.error('Could not load the data', err);
         process.exit();
     })
     .then(function(){
-        console.log("Success!");
+        console.log('Success!');
         process.exit();
-    })
+    });
 })
 .catch(function(err){
-    console.error("Couldn't connect to database", err);
+    console.error('Could not connect to database', err);
 });

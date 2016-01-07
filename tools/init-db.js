@@ -9,8 +9,6 @@ var generateSqlDefinition = require('sql-generate');
 
 // when ready, drop and create tables
 var databaseClientP = require('../database/management/databaseClientP');
-
-var connectToDB = require('../database/management/connectToDB.js');
 var dropAllTables = require('../database/management/dropAllTables.js');
 var createTables = require('../database/management/createTables.js');
 
