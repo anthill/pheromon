@@ -20,7 +20,7 @@
     "prod": "docker-compose -p pheromon -f compose-prod.yml up -d --force-recreate",
     "preprod": "npm run build-prod",
     "stop-prod": "docker-compose -f compose-prod.yml stop",
-    "test": "docker-compose -f compose-test.yml up --force-recreate",
+    "test": "docker-compose -p pheromontest -f compose-test.yml up --force-recreate",
     "validate": "npm ls"
   },
   "repository": {
