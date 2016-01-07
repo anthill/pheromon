@@ -2,15 +2,13 @@
 
 var pg = require('pg');
 
-var conString = 'postgres://' +
-                process.env.POSTGRES_USER +
-                ':' +
-                process.env.POSTGRES_PASSWORD +
-                '@' +
-                process.env.DB_PORT_5432_TCP_ADDR +
-                ':' +
-                process.env.DB_PORT_5432_TCP_PORT +
-                '/postgres';
+var conString = [
+    'postgres://',
+    process.env.POSTGRES_USER,
+    ':', 
+    process.env.POSTGRES_PASSWORD,
+    '@db/postgres'
+].join('');
 
 console.log('conString', conString);
 

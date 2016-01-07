@@ -77,6 +77,23 @@ npm run prod
 npm run dev
 ```
 
+* Reload the db from a backup : 
+
+In dev, `./backups` is linked to `/backups` and in prod, `/data/pheromon/backups` is linked to `/backups` where automatic backups (at 3AM) are persisted.
+At anytime you can backup the db using
+
+```
+docker exec pheromondev_api_1 tools/backup.js > backups/test.sql
+```
+
+to load it back **you must put it in your backups folder and give the path inside the container**:
+
+```
+docker exec pheromondev_api_1 tools/restore.js /backups/test.sql
+```
+
+you can also use a gziped file (comming from the automated backup for example).
+
 ## MQTT
 MQTT is the communication protocol between the server and the sensors.
 

@@ -2,7 +2,7 @@ api:
    build: ./
    command: nodemon --watch api --watch database api/api.js
    links:
-      - dbdev:db
+      - db
       - broker
    ports:
       - "3900:3900"
@@ -20,6 +20,7 @@ api:
       - UPDATER_SENSORS_PORT=22
    volumes:
       - ./:/pheromon
+      - ./backups:/backups/
       # Ansible playbooks for the updater
       #- ./updateFiles/:/pheromon/updateFiles/:ro
       # SSH configuration
@@ -32,7 +33,7 @@ broker:
    build: .
    command: nodemon --watch broker broker/index.js
    links:
-      - dbdev:db
+      - db
       - redis
    ports:
       - "1883:1883"
@@ -43,12 +44,12 @@ broker:
    volumes:
       - ./:/pheromon
    tty: true
-
-dbdev:
+db:
    image: postgres:9.4
    environment:
+      - POSTGRES_USER=postgres
+      - PGPASSWORD=elements
       - POSTGRES_PASSWORD=elements
-      - NODE_ENV=development
    volumes:
       - ./data:/var/lib/postgresql
    tty: true

@@ -10,6 +10,7 @@ var generateSqlDefinition = require('sql-generate');
 // when ready, drop and create tables
 var databaseClientP = require('../database/management/databaseClientP');
 
+var connectToDB = require('../database/management/connectToDB.js');
 var dropAllTables = require('../database/management/dropAllTables.js');
 var createTables = require('../database/management/createTables.js');
 
@@ -19,16 +20,10 @@ var conString = [
     process.env.POSTGRES_USER,
     ':', 
     process.env.POSTGRES_PASSWORD,
-    '@',
-    process.env.DB_PORT_5432_TCP_ADDR,
-    ':',
-    process.env.DB_PORT_5432_TCP_PORT,
-    '/postgres'
+    '@db/postgres'
 ].join('');
 
 console.log('Init-db connection string', conString);
-// postgres://postgres:elements@172.17.0.90:5432/postgres
-// postgres://postgres:elements@172.17.0.90:5432/postgres
 
 function generateDefinitions() {
     return new Promise(function(resolve, reject) {
@@ -45,7 +40,7 @@ function generateDefinitions() {
 
 (function tryRebuildDatabase(){
     console.log('Trying to rebuild database...');
-    
+
     setTimeout(function(){
         databaseClientP
         .then(function(){
@@ -59,30 +54,18 @@ function generateDefinitions() {
                 console.error('Couldn\'t create tables', err);
                 process.exit();
             })
-            .then(function(){   
-                if (!process.env.BACKUP) {
-                    console.log('no backup file');
-                    generateDefinitions()
-                    .then(function(){
-                        console.log('Dropped and created the tables.');
-                        process.exit();
-                    })
-                    .catch(function(err){
-                        console.error('Couldn\'t write the schema', err);
-                        process.exit();
-                    });
-                }
-                else {
-                    generateDefinitions()
-                    .then(function(){
-                        console.log('definitions generated');
-                        process.exit();
-                    })
-                    .catch(function(err){
-                        console.error('Couldn\'t write the schema', err);
-                        process.exit();
-                    });
-                }
+            .then(function(){
+               
+                generateDefinitions()
+                .then(function(){
+                    console.log('Dropped and created the tables.');
+                    process.exit();
+                })
+                .catch(function(err){
+                    console.error('Couldn\'t write the schema', err);
+                    process.exit();
+                });
+                
             })
             .catch(function(){
                 tryRebuildDatabase();
