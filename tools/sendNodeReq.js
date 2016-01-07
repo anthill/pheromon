@@ -11,7 +11,7 @@ module.exports = function (method, url, data){
             headers = {'Content-Type': 'application/json;charset=UTF-8'};
             data = JSON.stringify(data);
         }
-        // console.log(url);
+
         request({
             method: method.toUpperCase(),
             url: url,
@@ -56,6 +56,18 @@ module.exports = function (method, url, data){
                     ));
             }
         });
+
+        setTimeout(function(){
+            reject(Object.assign(
+                new Error('Request timeout'),
+                    {
+                        HTTPstatus: 408,
+                        text: undefined,
+                        error: undefined
+                    }
+                )
+            );
+        }, 5000);
 
     });
 };
