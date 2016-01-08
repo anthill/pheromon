@@ -242,8 +242,8 @@ module.exports = function(app, debug){
 
     // get various measurements of various types for various place
     app.get('/measurements/places', function(req, res){
-        var ids = req.query.ids.split(',');
-        var types = req.query.types.split(',');
+        var ids = req.query.ids.includes(',') ? req.query.ids.split(',') : [req.query.ids];
+        var types = req.query.types.includes(',') ? req.query.types.split(',') : [req.query.types];
         var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);
         var end = (req.query.end === undefined) ? undefined : new Date(req.query.end);
 

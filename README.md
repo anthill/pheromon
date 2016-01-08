@@ -54,28 +54,48 @@ cd pheromon
 npm install
 ````
 
-* Build container
+### In dev
+
+* Prepare the db : 
 
 ```
-docker-compose -f compose-init-db-dev.yml build
-docker-compose -f compose-dev.yml build
+npm run init-db-dev
+// then
+npm run start-dev
 ```
+
+the service will run on port 39000
+
+### In prod
 
 * Prepare the db : 
 
 ```
 npm run init-db-prod
-// or if you want to dev
-npm run init-db-dev
-```
-
-* Launch the containers and the 
-
-```
+// then
 npm run prod
-// or if you want to dev
-npm run dev
 ```
+
+the service will run on port 3900
+
+Use `npm run stop-prod` to stop.
+
+* Backups and restore : 
+
+In dev, `./backups` is linked to `/backups` and in prod, `/data/pheromon/backups` is linked to `/backups` where automatic backups (at 3AM) are persisted.
+At anytime you can backup the db using
+
+```
+docker exec pheromondev_api_1 tools/backup.js > backups/test.sql
+```
+
+to load it back **you must put it in your backups folder and give the path inside the container**:
+
+```
+docker exec pheromondev_api_1 tools/restore.js /backups/test.sql
+```
+
+you can also use a gziped file (comming from the automated backup for example).
 
 ## MQTT
 MQTT is the communication protocol between the server and the sensors.
@@ -148,13 +168,7 @@ You can send [commands](https://github.com/anthill/pheromon/blob/master/api/clie
 
 You can run Pheromon tests in a dedicated docker.
 
-
-First build the container:
-````
-docker-compose -f compose-test.yml build
-````
-
-Once built, you can use
+You can use
 ```
 npm run test
 ```

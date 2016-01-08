@@ -1,8 +1,8 @@
 api:
    build: ./
-   command: nodemon --watch api --watch database api/api.js
+   command: node api/api.js
    links:
-      - dbtest:db
+      - db
       - broker
    ports:
       - "4000:4000"
@@ -35,7 +35,7 @@ broker:
    build: .
    command: nodemon --watch broker broker/index.js
    links:
-      - dbtest:db
+      - db
       - redis
    ports:
       - "5100:5100"
@@ -47,7 +47,7 @@ broker:
       - ./:/pheromon
    log_driver: "none" 
 
-dbtest:
+db:
    image: postgres:9.4
    environment:
       - POSTGRES_USER=postgres
@@ -66,7 +66,7 @@ tests:
    links:
       - api
       - broker
-      - dbtest:db
+      - db
    environment:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
