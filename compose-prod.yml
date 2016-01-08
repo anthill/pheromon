@@ -62,5 +62,4 @@ db:
 
 redis:
    image: redis:3
-   log_driver: "none" 
    restart: always

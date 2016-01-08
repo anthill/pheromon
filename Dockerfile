@@ -1,4 +1,5 @@
-FROM ants/nodejs:v1
+FROM node:4.2
+
 MAINTAINER Alexandre Vallette <alexandre.vallette@ants.builders>
 
 RUN mkdir /pheromon
