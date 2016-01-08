@@ -7,7 +7,7 @@ api:
    ports:
       - "39000:39000"
    environment:
-      - VIRTUAL_HOST=pheromon.ants.builders
+      - VIRTUAL_HOST=pheromontest.ants.builders
       - VIRTUAL_PORT=39000
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
