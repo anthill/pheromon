@@ -9,12 +9,18 @@
       update: yes
       version: master
 
-  - name: update dependencies
+  - name: update 6brain
     npm:
       path: "/home/pi/6brain"
 
-  - name: restart and enable 6brain
-    service:
-      name: 6brain
-      state: started
-      enabled: true
+  - name: update 6bin
+    npm:
+      name: 6bin
+      path: "/home/pi/6brain"
+      version: "1.3.2"
+
+  - name: update waste-categories
+    npm:
+      name: waste-categories
+      path: "/home/pi/6brain"
+      version: "1.0.19"
