@@ -28,22 +28,24 @@ api:
       #- /home/sensorSSH/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub:ro
       #- /home/sensorSSH/.ssh/known_hosts:/root/.ssh/known_hosts
    tty: true
+   #log_driver: "none" 
 
 broker:
    build: .
-   command: nodemon --watch broker broker/index.js
+   command: nodemon -L --watch broker broker/index.js
    links:
       - db
       - redis
    ports:
-      - "1883:1883"
+      - "18830:18830"
    environment:
-      - VIRTUAL_PORT=1883
+      - VIRTUAL_PORT=18830
       - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
    tty: true
+   log_driver: "none" 
 db:
    image: postgres:9.4
    environment:
@@ -53,6 +55,7 @@ db:
    volumes:
       - ./data:/var/lib/postgresql
    tty: true
+   log_driver: "none" 
 
 redis:
    image: redis:3
