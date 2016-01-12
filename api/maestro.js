@@ -30,7 +30,7 @@ module.exports = function(authToken, io){
 
     var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
 
-    var maestro = mqtt.connect('mqtt://broker:1883', {
+    var maestro = mqtt.connect('mqtt://broker:18830', {
         username: 'maestro',
         password: authToken,
         clientId: 'maestro'
@@ -191,7 +191,7 @@ module.exports = function(authToken, io){
                         
                         decoder.decodeMessage(message, type)
                         .then(function(data){
-                            debug('Measurement to register', data, sensor.outputs);
+                            debug('Measurement to register', data);
 
                             var outputId = makeMap(sensor.outputs, 'type').get(type).id;
                             var measurements = decoder.extractMeasurementsFromData(data, type);
@@ -291,7 +291,7 @@ module.exports = function(authToken, io){
                         var timeoutP = new Promise(function(resolve, reject){
                             setTimeout(function(){
                                 reject('Timeout');
-                            }, 5000);
+                            }, 10000);
                         });
 
                         Promise.race([sendReq(parsedUrl.method, parsedUrl.url, parsedUrl.data), timeoutP])

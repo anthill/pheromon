@@ -6,7 +6,7 @@ module.exports = function(simId, authToken){
     return new Promise(function(resolve, reject){
         console.log('Creating fake sensor');
 
-        var newSensor = mqtt.connect('mqtt://broker:1883', { // connect to broker
+        var newSensor = mqtt.connect('mqtt://broker:18830', { // connect to broker
             username: simId,
             password: authToken,
             clientId: simId
