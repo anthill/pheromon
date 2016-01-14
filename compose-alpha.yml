@@ -13,7 +13,7 @@ api:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
-      - NODE_ENV=production
+      - NODE_ENV=alpha
       # Updater variables
       - UPDATER_RANGE_START=2200
       - UPDATER_RANGE_SIZE=10
@@ -44,7 +44,7 @@ broker:
       - "9901:9901"
    environment:
       - BROKER_PORT="9901"
-      - NODE_ENV=production
+      - NODE_ENV=alpha
       - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
@@ -55,7 +55,7 @@ db:
    image: postgres:9.4
    environment:
       - POSTGRES_PASSWORD=elements
-      - NODE_ENV=production
+      - NODE_ENV=alpha
    volumes:
       - /data/pheromon/db:/var/lib/postgresql/data
    tty: true
