@@ -7,7 +7,7 @@ api:
    ports:
       - "9009:9009"
    environment:
-      - VIRTUAL_HOST=pheromontest.ants.builders
+      - VIRTUAL_HOST=pheromon-dev.ants.builders
       - VIRTUAL_PORT=9009
       - BROKER_PORT=9909
       - POSTGRES_USER=postgres
