@@ -43,7 +43,7 @@ broker:
    ports:
       - "9900:9900"
    environment:
-      - VIRTUAL_PORT=9900
+      - BROKER_PORT=9900
       - NODE_ENV=production
       - POSTGRES_PASSWORD=elements
    volumes:

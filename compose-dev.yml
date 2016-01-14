@@ -40,7 +40,7 @@ broker:
    ports:
       - "9909:9909"
    environment:
-      - VIRTUAL_PORT=9909
+      - BROKER_PORT=9909
       - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:

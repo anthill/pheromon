@@ -43,7 +43,7 @@ broker:
    ports:
       - "9901:9901"
    environment:
-      - VIRTUAL_PORT="9901"
+      - BROKER_PORT="9901"
       - NODE_ENV=production
       - POSTGRES_PASSWORD=elements
    volumes:
