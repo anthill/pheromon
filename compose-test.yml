@@ -40,7 +40,7 @@ broker:
       - NODE_ENV=test
    volumes:
       - ./:/pheromon
-   log_driver: "none" 
+   #log_driver: "none" 
 
 db:
    image: postgres:9.4
