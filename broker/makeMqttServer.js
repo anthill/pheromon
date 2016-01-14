@@ -14,7 +14,7 @@ var pubsubsettings = {
 };
 
 var moscaSettings = {
-  port: parseInt(process.env.VIRTUAL_PORT, 10),
+  port: parseInt(process.env.BROKER_PORT, 10),
   backend: pubsubsettings,
   persistence: {
     factory: mosca.persistence.Redis,

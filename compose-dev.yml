@@ -5,10 +5,11 @@ api:
       - db
       - broker
    ports:
-      - "39000:39000"
+      - "9009:9009"
    environment:
-      - VIRTUAL_HOST=pheromontest.ants.builders
-      - VIRTUAL_PORT=39000
+      - VIRTUAL_HOST=pheromon-dev.ants.builders
+      - VIRTUAL_PORT=9009
+      - BROKER_PORT=9909
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
@@ -37,9 +38,9 @@ broker:
       - db
       - redis
    ports:
-      - "18830:18830"
+      - "9909:9909"
    environment:
-      - VIRTUAL_PORT=18830
+      - BROKER_PORT=9909
       - NODE_ENV=development
       - POSTGRES_PASSWORD=elements
    volumes:
@@ -49,9 +50,8 @@ broker:
 db:
    image: postgres:9.4
    environment:
-      - POSTGRES_USER=postgres
-      - PGPASSWORD=elements
       - POSTGRES_PASSWORD=elements
+      - NODE_ENV=development
    volumes:
       - ./data:/var/lib/postgresql
    tty: true
