@@ -20,11 +20,11 @@
     "prealpha": "npm run build",
     "test": "docker-compose -p pheromontest -f compose-test.yml up --force-recreate",
     "dev": "docker-compose -p pheromondev -f compose-dev.yml up --force-recreate",
-    "alpha": "docker-compose -p pheromonalpha -f compose-prod.yml up -d --force-recreate",
+    "alpha": "docker-compose -p pheromonalpha -f compose-alpha.yml up -d --force-recreate",
     "prod": "docker-compose -p pheromon -f compose-prod.yml up -d --force-recreate",
     "postdev": "npm run watch",
     "stop-dev": "docker-compose -p pheromondev -f compose-dev.yml stop",
-    "stop-alpha": "docker-compose -p pheromonalpha -f compose-prod.yml stop",
+    "stop-alpha": "docker-compose -p pheromonalpha -f compose-alpha.yml stop",
     "stop-prod": "docker-compose -f compose-prod.yml stop",
     
     "validate": "npm ls"
