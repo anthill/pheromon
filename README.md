@@ -55,6 +55,7 @@ npm install
 ````
 
 ### In dev
+Use this for development.
 
 ```
 npm run init-db-dev // prepare the db
@@ -62,9 +63,25 @@ npm run init-db-dev // prepare the db
 npm run dev // launch the service
 ```
 
-the service will run on port 39000
+The dev service will run on port **9009**, associated with a broker instance on port **9909**.
+
+Use `npm run stop-dev` to stop.
+
+### In alpha
+Use this for preproduction.
+
+```
+npm run init-db-alpha // prepare the db
+
+npm run alpha // launch the service
+```
+
+The alpha service will run on port **9001**, associated with a broker instance on port **9901**.
+
+Use `npm run stop-alpha` to stop.
 
 ### In prod
+Use this for production.
 
 ```
 npm run init-db-prod // prepare the db
@@ -72,7 +89,7 @@ npm run init-db-prod // prepare the db
 npm run prod // launch the service
 ```
 
-the service will run on port 3900
+The prod service will run on port **9000**, associated with a broker instance on port **9900**.
 
 Use `npm run stop-prod` to stop.
 
