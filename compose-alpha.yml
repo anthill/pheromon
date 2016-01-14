@@ -9,6 +9,7 @@ api:
    environment:
       - VIRTUAL_HOST=pheromon-alpha.ants.builders
       - VIRTUAL_PORT=9001
+      - BROKER_PORT=9901
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements

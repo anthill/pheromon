@@ -5,10 +5,11 @@ api:
       - db
       - broker
    ports:
-      - "3900:3900"
+      - "9000:9000"
    environment:
       - VIRTUAL_HOST=pheromon.ants.builders
-      - VIRTUAL_PORT=3900
+      - VIRTUAL_PORT=9000
+      - BROKER_PORT=9900
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=elements
       - PGPASSWORD=elements
@@ -40,9 +41,9 @@ broker:
       - db
       - redis
    ports:
-      - "1883:1883"
+      - "9900:9900"
    environment:
-      - VIRTUAL_PORT=1883
+      - VIRTUAL_PORT=9900
       - NODE_ENV=production
       - POSTGRES_PASSWORD=elements
    volumes:
