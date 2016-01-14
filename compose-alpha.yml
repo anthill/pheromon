@@ -45,7 +45,6 @@ broker:
    environment:
       - BROKER_PORT="9901"
       - NODE_ENV=alpha
-      - POSTGRES_PASSWORD=elements
    volumes:
       - ./:/pheromon
    tty: true
@@ -54,7 +53,6 @@ broker:
 db:
    image: postgres:9.4
    environment:
-      - POSTGRES_PASSWORD=elements
       - NODE_ENV=alpha
    volumes:
       - /data/pheromon-alpha/db:/var/lib/postgresql/data
