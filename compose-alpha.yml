@@ -57,7 +57,7 @@ db:
       - POSTGRES_PASSWORD=elements
       - NODE_ENV=alpha
    volumes:
-      - /data/pheromon/db:/var/lib/postgresql/data
+      - /data/pheromon-alpha/db:/var/lib/postgresql/data
    tty: true
    restart: always
 
