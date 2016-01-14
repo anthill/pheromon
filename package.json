@@ -19,6 +19,9 @@
     "stop-dev": "docker-compose -p pheromondev -f compose-dev.yml stop",
     "prod": "docker-compose -p pheromon -f compose-prod.yml up -d --force-recreate",
     "preprod": "npm run build",
+    "stop-alpha": "docker-compose -f compose-alpha.yml stop",
+    "prod": "docker-compose -p pheromon -f compose-alpha.yml up -d --force-recreate",
+    "prealpha": "npm run build",
     "stop-prod": "docker-compose -f compose-prod.yml stop",
     "test": "docker-compose -p pheromontest -f compose-test.yml up --force-recreate",
     "validate": "npm ls"
