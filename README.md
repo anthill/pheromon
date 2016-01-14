@@ -87,7 +87,7 @@ npm run prod // launch the service
 The prod service will run on port **9000**, associated with a broker instance on port **9900**.
 
 Use `npm run stop-prod` to stop.
-
+This will also create a `latest.sql` backup file of the db in the `backup` folder.
 
 ### Database
 
