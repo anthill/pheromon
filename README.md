@@ -48,7 +48,8 @@ cd pheromon
 
 * Copy / Create the files `PRIVATE/*.json`
 
-* Install dependencies locally (this is mainly to enable gulp and automated lint functionality)
+* Install dependencies
+This will also set up the git precommit hook for eslint.
 
 ````
 npm install
@@ -58,9 +59,7 @@ npm install
 Use this for development.
 
 ```
-npm run init-db-dev // prepare the db
-
-npm run dev // launch the service
+npm run dev
 ```
 
 The dev service will run on port **9009**, associated with a broker instance on port **9909**.
@@ -71,8 +70,6 @@ Use `npm run stop-dev` to stop.
 Use this for preproduction.
 
 ```
-npm run init-db-alpha // prepare the db
-
 npm run alpha // launch the service
 ```
 
@@ -84,14 +81,22 @@ Use `npm run stop-alpha` to stop.
 Use this for production.
 
 ```
-npm run init-db-prod // prepare the db
-
 npm run prod // launch the service
 ```
 
 The prod service will run on port **9000**, associated with a broker instance on port **9900**.
 
 Use `npm run stop-prod` to stop.
+
+
+### Database
+
+* Initialisation
+If you run a service without an initialized db, you need to
+
+```
+docker exec [your-db-container] tools/init-db.js
+```
 
 * Backups and restore : 
 
