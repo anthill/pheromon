@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "if [ -d .git ]; then cp ./git-hooks/pre-commit ./.git/hooks/pre-commit; chmod a+x ./.git/hooks/pre-commit; fi",
     "lint": "eslint .",
+    "prebuild": "npm install",
     "build:dashboard": "browserify api/clients/Dashboard/src/main.js -o api/clients/Dashboard-browserify-bundle.js -v",
     "build:admin": "browserify api/clients/Admin/src/main.js -o api/clients/Admin-browserify-bundle.js -v",
     "build": "npm-run-all --parallel 'build:*'",
@@ -23,10 +24,10 @@
     "alpha": "docker-compose -p pheromonalpha -f compose-alpha.yml up -d --force-recreate",
     "prod": "docker-compose -p pheromon -f compose-prod.yml up -d --force-recreate",
     "postdev": "npm run watch",
+    "prestop-prod": "docker exec pheromon_api_1 tools/backup.js > backups/latest.sql",
     "stop-dev": "docker-compose -p pheromondev -f compose-dev.yml stop",
     "stop-alpha": "docker-compose -p pheromonalpha -f compose-alpha.yml stop",
     "stop-prod": "docker-compose -f compose-prod.yml stop",
-    
     "validate": "npm ls"
   },
   "repository": {
