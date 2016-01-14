@@ -50,8 +50,6 @@ broker:
 db:
    image: postgres:9.4
    environment:
-      - POSTGRES_USER=postgres
-      - PGPASSWORD=elements
       - POSTGRES_PASSWORD=elements
       - NODE_ENV=development
    volumes:
