@@ -56,24 +56,20 @@ npm install
 
 ### In dev
 
-* Prepare the db : 
-
 ```
-npm run init-db-dev
-// then
-npm run start-dev
+npm run init-db-dev // prepare the db
+
+npm run dev // launch the service
 ```
 
 the service will run on port 39000
 
 ### In prod
 
-* Prepare the db : 
-
 ```
-npm run init-db-prod
-// then
-npm run prod
+npm run init-db-prod // prepare the db
+
+npm run prod // launch the service
 ```
 
 the service will run on port 3900
