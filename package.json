@@ -21,8 +21,8 @@
     "prealpha": "npm run build",
     "test": "docker-compose -p pheromontest -f compose-test.yml up --force-recreate",
     "dev": "npm-run-all --parallel 'dev:*'",
+    "prod": "npm-run-all --parallel 'prod:*'",
     "postdev": "npm run watch",
-    "prestop-prod": "docker exec pheromon_api_1 tools/backup.js > backups/latest.sql",
     "validate": "npm ls"
   },
   "repository": {
