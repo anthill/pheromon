@@ -57,6 +57,7 @@ npm install
 
 ### In dev
 Use this for development.
+You need to have VIRTUAL_PORT and BROKER_PORT set as environment variables.
 
 ```
 npm run dev
@@ -95,10 +96,10 @@ This will also create a `latest.sql` backup file of the db in the `backup` folde
 If you run a service without an initialized db, you need to
 
 ```
-docker exec [your-db-container] tools/init-db.js
+node tools/init-db.js
 ```
 
-* Backups and restore : 
+* Backups and restore : TO BE REWRITTEN
 
 In dev, `./backups` is linked to `/backups` and in prod, `/data/pheromon/backups` is linked to `/backups` where automatic backups (at 3AM) are persisted.
 At anytime you can backup the db using
