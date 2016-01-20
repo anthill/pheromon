@@ -37,8 +37,10 @@ var topLevelStore = {
 var match,
     pl     = /\+/g,  // Regex for replacing addition symbol with a space
     search = /([^&=]+)=?([^&]*)/g,
-    decode = function (s) { return decodeURIComponent(s.replace(pl, ' ')); },
     query  = window.location.search.substring(1);
+
+function decode(s) { return decodeURIComponent(s.replace(pl, ' ')); }
+
 
 var urlParams = {};
 while ((match = search.exec(query)))
