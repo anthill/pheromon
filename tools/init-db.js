@@ -9,19 +9,14 @@ var path = require('path');
 
 var generateSqlDefinition = require('sql-generate');
 
+var PRIVATE = require('../PRIVATE/secret.json');
+
 // when ready, drop and create tables
 var databaseClientP = require('../database/management/databaseClientP');
 var dropAllTables = require('../database/management/dropAllTables.js');
 var createTables = require('../database/management/createTables.js');
 
-
-var conString = [
-    'postgres://',
-    process.env.POSTGRES_USER,
-    ':', 
-    process.env.POSTGRES_PASSWORD,
-    '@db/postgres'
-].join('');
+var conString = 'postgres://'+ PRIVATE.pg_user + ':' + PRIVATE.pg_pwd + '@localhost:5432/' + PRIVATE.db_name;
 
 console.log('Init-db connection string', conString);
 

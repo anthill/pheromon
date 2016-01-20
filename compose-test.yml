@@ -64,6 +64,7 @@ tests:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
+      - NODE_ENV=test
    volumes:
       - ./:/pheromon/
    tty: true

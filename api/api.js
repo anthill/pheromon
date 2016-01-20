@@ -30,7 +30,6 @@ require('./maestro')(PRIVATE.mqtt_token, io);
 
 var PORT = process.env.VIRTUAL_PORT;
 
-
 // Backup database everyday at 3AM
 schedule.scheduleJob('0 3 * * *', function(){
     console.log('Backup database');

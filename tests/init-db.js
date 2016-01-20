@@ -11,22 +11,27 @@ var databaseClientP = require('../database/management/databaseClientP');
 var dropAllTables = require('../database/management/dropAllTables.js');
 var createTables = require('../database/management/createTables.js');
 
+var PRIVATE = require('../PRIVATE/secret.json');
+
+var isTest = process.env.NODE_ENV === 'test';
+
+var pg_user = isTest ? process.env.POSTGRES_USER : PRIVATE.pg_user;
+var pg_pwd = isTest ? process.env.POSTGRES_PASSWORD : PRIVATE.pg_pwd;
+var pg_addr = isTest ? process.env.DB_PORT_5432_TCP_ADDR : 'localhost';
+var pg_dbName = isTest ? 'postgres' : PRIVATE.db_name;
 
 var conString = [
     'postgres://',
-    process.env.POSTGRES_USER,
+    pg_user,
     ':', 
-    process.env.POSTGRES_PASSWORD,
+    pg_pwd,
     '@',
-    process.env.DB_PORT_5432_TCP_ADDR,
-    ':',
-    process.env.DB_PORT_5432_TCP_PORT,
-    '/postgres'
+    pg_addr,
+    ':5432/',
+    pg_dbName
 ].join('');
 
-console.log('Init-db connection string', conString);
-// postgres://postgres:elements@172.17.0.90:5432/postgres
-// postgres://postgres:elements@172.17.0.90:5432/postgres
+console.log('conString for Test init-db', conString);
 
 function generateDefinitions() {
     return new Promise(function(resolve, reject) {

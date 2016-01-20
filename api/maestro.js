@@ -17,8 +17,6 @@ var sigCodec = require('pheromon-codecs').signalStrengths;
 
 var createFakeSensor = require('../tools/createFakeSensor');
 
-var BROKER_PORT = process.env.BROKER_PORT;
-
 // Updater variables
 var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10) || 2200;
 var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
@@ -32,7 +30,7 @@ module.exports = function(authToken, io){
 
     var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
 
-    var maestro = mqtt.connect('mqtt://broker:' + BROKER_PORT, {
+    var maestro = mqtt.connect('mqtt://broker:' + process.env.BROKER_PORT, {
         username: 'maestro',
         password: authToken,
         clientId: 'maestro'

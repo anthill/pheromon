@@ -5,22 +5,20 @@ var mosca = require('mosca');
 var debug = require('../tools/debug');
 
 var pubsubsettings = {
-  type: 'redis',
-  redis: require('redis'),
-  db: 12,
-  host: process.env.REDIS_PORT_6379_TCP_ADDR,
-  port: process.env.REDIS_PORT_6379_TCP_PORT,
-  return_buffers: true
+    type: 'redis',
+    redis: require('redis'),
+    db: 12,
+    host: process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost',
+    return_buffers: true
 };
 
 var moscaSettings = {
-  port: process.env.BROKER_ENV, 
-  backend: pubsubsettings,
-  persistence: {
-    factory: mosca.persistence.Redis,
-    host: process.env.REDIS_PORT_6379_TCP_ADDR,
-    port: process.env.REDIS_PORT_6379_TCP_PORT
-  }
+    port: parseInt(process.env.BROKER_PORT, 10),
+    backend: pubsubsettings,
+    persistence: {
+        factory: mosca.persistence.Redis,
+        host: process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost'
+    }
 };
 
 module.exports = function(authToken){
