@@ -96,7 +96,7 @@ This will also create a `latest.sql` backup file of the db in the `backup` folde
 If you run a service without an initialized db, you need to
 
 ```
-node tools/init-db.js
+node database/management/init-db.js
 ```
 
 * Backups and restore : TO BE REWRITTEN
