@@ -99,19 +99,17 @@ If you run a service without an initialized db, you need to
 node database/management/init-db.js
 ```
 
-* Backups and restore : TO BE REWRITTEN
-
-In dev, `./backups` is linked to `/backups` and in prod, `/data/pheromon/backups` is linked to `/backups` where automatic backups (at 3AM) are persisted.
+* Backups and restore :
 At anytime you can backup the db using
 
 ```
-docker exec pheromondev_api_1 tools/backup.js > backups/test.sql
+node database/management/backup.js > backups/test.sql
 ```
 
-to load it back **you must put it in your backups folder and give the path inside the container**:
+or restore an previous db with
 
 ```
-docker exec pheromondev_api_1 tools/restore.js /backups/test.sql
+node database/management/restore.js backups/test.sql
 ```
 
 you can also use a gziped file (comming from the automated backup for example).
