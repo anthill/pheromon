@@ -4,4 +4,6 @@
 
 var spawn = require('child_process').spawn;
 
-spawn('pg_dump', ['-p', process.env.DB_PORT_5432_TCP_PORT, '-h', process.env.DB_PORT_5432_TCP_ADDR, '-U', process.env.POSTGRES_USER, '-w'], {stdio: 'inherit'});
+var dbConst = require('./getDbConst.js');
+
+spawn('pg_dump', ['-p', 5432, '-h', dbConst.ADDR, '-U', dbConst.USER, '-w'], {stdio: 'inherit'});

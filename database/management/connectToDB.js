@@ -1,25 +1,8 @@
 'use strict';
 
 var pg = require('pg');
-var PRIVATE = require('../../PRIVATE/secret.json');
 
-var isTest = process.env.NODE_ENV === 'test';
-
-var pg_user = isTest ? process.env.POSTGRES_USER : PRIVATE.pg_user;
-var pg_pwd = isTest ? process.env.POSTGRES_PASSWORD : PRIVATE.pg_pwd;
-var pg_addr = isTest ? process.env.DB_PORT_5432_TCP_ADDR : 'localhost';
-var pg_dbName = isTest ? 'postgres' : PRIVATE.db_name;
-
-var conString = [
-    'postgres://',
-    pg_user,
-    ':', 
-    pg_pwd,
-    '@',
-    pg_addr,
-    ':5432/',
-    pg_dbName
-].join('');
+var CONNEXION_STRING = require('./getDbConst.js').conString;
 
 var MAX_ATTEMPTS = 10;
 var INITIAL_TIMEOUT_TIME = 100;
@@ -32,7 +15,7 @@ module.exports = function(){
         (function tryConnect(time){
             setTimeout(function(){
                 
-                var client = new pg.Client(conString);
+                var client = new pg.Client(CONNEXION_STRING);
 
                 client.connect(function(err) {
                     if(err){
