@@ -8,7 +8,7 @@ var pubsubsettings = {
     type: 'redis',
     redis: require('redis'),
     db: 12,
-    host: process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost',
+    host: process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost', // localhost is for prod, dev, alpha. The other is for tests
     return_buffers: true
 };
 
@@ -17,7 +17,7 @@ var moscaSettings = {
     backend: pubsubsettings,
     persistence: {
         factory: mosca.persistence.Redis,
-        host: process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost'
+        host: process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost' // localhost is for prod, dev, alpha. The other is for tests
     }
 };
 
