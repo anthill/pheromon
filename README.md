@@ -55,14 +55,14 @@ This will also set up the git precommit hook for eslint.
 npm install
 ````
 
+You need to have VIRTUAL_PORT and BROKER_PORT set as environment variables.
+
 ### In dev
 Use this for development.
 
 ```
 npm run dev
 ```
-
-The dev service will run on port **9009**, associated with a broker instance on port **9909**.
 
 Use `npm run stop-dev` to stop.
 
@@ -73,8 +73,6 @@ Use this for preproduction.
 npm run alpha // launch the service
 ```
 
-The alpha service will run on port **9001**, associated with a broker instance on port **9901**.
-
 Use `npm run stop-alpha` to stop.
 
 ### In prod
@@ -84,7 +82,6 @@ Use this for production.
 npm run prod // launch the service
 ```
 
-The prod service will run on port **9000**, associated with a broker instance on port **9900**.
 
 Use `npm run stop-prod` to stop.
 This will also create a `latest.sql` backup file of the db in the `backup` folder.
@@ -95,22 +92,20 @@ This will also create a `latest.sql` backup file of the db in the `backup` folde
 If you run a service without an initialized db, you need to
 
 ```
-docker exec [your-db-container] tools/init-db.js
+node database/management/init-db.js
 ```
 
-* Backups and restore : 
-
-In dev, `./backups` is linked to `/backups` and in prod, `/data/pheromon/backups` is linked to `/backups` where automatic backups (at 3AM) are persisted.
+* Backups and restore :
 At anytime you can backup the db using
 
 ```
-docker exec pheromondev_api_1 tools/backup.js > backups/test.sql
+node database/management/backup.js > backups/test.sql
 ```
 
-to load it back **you must put it in your backups folder and give the path inside the container**:
+or restore an previous db with
 
 ```
-docker exec pheromondev_api_1 tools/restore.js /backups/test.sql
+node database/management/restore.js backups/test.sql
 ```
 
 you can also use a gziped file (comming from the automated backup for example).

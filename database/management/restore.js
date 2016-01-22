@@ -9,8 +9,10 @@ var fs = require('fs');
 var spawn = child_process.spawn;
 var zlib = require('zlib');
 
-var connectToDB = require('../database/management/connectToDB.js');
-var dropAllTables = require('../database/management/dropAllTables.js');
+var connectToDB = require('./connectToDB.js');
+var dropAllTables = require('./dropAllTables.js');
+
+var dbConst = require('./getDbConst.js');
 
 var inputFile = process.argv[2];
 
@@ -27,7 +29,7 @@ connectToDB()
             console.log('Gz format');
             var gzip = zlib.createGunzip();
             var readStream = fs.createReadStream(inputFile);
-            var proc = spawn('psql', ['-p', process.env.DB_PORT_5432_TCP_PORT, '-h', process.env.DB_PORT_5432_TCP_ADDR, '-U', process.env.POSTGRES_USER, '-d', process.env.POSTGRES_USER]);
+            var proc = spawn('psql', ['-p', 5432, '-h', dbConst.ADDR, '-U', dbConst.USER, '-d', dbConst.name]);
             
             return new Promise(function(resolve, reject){
                 readStream
@@ -42,7 +44,7 @@ connectToDB()
             });
         }
         else
-            spawn('psql', ['-p', process.env.DB_PORT_5432_TCP_PORT, '-h', process.env.DB_PORT_5432_TCP_ADDR, '-U', process.env.POSTGRES_USER, '-w', '-f', inputFile]);
+            spawn('psql', ['-p', 5432, '-h', dbConst.ADDR, '-U', dbConst.USER, '-w', '-f', inputFile]);
     })
     .catch(function(err){
         console.error('Could not load the data', err);

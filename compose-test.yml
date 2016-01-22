@@ -40,7 +40,7 @@ broker:
       - NODE_ENV=test
    volumes:
       - ./:/pheromon
-   #log_driver: "none" 
+   log_driver: "none" 
 
 db:
    image: postgres:9.4
@@ -64,6 +64,7 @@ tests:
       - POSTGRES_USER=postgres
       - PGPASSWORD=elements # don't change the name of the variable for pg_dump
       - POSTGRES_PASSWORD=elements
+      - NODE_ENV=test
    volumes:
       - ./:/pheromon/
    tty: true
