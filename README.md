@@ -55,15 +55,14 @@ This will also set up the git precommit hook for eslint.
 npm install
 ````
 
+You need to have VIRTUAL_PORT and BROKER_PORT set as environment variables.
+
 ### In dev
 Use this for development.
-You need to have VIRTUAL_PORT and BROKER_PORT set as environment variables.
 
 ```
 npm run dev
 ```
-
-The dev service will run on port **9009**, associated with a broker instance on port **9909**.
 
 Use `npm run stop-dev` to stop.
 
@@ -74,8 +73,6 @@ Use this for preproduction.
 npm run alpha // launch the service
 ```
 
-The alpha service will run on port **9001**, associated with a broker instance on port **9901**.
-
 Use `npm run stop-alpha` to stop.
 
 ### In prod
@@ -85,7 +82,6 @@ Use this for production.
 npm run prod // launch the service
 ```
 
-The prod service will run on port **9000**, associated with a broker instance on port **9900**.
 
 Use `npm run stop-prod` to stop.
 This will also create a `latest.sql` backup file of the db in the `backup` folder.
