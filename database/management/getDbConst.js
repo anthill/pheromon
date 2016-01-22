@@ -27,5 +27,5 @@ module.exports = {
 	PWD: pwd,
 	ADDR: addr,
 	NAME: name,
-	CONNEXION_STRING: conString
+	CONNECTION_STRING: conString
 };

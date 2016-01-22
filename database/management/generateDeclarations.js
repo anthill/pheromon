@@ -6,11 +6,11 @@ var fs = require('fs');
 var path = require('path');
 var generateSqlDefinition = require('sql-generate');
 
-var CONNEXION_STRING = require('./getDbConst.js').CONNEXION_STRING;
+var CONNECTION_STRING = require('./getDbConst.js').CONNECTION_STRING;
 
 module.exports = function() {
     return new Promise(function(resolve, reject) {
-        generateSqlDefinition({ dsn: CONNEXION_STRING, omitComments: true }, function(err, definitions) {
+        generateSqlDefinition({ dsn: CONNECTION_STRING, omitComments: true }, function(err, definitions) {
             if (err) {
                 console.error(err);
                 reject(err);

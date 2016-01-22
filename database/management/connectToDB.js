@@ -2,7 +2,7 @@
 
 var pg = require('pg');
 
-var CONNEXION_STRING = require('./getDbConst.js').conString;
+var CONNECTION_STRING = require('./getDbConst.js').CONNECTION_STRING;
 
 var MAX_ATTEMPTS = 10;
 var INITIAL_TIMEOUT_TIME = 100;
@@ -15,7 +15,7 @@ module.exports = function(){
         (function tryConnect(time){
             setTimeout(function(){
                 
-                var client = new pg.Client(CONNEXION_STRING);
+                var client = new pg.Client(CONNECTION_STRING);
 
                 client.connect(function(err) {
                     if(err){
