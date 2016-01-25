@@ -20,7 +20,7 @@ var createFakeSensor = require('../tools/createFakeSensor');
 // Updater variables
 var UPDATER_RANGE_START = parseInt(process.env.UPDATER_RANGE_START, 10) || 2200;
 var UPDATER_RANGE_SIZE = parseInt(process.env.UPDATER_RANGE_SIZE, 10) || 50;
-var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || './';
+var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || '../updateFiles/';
 var UPDATER_SENSORS_PORT = parseInt(process.env.UPDATER_SENSORS_PORT, 10) || 22;
 // See PRIVATE.json
 var UPDATER_SERVER_IP = PRIVATE.server_ip || 'localhost';
@@ -47,15 +47,8 @@ module.exports = function(authToken, io){
 
         // wrapper of the mqtt.publish() function
         maestro.distribute = function(message){
-            database.Sensors.getAll()
-            .then(function(sensors){
-                if (message.to.length === sensors.length)
-                    maestro.publish('all', message.command, {qos: 1});
-                    
-                else
-                    message.to.forEach(function(sim){
-                        maestro.publish(sim, message.command, {qos: 1});
-                    });
+            message.to.forEach(function(sim){
+                maestro.publish(sim, message.command, {qos: 1});
             });
         };
 
@@ -153,7 +146,6 @@ module.exports = function(authToken, io){
                         // update only sensor, client and signal are reserved keywords
                         if (SENSOR_STATUS.has(type)){
                             deltaStatus[type + '_status'] = message;
-
                             database.Sensors.update(sensor.sim, deltaStatus)
                             .then(function() {
                                 io.emit('status', {sensorId: sensor.id});
@@ -166,7 +158,6 @@ module.exports = function(authToken, io){
                         // update only outputs
                         else {
                             deltaStatus['status'] = message;
-
                             database.Sensors.updateOutput(sensor.id, type, deltaStatus) // the output is linked to the id of the sensor, not to the sim
                             .then(function() {
                                 io.emit('status', {sensorId: sensor.id});

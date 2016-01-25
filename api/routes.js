@@ -28,14 +28,17 @@ module.exports = function(app, debug){
         if(req.query.s === PRIVATE.html_token || DEBUG) {
             var sim = req.body.sim;
 
-            database.Sensors.update(sim, req.body.delta)
-            .then(function(data){
-                res.status(200).send(data);
-            })
-            .catch(function(error){
-                res.status(500).send('Couldn\'t update Sensors database');
-                console.log('error in /sensor/update/' + sim, error);
-            });
+            if(Object.keys(req.body.delta).length !== 0){
+                database.Sensors.update(sim, req.body.delta)
+                .then(function(data){
+                    res.status(200).send(data);
+                })
+                .catch(function(error){
+                    res.status(500).send('Couldn\'t update Sensors database');
+                    console.log('error in /sensor/update/' + sim, error);
+                });
+            } else
+                res.status(403).send({success: false, message: 'Nothing to update.'});
         } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
