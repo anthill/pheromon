@@ -24,13 +24,13 @@ var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || './';
 var UPDATER_SENSORS_PORT = parseInt(process.env.UPDATER_SENSORS_PORT, 10) || 22;
 // See PRIVATE.json
 var UPDATER_SERVER_IP = PRIVATE.server_ip || 'localhost';
-
+var BROKER_ADDRESS = process.env.NODE_ENV === "test" ? 'broker' : 'localhost';
 
 module.exports = function(authToken, io){
 
     var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
 
-    var maestro = mqtt.connect('mqtt://broker:' + process.env.BROKER_PORT, {
+    var maestro = mqtt.connect('mqtt://'+ BROKER_ADDRESS + ':' + process.env.BROKER_PORT, {
         username: 'maestro',
         password: authToken,
         clientId: 'maestro'
