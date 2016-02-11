@@ -28,14 +28,17 @@ module.exports = function(app, debug){
         if(req.query.s === PRIVATE.html_token || DEBUG) {
             var sim = req.body.sim;
 
-            database.Sensors.update(sim, req.body.delta)
-            .then(function(data){
-                res.status(200).send(data);
-            })
-            .catch(function(error){
-                res.status(500).send('Couldn\'t update Sensors database');
-                console.log('error in /sensor/update/' + sim, error);
-            });
+            if(Object.keys(req.body.delta).length !== 0){
+                database.Sensors.update(sim, req.body.delta)
+                .then(function(data){
+                    res.status(200).send(data);
+                })
+                .catch(function(error){
+                    res.status(500).send('Couldn\'t update Sensors database');
+                    console.log('error in /sensor/update/' + sim, error);
+                });
+            } else
+                res.status(403).send({success: false, message: 'Nothing to update.'});
         } else res.status(403).send({success: false, message: 'No token provided.'});
     });
 
@@ -242,8 +245,8 @@ module.exports = function(app, debug){
 
     // get various measurements of various types for various place
     app.get('/measurements/places', function(req, res){
-        var ids = req.query.ids.split(',');
-        var types = req.query.types.split(',');
+        var ids = req.query.ids.includes(',') ? req.query.ids.split(',') : [req.query.ids];
+        var types = req.query.types.includes(',') ? req.query.types.split(',') : [req.query.types];
         var start = (req.query.start === undefined) ? undefined : new Date(req.query.start);
         var end = (req.query.end === undefined) ? undefined : new Date(req.query.end);
 

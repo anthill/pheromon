@@ -35,7 +35,8 @@
         consistent-return: 0,
         no-loop-func: 1,
         no-console: 0,
-        no-redeclare: 1
+        no-redeclare: 1,
+        func-style: [2, "declaration"]
     },
     "env": {
         "es6": true,

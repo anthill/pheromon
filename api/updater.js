@@ -8,6 +8,8 @@ var util = require('util');
 var ansible = require('node-ansible');
 var exec = require('child_process').exec;
 
+var BROKER_ADDRESS = process.env.NODE_ENV === "test" ? 'broker' : 'localhost';
+
 // Start ansible for one or more sensor(s)
 function updateSensors(ansiblePlaybook, addresses) {
     return new Promise(function (resolve, reject) {
@@ -46,11 +48,15 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
     var self = this;
     var hostIP;
 
-    // Get the IP of the docker host
-    exec('ip ro get 8.8.8.8 | grep -oP "(?<=via )([\\d\\.]+)"', function (err, stdout) {
-        hostIP = stdout.toString().replace('\n', '').trim();
-        return (err);
-    });
+    // Get the host (either local host of docker)
+    if (process.env.NODE_ENV === "test"){
+        exec('ip ro get 8.8.8.8 | grep -oP "(?<=via )([\\d\\.]+)"', function (err, stdout) {
+            hostIP = stdout.toString().replace('\n', '').trim();
+            return (err);
+        });
+    } else {
+        hostIP = "localhost";
+    }
 
 
     if (typeof mqttToken !== 'string') // Incorect token
@@ -66,7 +72,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
 
     EventEmitter.call(self);
 
-    var mqttClient = mqtt.connect('mqtt://broker:1883', {
+    var mqttClient = mqtt.connect('mqtt://'+ BROKER_ADDRESS + ':' + process.env.BROKER_PORT, {
         username: 'updater',
         password: mqttToken,
         clientId: 'updater'
@@ -97,9 +103,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
             self.emit('timeout', sensor.id);
             sensor.state = 'TIMEOUT';
 
-            mqttClient.publish(sensor.id,
-                'closetunnel',
-                {qos: 1});
+            mqttClient.publish(sensor.id, 'closetunnel', {qos: 1});
 
             startNewUpdate(sensor, sensorPort, address);
 

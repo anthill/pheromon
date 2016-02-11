@@ -48,34 +48,67 @@ cd pheromon
 
 * Copy / Create the files `PRIVATE/*.json`
 
-* Install dependencies locally (this is mainly to enable gulp and automated lint functionality)
+* Install dependencies
+This will also set up the git precommit hook for eslint.
 
 ````
 npm install
 ````
 
-* Build container
+You need to have VIRTUAL_PORT and BROKER_PORT set as environment variables.
+
+### In dev
+Use this for development.
 
 ```
-docker-compose -f compose-init-db-dev.yml build
-docker-compose -f compose-dev.yml build
-```
-
-* Prepare the db : 
-
-```
-npm run init-db-prod
-// or if you want to dev
-npm run init-db-dev
-```
-
-* Launch the containers and the 
-
-```
-npm run prod
-// or if you want to dev
 npm run dev
 ```
+
+Use `npm run stop-dev` to stop.
+
+### In alpha
+Use this for preproduction.
+
+```
+npm run alpha // launch the service
+```
+
+Use `npm run stop-alpha` to stop.
+
+### In prod
+Use this for production.
+
+```
+npm run prod // launch the service
+```
+
+
+Use `npm run stop-prod` to stop.
+This will also create a `latest.sql` backup file of the db in the `backup` folder.
+
+### Database
+
+* Initialisation
+If you run a service without an initialized db, you need to
+
+```
+node database/management/init-db.js
+```
+
+* Backups and restore :
+At anytime you can backup the db using
+
+```
+node database/management/backup.js > backups/test.sql
+```
+
+or restore an previous db with
+
+```
+node database/management/restore.js backups/test.sql
+```
+
+you can also use a gziped file (comming from the automated backup for example).
 
 ## MQTT
 MQTT is the communication protocol between the server and the sensors.
@@ -148,13 +181,7 @@ You can send [commands](https://github.com/anthill/pheromon/blob/master/api/clie
 
 You can run Pheromon tests in a dedicated docker.
 
-
-First build the container:
-````
-docker-compose -f compose-test.yml build
-````
-
-Once built, you can use
+You can use
 ```
 npm run test
 ```

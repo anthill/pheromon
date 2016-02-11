@@ -338,7 +338,6 @@ describe('Maestro testing', function(){
 
                     if(main === simId || 'all') {
                         expect(destination).to.deep.equal('test');
-                        expect(parsed.error).to.exist;
                         expect(parsed.isSuccessful).to.be.false;
                         resolve();
                     }

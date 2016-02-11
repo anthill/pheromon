@@ -1,7 +1,7 @@
 'use strict';
 
 // Concats every paramater in a url postifx string
-var makeSearchString = function (obj){
+function makeSearchString(obj){
 
     if(obj === undefined) return '';
     
@@ -10,8 +10,7 @@ var makeSearchString = function (obj){
         return encodeURI(k) + '=' + encodeURI(obj[k]);
     })
     .join('&');
-};
-
+}
 
 module.exports = function(request, origin, token){
 
