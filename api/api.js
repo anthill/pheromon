@@ -4,16 +4,12 @@ require('es6-shim');
 require('better-log').install();
 
 var path = require('path');
-var fs = require('fs');
-var spawn = require('child_process').spawn;
-var zlib = require('zlib');
 
 var express = require('express');
 var app = express();
 var http = require('http');
 var compression = require('compression');
 var bodyParser = require('body-parser');
-var schedule = require('node-schedule');
 
 var debug = require('../tools/debug');
 var routes = require('./routes.js');
@@ -29,21 +25,6 @@ io.set('origins', '*:*');
 require('./maestro')(PRIVATE.mqtt_token, io);
 
 var PORT = process.env.VIRTUAL_PORT;
-
-// Backup database everyday at 3AM
-schedule.scheduleJob('0 3 * * *', function(){
-    console.log('Backup database');
-    var gzip = zlib.createGzip();
-    var today = new Date();
-    var wstream = fs.createWriteStream('/backups/' + today.getDay() + '.sql.gz');
-    var proc = spawn('pg_dump', ['-p', process.env.DB_PORT_5432_TCP_PORT, '-h', process.env.DB_PORT_5432_TCP_ADDR, '-U', process.env.POSTGRES_USER, '-d', process.env.POSTGRES_USER, '-w']);
-    proc.stdout
-        .pipe(gzip)
-        .pipe(wstream);
-    proc.stderr.on('data', function(buffer) {
-        console.log(buffer.toString().replace('\n', ''));
-    });
-});
 
 //CORS for GET
 app.use(function(req, res, next) {
