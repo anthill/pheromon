@@ -24,7 +24,7 @@ var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || '../updateF
 var UPDATER_SENSORS_PORT = parseInt(process.env.UPDATER_SENSORS_PORT, 10) || 22;
 // See PRIVATE.json
 var UPDATER_SERVER_IP = PRIVATE.server_ip || 'localhost';
-var BROKER_ADDRESS = process.env.NODE_ENV === "test" ? 'broker' : 'localhost';
+var BROKER_ADDRESS = process.env.NODE_ENV === 'test' ? 'broker' : 'localhost';
 
 module.exports = function(authToken, io){
 

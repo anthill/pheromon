@@ -8,7 +8,7 @@ var util = require('util');
 var ansible = require('node-ansible');
 var exec = require('child_process').exec;
 
-var BROKER_ADDRESS = process.env.NODE_ENV === "test" ? 'broker' : 'localhost';
+var BROKER_ADDRESS = process.env.NODE_ENV === 'test' ? 'broker' : 'localhost';
 
 // Start ansible for one or more sensor(s)
 function updateSensors(ansiblePlaybook, addresses) {
@@ -49,13 +49,13 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
     var hostIP;
 
     // Get the host (either local host of docker)
-    if (process.env.NODE_ENV === "test"){
+    if (process.env.NODE_ENV === 'test'){
         exec('ip ro get 8.8.8.8 | grep -oP "(?<=via )([\\d\\.]+)"', function (err, stdout) {
             hostIP = stdout.toString().replace('\n', '').trim();
             return (err);
         });
     } else {
-        hostIP = "localhost";
+        hostIP = 'localhost';
     }
 
 
