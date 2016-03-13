@@ -40,7 +40,7 @@ var LineChart = React.createClass({
     
         var data = props.measurements.map(function(measurement){
             var date = new Date(measurement.date);
-            return [date, measurement.value.x];
+            return [date, measurement.value.x, measurement.value.y, measurement.value.z];
         });
 
         var beginDay;
@@ -59,7 +59,7 @@ var LineChart = React.createClass({
             React.findDOMNode(this.refs[CHART_DIV_REF]),
             data,
             {
-                labels: [ 'time', 'Acceleration' ],
+                labels: [ 'time', 'Ax', 'Ay', 'Az'],
                 legend: 'onmouseover',
                 strokeWidth: 2,
                 dateWindow: [beginDay.getTime(), endDay.getTime()]
