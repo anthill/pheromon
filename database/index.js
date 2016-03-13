@@ -51,7 +51,7 @@ var toExport = {
                         place.id,
                         output.type,
                         measurement
-                            .literal('json_array_length(measurements.value)')
+                            .literal('measurements.value.x')
                             .as('latest'),
                         measurement.date.as('last_date')
                     )
