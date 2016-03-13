@@ -347,6 +347,7 @@ var toExport = {
                 var query = place
                     .select(
                         sensor.literal("array_agg(sensors.id)").as("sensor_ids"),
+                        sensor.literal("array_agg(sensors.sim)").as("sensor_uids"),
                         place.star()
                     )
                     .from(
