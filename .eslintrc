@@ -23,7 +23,6 @@
             }
         ],
         semi: 2,
-        quotes: [1, "single"],
         no-trailing-spaces: 0,
         no-multi-spaces: 0,
         space-infix-ops: 0,
