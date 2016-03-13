@@ -64,7 +64,7 @@ function render(){
 // Initial rendering
 render();
 
-// Render again when receiving recyclingCenters from API
+// Render again when receiving places from API
 api.placesLatestMeasurement('sismic')
     .then(function(places){
         console.log('places', places);
