@@ -15,7 +15,7 @@ var errlog = console.error.bind(console);
 
 var PRIVATE = require('../../../../PRIVATE/mapbox.json');
 
-var BORDEAUX_COORDS = [44.84, -0.57];
+var START_COORDS = [16.1496297,-61.39705];
 
 function safeMax(safeInt, unsafeInt) {
     return unsafeInt | 0 === unsafeInt ? Math.max(safeInt, unsafeInt) : safeInt;
@@ -30,7 +30,7 @@ var topLevelStore = {
     day: day,
     mapBoxToken: PRIVATE.token,
     mapId: PRIVATE.map_id,
-    mapCenter: BORDEAUX_COORDS,
+    mapCenter: START_COORDS,
     placeMap: undefined,
     selectedPlaceMap: new Map(),
     updatingIDs: [],
