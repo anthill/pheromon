@@ -47,7 +47,7 @@ var topLevelStore = {
             place.measurements = measurements.map(function (measurement) {
                 return ({
                     date: measurement.date,
-                    value: measurement.value.length
+                    value: measurement.value.x
                 });
             });
             topLevelStore.selectedPlaceMap.set(place.id, place);
@@ -65,7 +65,7 @@ function render(){
 render();
 
 // Render again when receiving recyclingCenters from API
-api.placesLatestMeasurement('wifi')
+api.placesLatestMeasurement('sismic')
     .then(function(places){
         console.log('places', places);
 
@@ -83,7 +83,7 @@ socket.on('data', function (measurement) {
     // GET DATA
     var id = measurement.installed_at;
 
-    var value = measurement.value.length;
+    var value = measurement.value.x;
     var date = measurement.date;
     
     // GET PLACE
