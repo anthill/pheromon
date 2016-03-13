@@ -69,7 +69,7 @@ var toExport = {
                     .subQuery('max_measurement_per_recycling_center')
                     .select(
                         place.id, place.name, place.lat, place.lon,
-                        'max(GREATEST(json_array_length(measurements.value), 1))'
+                        'max(GREATEST(measurements.value.x, 1))'
                     )
                     .from(fullJoin)
                     .where(place.id.equals(placeId))
@@ -134,7 +134,7 @@ var toExport = {
                         place.id,
                         output.type,
                         measurement
-                            .literal('json_array_length(measurements.value)')
+                            .literal('measurements.value.x')
                             .as('latest'),
                         measurement.date.as('last_date')
                     )
@@ -152,7 +152,7 @@ var toExport = {
                     .subQuery('max_measurement_per_recycling_center')
                     .select(
                         place.id, place.name, place.lat, place.lon,
-                        'max(GREATEST(json_array_length(measurements.value),1))'
+                        'max(GREATEST(measurements.value.x,1))'
                     )
                     .from(fullJoin)
                     .group(place.id);
@@ -215,7 +215,7 @@ var toExport = {
                         sensor.id,
                         output.type,
                         measurement
-                            .literal('json_array_length(measurements.value)')
+                            .literal('measurements.value.x')
                             .as('latest'),
                         measurement.date.as('last_date')
                     )
@@ -233,7 +233,7 @@ var toExport = {
                     .subQuery('max_measurement_per_recycling_center')
                     .select(
                         sensor.id, sensor.name, sensor.project, sensor.sim, sensor.period,
-                        'max(GREATEST(json_array_length(measurements.value),1))'
+                        'max(GREATEST(measurements.value.x,1))'
                     )
                     .from(fullJoin)
                     .where(sensor.sim.in(sims))
@@ -313,7 +313,7 @@ var toExport = {
                         measurement.date,
                         output.type,
                         measurement
-                            .literal('json_array_length(measurements.value)')
+                            .literal('measurements.value.x')
                             .as('entry'),
                         measurement.value
                     )
