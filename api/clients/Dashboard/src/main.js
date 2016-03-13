@@ -47,7 +47,7 @@ var topLevelStore = {
             place.measurements = measurements.map(function (measurement) {
                 return ({
                     date: measurement.date,
-                    value: measurement.value.x
+                    value: measurement.value
                 });
             });
             topLevelStore.selectedPlaceMap.set(place.id, place);
