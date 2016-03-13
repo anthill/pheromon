@@ -123,12 +123,11 @@ module.exports = function(authToken, io){
                         database.Sensors.update(sensor.sim, {client_status: 'connected'}) // this is to set the sensor to 'CONNECTED' in D
                         .then(function() {
                             io.emit('status', {sensorId: sensor.id});
+                            var dateString = new Date().toISOString();
                             var cmd = [
                                 'init',
                                 sensor.period,
-                                sensor.start_hour,
-                                sensor.stop_hour,
-                                sensor.installed_at
+                                dateString
                             ].join(' ');
 
                             maestro.publish(sim, cmd);
@@ -180,75 +179,41 @@ module.exports = function(authToken, io){
                             }
                         */
                         
-                        decoder.decodeMessage(message, type)
-                        .then(function(data){
-                            debug('Measurement to register', data);
+                        var data = message.toString();
+                        
+                        debug('Measurement to register', data);
 
-                            var outputId = makeMap(sensor.outputs, 'type').get(type).id;
-                            var measurements = decoder.extractMeasurementsFromData(data, type);
+                        var outputId = makeMap(sensor.outputs, 'type').get(type).id;
+                        var measurements = decoder.extractMeasurementsFromData(data, type);
 
-                            if (measurements) {
-                                measurements.forEach(function (measurement) {
+                        if (measurements) {
+                            measurements.forEach(function (measurement) {
 
-                                    var createMeasurementP = database.Measurements.create({
-                                        output_id: outputId,
+                                var createMeasurementP = database.Measurements.create({
+                                    output_id: outputId,
+                                    value: measurement.value,
+                                    date: measurement.date
+                                });
+
+                                var updateSensorStatusP;
+                                if (sensor.client_status === 'disconnected')
+                                    updateSensorStatusP = database.Sensors.update(sensor.sim, {client_status: 'connected'});
+                                
+                                Promise.all([createMeasurementP, updateSensorStatusP]).then(function() {
+                                    io.emit('data', {
+                                        installed_at: sensor.installed_at,
+                                        type: type,
                                         value: measurement.value,
                                         date: measurement.date
-                                    });
+                                    });                                      
+                                    console.log('measurement of type', type, 'updated');
 
-                                    var updateSensorStatusP;
-                                    if (sensor.client_status === 'disconnected')
-                                        updateSensorStatusP = database.Sensors.update(sensor.sim, {client_status: 'connected'});
-                                    
-                                    Promise.all([createMeasurementP, updateSensorStatusP]).then(function() {
-                                        switch(type){
-                                            case 'wifi':
-                                                io.emit('data', {
-                                                    installed_at: sensor.installed_at,
-                                                    type: type,
-                                                    value: measurement.value,
-                                                    date: measurement.date
-                                                });
-                                                break;
-
-                                            // THIS IS 6ELEMENT SPECIFIC CODE :/
-                                            case 'bin':
-                                                /* we need to send a websocket msg to pass the info to 6element server */
-                                                io.emit('bin', {
-                                                    installed_at: sensor.installed_at,
-                                                    bin: measurement.value
-                                                });
-
-                                                maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
-                                                    isSuccessful: true,
-                                                    index: measurement.index
-                                                }));
-                                                break;
-                                        }
-                                        console.log('measurement of type', type, 'updated');
-
-                                    })
-                                    .catch(function(err) {
-                                        console.log('error : cannot store measurement in DB :', err);
-
-                                        // THIS IS 6ELEMENT SPECIFIC CODE :/
-                                        if (type === 'bin'){
-                                            maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
-                                                error: err,
-                                                isSuccessful: false,
-                                                index: measurement.index
-                                            }));
-                                        }
-                                    });
+                                })
+                                .catch(function(err) {
+                                    console.log('error : cannot store measurement in DB :', err);
                                 });
-                            }
-                            else
-                                console.log('Error extracing measurements from data');
-                        })
-                        .catch(function(err){
-                            console.log('ERROR in decoding', err);
-                        });
-                                               
+                            });
+                        }               
                         break;
                     
                     case 'cmdResult':
