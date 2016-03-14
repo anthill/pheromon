@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS sensors (
     signal_status   signal_status DEFAULT 'NODATA' NOT NULL,
     latest_input    text DEFAULT NULL, --Command
     latest_output   text DEFAULT NULL, --Result
-    period          real DEFAULT 300, --One measurement every 300 seconds
+    period          real DEFAULT 1, --Aggregate 1 seconds of measures
     start_hour      real DEFAULT 7, --Start at 7h UTC
     stop_hour       real DEFAULT 16 --End at 16h UTC
 ) INHERITS(lifecycle);
