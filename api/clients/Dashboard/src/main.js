@@ -106,6 +106,6 @@ socket.on('data', function (measurement) {
     setTimeout(function(){
         topLevelStore.updatingIDs = [];
         render();
-    }, 200);
+    }, 4000);
 
 });
