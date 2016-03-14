@@ -77,8 +77,6 @@ api.placesLatestMeasurement('sismic')
 var socket = io();
 
 socket.on('data', function (measurement) {
-    // For now, this is only capable of treating measurements of type signal_strength
-    // We need to implement differents measurement types push
 
     // GET DATA
     var id = measurement.installed_at;

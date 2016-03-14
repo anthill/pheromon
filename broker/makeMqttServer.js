@@ -4,6 +4,8 @@ var mosca = require('mosca');
 
 var debug = require('../tools/debug');
 
+var PORT = parseInt(process.env.BROKER_PORT, 10) || 1883;
+
 var pubsubsettings = {
     type: 'redis',
     redis: require('redis'),
@@ -13,7 +15,7 @@ var pubsubsettings = {
 };
 
 var moscaSettings = {
-    port: parseInt(process.env.BROKER_PORT, 10),
+    port: PORT,
     backend: pubsubsettings,
     persistence: {
         factory: mosca.persistence.Redis,
