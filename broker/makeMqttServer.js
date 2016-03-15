@@ -2,7 +2,6 @@
 
 var mosca = require('mosca');
 
-var debug = require('../tools/debug');
 
 var PORT = parseInt(process.env.BROKER_PORT, 10) || 1883;
 
@@ -30,33 +29,33 @@ module.exports = function(authToken){
         var server = new mosca.Server(moscaSettings);
 
         server.on('clientConnected', function(client) {
-            debug('Client', client.id, 'connected');
+            console.log('Client', client.id, 'connected');
         });
 
         server.on('clientDisconnected', function(client) {
-            debug('Client', client.id, 'disconnected');
+            console.log('Client', client.id, 'disconnected');
         });
 
         server.on('published', function(packet, client) {
             if (!client)
                 client = {id: 'broker'};
-            debug('Client', client.id);
-            debug('published', packet.topic);
+            console.log('Client', client.id);
+            console.log('published', packet.topic);
         });
 
         server.on('delivered', function(packet, client) {
             if (!client)
                 client = {id: 'broker'};
-            debug('Client', client.id);
-            debug('received', packet.topic);
+            console.log('Client', client.id);
+            console.log('received', packet.topic);
         });
 
         server.on('subscribed', function(topic, client) {
-            debug('Client', client.id, 'subscribed to', topic);
+            console.log('Client', client.id, 'subscribed to', topic);
         });
 
         server.on('unsubscribed', function(topic, client) {
-            debug('Client', client.id, 'unsubscribed to', topic);
+            console.log('Client', client.id, 'unsubscribed to', topic);
         });
 
         server.on('ready', function(){
