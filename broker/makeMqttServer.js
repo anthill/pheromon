@@ -4,6 +4,8 @@ var mosca = require('mosca');
 
 
 var PORT = parseInt(process.env.BROKER_PORT, 10) || 1883;
+var API_PORT = process.env.VIRTUAL_PORT ? process.env.VIRTUAL_PORT : 9000;
+var ssl = require('../PRIVATE/secret.json').ssl;
 
 var pubsubsettings = {
     type: 'redis',
@@ -14,12 +16,16 @@ var pubsubsettings = {
 };
 
 var moscaSettings = {
-    port: PORT,
     backend: pubsubsettings,
     persistence: {
         factory: mosca.persistence.Redis,
         host: process.env.REDIS_PORT_6379_TCP_ADDR || 'localhost' // localhost is for prod, dev, alpha. The other is for tests
-    }
+    },
+    interfaces: [
+        { type: "mqtt", port: PORT },
+        { type: "http", port: API_PORT, bundle: true },
+        { type: "https", port: API_PORT, bundle: true, credentials: { keyPath: "/etc/ssl/" + ssl + ".key", certPath: "/etc/ssl/" + ssl + ".crt" }}
+    ]
 };
 
 module.exports = function(authToken){
