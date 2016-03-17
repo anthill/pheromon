@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS sensors (
     latest_input    text DEFAULT NULL, --Command
     latest_output   text DEFAULT NULL, --Result
     period          real DEFAULT 300, --One measurement every 300 seconds
-    start_hour      real DEFAULT 7, --Start at 7h UTC
-    stop_hour       real DEFAULT 16 --End at 16h UTC
+    start_hour      real DEFAULT 8, --Start at 8h UTC
+    stop_hour       real DEFAULT 18 --End at 18h UTC
 ) INHERITS(lifecycle);
 CREATE TRIGGER updated_at_sensors BEFORE UPDATE ON sensors FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
