@@ -29,8 +29,8 @@ module.exports = function(authToken, io){
     var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
 
     var maestro = mqtt.connect('mqtt://'+ BROKER_ADDRESS + ':' + process.env.BROKER_PORT, {
-        username: 'maestro',
-        password: authToken,
+        username: PRIVATE.mqtt_user,
+        password: PRIVATE.mqtt_token,
         clientId: 'maestro'
     });
 

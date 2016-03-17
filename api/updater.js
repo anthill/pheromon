@@ -2,6 +2,8 @@
 
 require('es6-shim');
 
+var PRIVATE = require('../PRIVATE/secret.json');
+
 var EventEmitter = require('events').EventEmitter;
 var mqtt = require('mqtt');
 var util = require('util');
@@ -73,7 +75,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
     EventEmitter.call(self);
 
     var mqttClient = mqtt.connect('mqtt://'+ BROKER_ADDRESS + ':' + process.env.BROKER_PORT, {
-        username: 'updater',
+        username: PRIVATE.mqtt_user,
         password: mqttToken,
         clientId: 'updater'
     });
