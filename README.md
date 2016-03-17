@@ -236,6 +236,7 @@ There are 2 PRIVATE files:
 {
     "server_ip": ..., // your server ip, used by the sensor updater
     "html_token": ..., // token you should use to protect the access to your Admin client or database API
+    "mqtt_user": ..., // username for mqtt
     "mqtt_token": ..., // MQTT for the broker to authenticate sensor
     "cmd_token": ... // token to allow cmd sending to sensor
 }
@@ -244,8 +245,6 @@ There are 2 PRIVATE files:
 `server_ip` is used in `api/maestro.js`.
 
 `html_token` is used in `api/api.js` and `api/routes.js`.
-
-`mqtt_token` is used in `api/api.js` and `broker/index.js`.
 
 `cmd_token` is used in `api/maestro.js` and `api/clients/Admin/src/main.js`.
 
