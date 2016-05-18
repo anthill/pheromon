@@ -35,7 +35,7 @@ var toExport = {
                     .subQuery('latest_recycling_center_measurement_date')
                     .select(
                         place.id,
-                        measurement.created_at.max().as('last_date')
+                        measurement.date.max().as('last_date')
                     )
                     .from(fullJoin)
                     .where(place.id.equals(placeId))
@@ -53,12 +53,12 @@ var toExport = {
                         measurement
                             .literal('json_array_length(measurements.value)')
                             .as('latest'),
-                        measurement.created_at.as('last_date')
+                        measurement.date.as('last_date')
                     )
                     .from(fullJoin
                         .join(latestPlaceMeasurementDate)
                         .on(place.id.equals(latestPlaceMeasurementDate.id).and(
-                            latestPlaceMeasurementDate.last_date.equals(measurement.created_at)
+                            latestPlaceMeasurementDate.last_date.equals(measurement.date)
                         )));
 
                 /*
@@ -119,7 +119,7 @@ var toExport = {
                     .subQuery('latest_recycling_center_measurement_date')
                     .select(
                         place.id,
-                        measurement.created_at.max().as('last_date')
+                        measurement.date.max().as('last_date')
                     )
                     .from(fullJoin)
                     .group(place.id);
@@ -136,12 +136,12 @@ var toExport = {
                         measurement
                             .literal('json_array_length(measurements.value)')
                             .as('latest'),
-                        measurement.created_at.as('last_date')
+                        measurement.date.as('last_date')
                     )
                     .from(fullJoin
                         .join(latestPlaceMeasurementDate)
                         .on(place.id.equals(latestPlaceMeasurementDate.id).and(
-                            latestPlaceMeasurementDate.last_date.equals(measurement.created_at)
+                            latestPlaceMeasurementDate.last_date.equals(measurement.date)
                         )));
 
                 /*
@@ -199,7 +199,7 @@ var toExport = {
                     .subQuery('latest_sensor_measurement_date')
                     .select(
                         sensor.id,
-                        measurement.created_at.max().as('last_date')
+                        measurement.date.max().as('last_date')
                     )
                     .from(fullJoin)
                     .where(sensor.sim.in(sims))
@@ -217,12 +217,12 @@ var toExport = {
                         measurement
                             .literal('json_array_length(measurements.value)')
                             .as('latest'),
-                        measurement.created_at.as('last_date')
+                        measurement.date.as('last_date')
                     )
                     .from(fullJoin
                         .join(latestSensorMeasurementDate)
                         .on(sensor.id.equals(latestSensorMeasurementDate.id).and(
-                            latestSensorMeasurementDate.last_date.equals(measurement.created_at)
+                            latestSensorMeasurementDate.last_date.equals(measurement.date)
                         )));
 
                 /*
@@ -274,14 +274,14 @@ var toExport = {
 
                 var query = sensor
                     .select(
-                        measurement.created_at,
+                        measurement.date,
                         measurement.value,
                         output.type
                     )
                     .where(
                         sensor.installed_at.in(ids),
                         output.type.in(types),
-                        measurement.created_at.between(_start, _end)
+                        measurement.date.between(_start, _end)
                     )
                     .from(
                         sensor
@@ -310,7 +310,7 @@ var toExport = {
                 var query = sensor
                     .select(
                         sensor.sim,
-                        measurement.created_at,
+                        measurement.date,
                         output.type,
                         measurement
                             .literal('json_array_length(measurements.value)')
@@ -320,7 +320,7 @@ var toExport = {
                     .where(
                         sensor.sim.in(sims), 
                         output.type.in(types),
-                        measurement.created_at.between(_start, _end)
+                        measurement.date.between(_start, _end)
                         )
                     .from(
                         sensor
@@ -380,7 +380,7 @@ var toExport = {
 
                 var query = sensor
                     .select(
-                        measurement.created_at,
+                        measurement.created_at.as('date'),
                         measurement.value,
                         output.type
                     )
@@ -419,13 +419,13 @@ var toExport = {
                     .select(
                         sensor.sim,
                         output.type,
-                        measurement.created_at,
+                        measurement.date,
                         measurement.value
                     )
                     .where(
                         sensor.sim.equals(sim),
                         output.type.equals(type),
-                        measurement.created_at.between(_start, _end)
+                        measurement.date.between(_start, _end)
                         )
                     .from(
                         sensor
