@@ -15,7 +15,7 @@ var errlog = console.error.bind(console);
 
 var PRIVATE = require('../../../../PRIVATE/mapbox.json');
 
-var START_COORDS = [16.1496297,-61.39705];
+var START_COORDS = PRIVATE.center;
 
 function safeMax(safeInt, unsafeInt) {
     return unsafeInt | 0 === unsafeInt ? Math.max(safeInt, unsafeInt) : safeInt;
@@ -65,7 +65,7 @@ function render(){
 render();
 
 // Render again when receiving places from API
-api.placesLatestMeasurement('sismic')
+api.placesLatestMeasurement('measurement')
     .then(function(places){
         console.log('places', places);
 

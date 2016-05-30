@@ -252,7 +252,8 @@ There are 2 PRIVATE files:
 ```
 {
     "token": ..., // token for your mapbox account
-    "map_id": ..., // id of your map background
+    "map_id": ..., // id of your map background,
+    "center": [16.1496297,-61.39705]
 }
 ```
 Both `mapbox.json` fields are used in `api/clients/Dashboard/src/main.js`.

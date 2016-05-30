@@ -85,7 +85,7 @@ module.exports = React.createClass({
                     }
                 }
                 else{
-                    props.measurementsPlaces(place, ['sismic']); 
+                    props.measurementsPlaces(place, ['measurement']); 
                 }
             }
         });
