@@ -24,7 +24,15 @@
 }
 
 .place.updating {
-	stroke-width: 3; stroke-opacity: 1; stroke: red;
+	stroke-width: 10; stroke-opacity: 0.1; stroke: red;    
+	animation-name: pulse;
+    animation-duration: 1s;
+    animation-iteration-count: 3;
+}
+
+@keyframes pulse {
+    0% {stroke-width: 10; stroke-opacity: 1.0;}
+    100% {stroke-width: 100; stroke-opacity: 0.0;}
 }
 
 .placeName{

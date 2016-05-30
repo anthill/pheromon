@@ -2,9 +2,7 @@
 
 // maestro: mqtt client on the API side of Pheromon
 var mqtt = require('mqtt');
-var decoder = require('./utils/decodeMessage');
 var checkSensor = require('./utils/checkSensor.js');
-var debug = require('../tools/debug');
 var makeMap = require('../tools/makeMap');
 var sendReq = require('../tools/sendNodeReq');
 var database = require('../database');
@@ -31,8 +29,8 @@ module.exports = function(authToken, io){
     var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
 
     var maestro = mqtt.connect('mqtt://'+ BROKER_ADDRESS + ':' + process.env.BROKER_PORT, {
-        username: 'maestro',
-        password: authToken,
+        username: PRIVATE.mqtt_user,
+        password: PRIVATE.mqtt_token,
         clientId: 'maestro'
     });
 
@@ -123,12 +121,11 @@ module.exports = function(authToken, io){
                         database.Sensors.update(sensor.sim, {client_status: 'connected'}) // this is to set the sensor to 'CONNECTED' in D
                         .then(function() {
                             io.emit('status', {sensorId: sensor.id});
+                            var dateString = new Date().toISOString();
                             var cmd = [
                                 'init',
                                 sensor.period,
-                                sensor.start_hour,
-                                sensor.stop_hour,
-                                sensor.installed_at
+                                dateString
                             ].join(' ');
 
                             maestro.publish(sim, cmd);
@@ -180,75 +177,36 @@ module.exports = function(authToken, io){
                             }
                         */
                         
-                        decoder.decodeMessage(message, type)
-                        .then(function(data){
-                            debug('Measurement to register', data);
+                        var measurements = JSON.parse(message.toString());
+                        
+                        var outputId = makeMap(sensor.outputs, 'type').get(type).id;
 
-                            var outputId = makeMap(sensor.outputs, 'type').get(type).id;
-                            var measurements = decoder.extractMeasurementsFromData(data, type);
+                        measurements.forEach(function (measurement) {
 
-                            if (measurements) {
-                                measurements.forEach(function (measurement) {
+                            var createMeasurementP = database.Measurements.create({
+                                output_id: outputId,
+                                value: measurement.value,
+                                date: measurement.date
+                            });
 
-                                    var createMeasurementP = database.Measurements.create({
-                                        output_id: outputId,
-                                        value: measurement.value,
-                                        date: measurement.date
-                                    });
+                            var updateSensorStatusP;
+                            if (sensor.client_status === 'disconnected')
+                                updateSensorStatusP = database.Sensors.update(sensor.sim, {client_status: 'connected'});
+                            
+                            Promise.all([createMeasurementP, updateSensorStatusP]).then(function() {
+                                io.emit('data', {
+                                    installed_at: sensor.installed_at,
+                                    type: type,
+                                    value: measurement.value,
+                                    date: measurement.date
+                                });                                      
+                                console.log('measurement of type', type, 'updated');
 
-                                    var updateSensorStatusP;
-                                    if (sensor.client_status === 'disconnected')
-                                        updateSensorStatusP = database.Sensors.update(sensor.sim, {client_status: 'connected'});
-                                    
-                                    Promise.all([createMeasurementP, updateSensorStatusP]).then(function() {
-                                        switch(type){
-                                            case 'wifi':
-                                                io.emit('data', {
-                                                    installed_at: sensor.installed_at,
-                                                    type: type,
-                                                    value: measurement.value,
-                                                    date: measurement.date
-                                                });
-                                                break;
-
-                                            // THIS IS 6ELEMENT SPECIFIC CODE :/
-                                            case 'bin':
-                                                /* we need to send a websocket msg to pass the info to 6element server */
-                                                io.emit('bin', {
-                                                    installed_at: sensor.installed_at,
-                                                    bin: measurement.value
-                                                });
-
-                                                maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
-                                                    isSuccessful: true,
-                                                    index: measurement.index
-                                                }));
-                                                break;
-                                        }
-                                        console.log('measurement of type', type, 'updated');
-
-                                    })
-                                    .catch(function(err) {
-                                        console.log('error : cannot store measurement in DB :', err);
-
-                                        // THIS IS 6ELEMENT SPECIFIC CODE :/
-                                        if (type === 'bin'){
-                                            maestro.publish(sensor.sim + '/' + measurement.origin, JSON.stringify({
-                                                error: err,
-                                                isSuccessful: false,
-                                                index: measurement.index
-                                            }));
-                                        }
-                                    });
-                                });
-                            }
-                            else
-                                console.log('Error extracing measurements from data');
-                        })
-                        .catch(function(err){
-                            console.log('ERROR in decoding', err);
+                            })
+                            .catch(function(err) {
+                                console.log('error : cannot store measurement in DB :', err);
+                            });
                         });
-                                               
                         break;
                     
                     case 'cmdResult':

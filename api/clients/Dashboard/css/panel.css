@@ -74,10 +74,9 @@
 
 #logomap{
 	position: absolute;
-	background-color: white;
-	opacity: 0.7;
-	width: 6em;
-	bottom: 0.5em;
+	opacity: 0.9;
+	width: 12em;
+	bottom: 2em;
 	left: 0.5em;
 	z-index: 1;
 }

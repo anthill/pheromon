@@ -85,7 +85,7 @@ module.exports = React.createClass({
                     }
                 }
                 else{
-                    props.measurementsPlaces(place, ['wifi']); 
+                    props.measurementsPlaces(place, ['measurement']); 
                 }
             }
         });
