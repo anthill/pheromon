@@ -15,7 +15,7 @@ var errlog = console.error.bind(console);
 
 var PRIVATE = require('../../../../PRIVATE/mapbox.json');
 
-var BORDEAUX_COORDS = [44.84, -0.57];
+var START_COORDS = PRIVATE.center;
 
 function safeMax(safeInt, unsafeInt) {
     return unsafeInt | 0 === unsafeInt ? Math.max(safeInt, unsafeInt) : safeInt;
@@ -30,7 +30,7 @@ var topLevelStore = {
     day: day,
     mapBoxToken: PRIVATE.token,
     mapId: PRIVATE.map_id,
-    mapCenter: BORDEAUX_COORDS,
+    mapCenter: START_COORDS,
     placeMap: undefined,
     selectedPlaceMap: new Map(),
     updatingIDs: [],
@@ -47,7 +47,7 @@ var topLevelStore = {
             place.measurements = measurements.map(function (measurement) {
                 return ({
                     date: measurement.date,
-                    value: measurement.value.length
+                    value: measurement.value
                 });
             });
             topLevelStore.selectedPlaceMap.set(place.id, place);
@@ -64,8 +64,8 @@ function render(){
 // Initial rendering
 render();
 
-// Render again when receiving recyclingCenters from API
-api.placesLatestMeasurement('wifi')
+// Render again when receiving places from API
+api.placesLatestMeasurement('measurement')
     .then(function(places){
         console.log('places', places);
 
@@ -77,13 +77,11 @@ api.placesLatestMeasurement('wifi')
 var socket = io();
 
 socket.on('data', function (measurement) {
-    // For now, this is only capable of treating measurements of type signal_strength
-    // We need to implement differents measurement types push
 
     // GET DATA
     var id = measurement.installed_at;
 
-    var value = measurement.value.length;
+    var value = measurement.value.x;
     var date = measurement.date;
     
     // GET PLACE
@@ -108,6 +106,6 @@ socket.on('data', function (measurement) {
     setTimeout(function(){
         topLevelStore.updatingIDs = [];
         render();
-    }, 200);
+    }, 4000);
 
 });

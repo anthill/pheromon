@@ -236,6 +236,7 @@ There are 2 PRIVATE files:
 {
     "server_ip": ..., // your server ip, used by the sensor updater
     "html_token": ..., // token you should use to protect the access to your Admin client or database API
+    "mqtt_user": ..., // username for mqtt
     "mqtt_token": ..., // MQTT for the broker to authenticate sensor
     "cmd_token": ... // token to allow cmd sending to sensor
 }
@@ -245,15 +246,14 @@ There are 2 PRIVATE files:
 
 `html_token` is used in `api/api.js` and `api/routes.js`.
 
-`mqtt_token` is used in `api/api.js` and `broker/index.js`.
-
 `cmd_token` is used in `api/maestro.js` and `api/clients/Admin/src/main.js`.
 
 - `mapbox.json` : this file is not very sensitive. It only contains mapbox infos
 ```
 {
     "token": ..., // token for your mapbox account
-    "map_id": ..., // id of your map background
+    "map_id": ..., // id of your map background,
+    "center": [16.1496297,-61.39705]
 }
 ```
 Both `mapbox.json` fields are used in `api/clients/Dashboard/src/main.js`.

@@ -53,7 +53,7 @@ var Panel = React.createClass({
                 className: classes
             },
             [
-                React.DOM.h1({}, 'Affluence en direct'),
+                React.DOM.h1({}, 'Realtime measurements'),
                 closeButton,
                 details
             ]

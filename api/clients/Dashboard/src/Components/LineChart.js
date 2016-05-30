@@ -59,7 +59,7 @@ var LineChart = React.createClass({
             React.findDOMNode(this.refs[CHART_DIV_REF]),
             data,
             {
-                labels: [ 'time', 'Traces wifi' ],
+                labels: [ 'time', 'measure'],
                 legend: 'onmouseover',
                 strokeWidth: 2,
                 dateWindow: [beginDay.getTime(), endDay.getTime()]

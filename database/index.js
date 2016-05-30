@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-var decl = require('./management/declarations.js');
-var databaseP = require('./management/databaseClientP');
+var decl = require("./management/declarations.js");
+var databaseP = require("./management/databaseClientP");
 
 var place = decl.places;
 var sensor = decl.sensors;
@@ -9,9 +9,9 @@ var measurement = decl.measurements;
 var output = decl.outputs;
 
 var toExport = {
-    Places: require('./models/places.js'),
-    Sensors: require('./models/sensors.js'),
-    Measurements: require('./models/measurements.js'),
+    Places: require("./models/places.js"),
+    Sensors: require("./models/sensors.js"),
+    Measurements: require("./models/measurements.js"),
     complexQueries: {
         placeLatestMeasurement: function(placeId, type){
             return databaseP.then(function(db) {
@@ -32,28 +32,28 @@ var toExport = {
                 */
 
                 var latestPlaceMeasurementDate = place
-                    .subQuery('latest_recycling_center_measurement_date')
+                    .subQuery("latest_recycling_center_measurement_date")
                     .select(
                         place.id,
-                        measurement.date.max().as('last_date')
+                        measurement.date.max().as("last_date")
                     )
                     .from(fullJoin)
                     .where(place.id.equals(placeId))
                     .group(place.id);
 
                 /*
-                    For each recycling center, get the measurement value associated to the last measurement date
+                    For each place, get the measurement value associated to the last measurement date
                 */
                 
                 var latestPlaceMeasurementValue = place
-                    .subQuery('latest_recycling_center_measurement_value')
+                    .subQuery("latest_recycling_center_measurement_value")
                     .select(
                         place.id,
                         output.type,
                         measurement
-                            .literal('json_array_length(measurements.value)')
-                            .as('latest'),
-                        measurement.date.as('last_date')
+                            .literal("measurements.value::json->>'x'")
+                            .as("latest"),
+                        measurement.date.as("last_date")
                     )
                     .from(fullJoin
                         .join(latestPlaceMeasurementDate)
@@ -62,34 +62,34 @@ var toExport = {
                         )));
 
                 /*
-                    For each recycling center, get the maximum measurement (and recycling center infos)
+                    For each place, get the maximum measurement (and place infos)
                     TODO restrict maximum to the last few months
                 */
                 var maxMeasurementPerPlace = place
-                    .subQuery('max_measurement_per_recycling_center')
+                    .subQuery("max_measurement_per_recycling_center")
                     .select(
                         place.id, place.name, place.lat, place.lon,
-                        'max(GREATEST(json_array_length(measurements.value), 1))'
+                        "max(GREATEST(cast(measurements.value::json->>'x' as float),01))"
                     )
                     .from(fullJoin)
                     .where(place.id.equals(placeId))
                     .group(place.id);
 
                 /*
-                    For each recycling center, get
-                    * recycling center infos (long lat)
+                    For each place, get
+                    * place infos (long lat)
                     * maximum number of signals
                     * latest measured number of signals
                 */
                 var query = place
-                    .select('*')
+                    .select("*")
                     .from(maxMeasurementPerPlace
                         .join(latestPlaceMeasurementValue)
                         .on(maxMeasurementPerPlace.id.equals(latestPlaceMeasurementValue.id))
                     )
                     .toQuery();
 
-                // console.log('placeLatestMeasurement query', query);
+                // console.log("placeLatestMeasurement query", query);
 
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
@@ -116,27 +116,27 @@ var toExport = {
                     For each place, get the last measurement date
                 */
                 var latestPlaceMeasurementDate = place
-                    .subQuery('latest_recycling_center_measurement_date')
+                    .subQuery("latest_recycling_center_measurement_date")
                     .select(
                         place.id,
-                        measurement.date.max().as('last_date')
+                        measurement.date.max().as("last_date")
                     )
                     .from(fullJoin)
                     .group(place.id);
 
                 /*
-                    For each recycling center, get the measurement value associated to the last measurement date
+                    For each place, get the measurement value associated to the last measurement date
                 */
                 
                 var latestPlaceMeasurementValue = place
-                    .subQuery('latest_recycling_center_measurement_value')
+                    .subQuery("latest_recycling_center_measurement_value")
                     .select(
                         place.id,
                         output.type,
                         measurement
-                            .literal('json_array_length(measurements.value)')
-                            .as('latest'),
-                        measurement.date.as('last_date')
+                            .literal("measurements.value::json->>'x'")
+                            .as("latest"),
+                        measurement.date.as("last_date")
                     )
                     .from(fullJoin
                         .join(latestPlaceMeasurementDate)
@@ -145,33 +145,32 @@ var toExport = {
                         )));
 
                 /*
-                    For each recycling center, get the maximum measurement (and recycling center infos)
-                    TODO restrict maximum to the last few months
+                    For each place, get the maximum measurement (and place infos)
                 */
                 var maxMeasurementPerPlace = place
-                    .subQuery('max_measurement_per_recycling_center')
+                    .subQuery("max_measurement_per_recycling_center")
                     .select(
                         place.id, place.name, place.lat, place.lon,
-                        'max(GREATEST(json_array_length(measurements.value),1))'
+                        "max(GREATEST(cast(measurements.value::json->>'x' as float),0))"
                     )
                     .from(fullJoin)
                     .group(place.id);
 
                 /*
-                    For each recycling center, get
-                    * recycling center infos (long lat)
+                    For each place, get
+                    * place infos (long lat)
                     * maximum number of signals
                     * latest measured number of signals
                 */
                 var query = place
-                    .select('*')
+                    .select("*")
                     .from(maxMeasurementPerPlace
                         .join(latestPlaceMeasurementValue)
                         .on(maxMeasurementPerPlace.id.equals(latestPlaceMeasurementValue.id))
                     )
                     .toQuery();
 
-                // console.log('currentPlaceAffluences query', query);
+                // console.log("currentPlaceAffluences query", query);
 
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
@@ -196,10 +195,10 @@ var toExport = {
                     For each sensor, get the last measurement date
                 */
                 var latestSensorMeasurementDate = sensor
-                    .subQuery('latest_sensor_measurement_date')
+                    .subQuery("latest_sensor_measurement_date")
                     .select(
                         sensor.id,
-                        measurement.date.max().as('last_date')
+                        measurement.date.max().as("last_date")
                     )
                     .from(fullJoin)
                     .where(sensor.sim.in(sims))
@@ -210,14 +209,14 @@ var toExport = {
                 */
                 
                 var latestSensorMeasurementValue = sensor
-                    .subQuery('latest_sensor_measurement_value')
+                    .subQuery("latest_sensor_measurement_value")
                     .select(
                         sensor.id,
                         output.type,
                         measurement
-                            .literal('json_array_length(measurements.value)')
-                            .as('latest'),
-                        measurement.date.as('last_date')
+                            .literal("measurements.value::json->>'x'")
+                            .as("latest"),
+                        measurement.date.as("last_date")
                     )
                     .from(fullJoin
                         .join(latestSensorMeasurementDate)
@@ -230,10 +229,10 @@ var toExport = {
                     TODO restrict maximum to the last few months
                 */
                 var maxMeasurementPerSensor = sensor
-                    .subQuery('max_measurement_per_recycling_center')
+                    .subQuery("max_measurement_per_recycling_center")
                     .select(
                         sensor.id, sensor.name, sensor.project, sensor.sim, sensor.period,
-                        'max(GREATEST(json_array_length(measurements.value),1))'
+                        "max(GREATEST(cast(measurements.value::json->>'x' as float),0))"
                     )
                     .from(fullJoin)
                     .where(sensor.sim.in(sims))
@@ -247,14 +246,14 @@ var toExport = {
                     * latest date measured
                 */
                 var query = place
-                    .select('*')
+                    .select("*")
                     .from(maxMeasurementPerSensor
                         .join(latestSensorMeasurementValue)
                         .on(maxMeasurementPerSensor.id.equals(latestSensorMeasurementValue.id))
                     )
                     .toQuery();
 
-                // console.log('sensorsLatestMeasurement query', query);
+                // console.log("sensorsLatestMeasurement query", query);
 
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
@@ -269,8 +268,8 @@ var toExport = {
             return databaseP.then(function(db){
 
                 // if no dates provided, assume we want all
-                var _start = start || new Date('1900-10-15T11:23:19.766Z');
-                var _end = end || new Date('2200-10-15T11:23:19.766Z');
+                var _start = start || new Date("1900-10-15T11:23:19.766Z");
+                var _end = end || new Date("2200-10-15T11:23:19.766Z");
 
                 var query = sensor
                     .select(
@@ -304,8 +303,8 @@ var toExport = {
             return databaseP.then(function(db){
 
                 // if no dates provided, assume we want all
-                var _start = start || new Date('1900-10-15T11:23:19.766Z');
-                var _end = end || new Date('2200-10-15T11:23:19.766Z');
+                var _start = start || new Date("1900-10-15T11:23:19.766Z");
+                var _end = end || new Date("2200-10-15T11:23:19.766Z");
 
                 var query = sensor
                     .select(
@@ -313,8 +312,8 @@ var toExport = {
                         measurement.date,
                         output.type,
                         measurement
-                            .literal('json_array_length(measurements.value)')
-                            .as('entry'),
+                            .literal("measurements.value::json->>'x'")
+                            .as("entry"),
                         measurement.value
                     )
                     .where(
@@ -330,7 +329,7 @@ var toExport = {
                             .on(output.sensor_id.equals(sensor.id)))
                     .toQuery();
 
-                // console.log('getSensorsMeasurements query', query);
+                // console.log("getSensorsMeasurements query", query);
 
                 return new Promise(function (resolve, reject) {
                     db.query(query, function (err, result) {
@@ -347,7 +346,8 @@ var toExport = {
 
                 var query = place
                     .select(
-                        sensor.literal('array_agg(sensors.id)').as('sensor_ids'),
+                        sensor.literal("array_agg(sensors.id)").as("sensor_ids"),
+                        sensor.literal("array_agg(sensors.sim)").as("sensor_uids"),
                         place.star()
                     )
                     .from(
@@ -366,7 +366,7 @@ var toExport = {
                 });
             })
             .catch(function(err){
-                console.log('ERROR in getAllPlacesInfos', err);
+                console.log("ERROR in getAllPlacesInfos", err);
             });
         },
 
@@ -375,8 +375,8 @@ var toExport = {
             return databaseP.then(function(db){
 
                 // if no dates provided, assume we want all
-                var _start = start || new Date('1900-10-15T11:23:19.766Z');
-                var _end = end || new Date('2200-10-15T11:23:19.766Z');
+                var _start = start || new Date("1900-10-15T11:23:19.766Z");
+                var _end = end || new Date("2200-10-15T11:23:19.766Z");
 
                 var query = sensor
                     .select(
@@ -412,8 +412,8 @@ var toExport = {
             return databaseP.then(function(db){
 
                 // if no dates provided, assume we want all
-                var _start = start || new Date('1900-10-15T11:23:19.766Z');
-                var _end = end || new Date('2200-10-15T11:23:19.766Z');
+                var _start = start || new Date("1900-10-15T11:23:19.766Z");
+                var _end = end || new Date("2200-10-15T11:23:19.766Z");
 
                 var query = sensor
                     .select(
