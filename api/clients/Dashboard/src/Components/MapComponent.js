@@ -37,9 +37,9 @@ module.exports = React.createClass({
         this.map = L.map(this.getDOMNode(), {
             layers: [
                 L.tileLayer(
-                    'https://api.tiles.mapbox.com/v4/' +
+                    'https://api.mapbox.com/styles/v1/' +
                     this.props.mapId +
-                    '/{z}/{x}/{y}.png?access_token=' +
+                    '/tiles/{z}/{x}/{y}?access_token=' +
                     this.props.mapBoxToken, 
                     {
                         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
