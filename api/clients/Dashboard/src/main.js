@@ -81,7 +81,7 @@ socket.on('data', function (measurement) {
     // GET DATA
     var id = measurement.installed_at;
 
-    var value = measurement.value.x;
+    var value = measurement.value;
     var date = measurement.date;
     
     // GET PLACE
