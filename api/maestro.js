@@ -126,7 +126,8 @@ module.exports = function(authToken, io){
                                 'init',
                                 sensor.period,
                                 sensor.start_hour,
-                                sensor.stop_hour
+                                sensor.stop_hour,
+                                new Date().toISOString()
                             ].join(' ');
 
                             maestro.publish(sim, cmd);
