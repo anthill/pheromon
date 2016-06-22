@@ -25,6 +25,8 @@ var UPDATER_SERVER_IP = PRIVATE.server_ip || 'localhost';
 var BROKER_ADDRESS = process.env.NODE_ENV === 'test' ? 'broker' : 'localhost';
 var BROKER_PORT = process.env.BROKER_PORT ? process.env.BROKER_PORT : 1883;
 
+var subscribed = false; // ensures we don't ressubscribe twice when the broker is restarted
+
 module.exports = function(authToken, io){
 
     var updater = new Updater(authToken, UPDATER_RANGE_START, UPDATER_RANGE_SIZE);
@@ -37,12 +39,15 @@ module.exports = function(authToken, io){
 
     maestro.on('connect', function () {
 
-        maestro.subscribe('init/#', {qos: 1});
-        maestro.subscribe('disconnection/#', {qos: 1});
-        maestro.subscribe('status/#', {qos: 1});
-        maestro.subscribe('measurement/#', {qos: 1});
-        maestro.subscribe('cmdResult/#', {qos: 1});
-        maestro.subscribe('url/#', {qos: 1});
+        if (!subscribed) {
+
+            maestro.subscribe('init/#', {qos: 1});
+            maestro.subscribe('disconnection/#', {qos: 1});
+            maestro.subscribe('status/#', {qos: 1});
+            maestro.subscribe('measurement/#', {qos: 1});
+            maestro.subscribe('cmdResult/#', {qos: 1});
+            maestro.subscribe('url/#', {qos: 1});
+        }
 
         // wrapper of the mqtt.publish() function
         maestro.distribute = function(message){
