@@ -66,10 +66,27 @@ render();
 // Render again when receiving places from API
 api.placesLatestMeasurement('measurement')
     .then(function(places){
-        console.log('places', places);
 
         topLevelStore.placeMap = makeMap(places, 'id');
-        render();
+        var place =  places[0];
+        api.measurementsPlaces({ids: [1], types: ['measurement']})
+        .then(function(measurements){
+            
+            // sort by asc time in case it's not already thus sorted
+            measurements.sort(function(m1, m2){
+                return new Date(m1.date).getTime() - new Date(m2.date).getTime();
+            });
+            // place.measurements format is : [{date: Date, value: Int}, {date: Date, value: Int}, ...]
+            place.measurements = measurements.map(function (measurement) {
+                return ({
+                    date: measurement.date,
+                    value: measurement.value
+                });
+            });
+            topLevelStore.selectedPlaceMap.set(place.id, place);
+            render();
+        })
+        .catch(errlog);
     })
     .catch(errlog);
 
@@ -91,7 +108,7 @@ socket.on('data', function (measurement) {
 
     // place.measurements format is : [{date: Date, value: Int}, {date: Date, value: Int}, ...]
     if (place.measurements) {
-    // UPDATE CURVE
+        // UPDATE CURVE
         place.measurements.push({
             date: date,
             value: value

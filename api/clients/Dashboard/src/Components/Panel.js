@@ -18,7 +18,6 @@ var Panel = React.createClass({
     getInitialState: function(){
         return {};
     },
-
     render: function() {
         //var self = this;
         var props = this.props;
