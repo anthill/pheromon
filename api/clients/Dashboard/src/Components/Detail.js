@@ -2,6 +2,7 @@
 
 var React = require('react');
 var LineChart = React.createFactory(require('./LineChart.js'));
+// var Histogram = React.createFactory(require('./Histogram.js'));
 
 /*
 interface DetailProps{

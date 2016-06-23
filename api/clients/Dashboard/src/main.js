@@ -37,7 +37,6 @@ var topLevelStore = {
     measurementsPlaces: function(place, types){
         api.measurementsPlaces({ids: [place.id], types: types})
         .then(function(measurements){
-            console.log('place measurements', place, measurements);
             
             // sort by asc time in case it's not already thus sorted
             measurements.sort(function(m1, m2){
