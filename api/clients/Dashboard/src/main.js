@@ -83,7 +83,7 @@ api.placesLatestMeasurement('measurement')
                     value: measurement.value
                 });
             });
-            topLevelStore.selectedPlaceMap.set(place.id, place);
+            // topLevelStore.selectedPlaceMap.set(place.id, place);
             render();
         })
         .catch(errlog);
