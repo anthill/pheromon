@@ -57,7 +57,8 @@ var LineChart = React.createClass({
             React.findDOMNode(this.refs['chart_'+this.props.index.toString()]),
             data,
             {
-                labels: [ 'time', 'measure'],
+                labels: [ 'heure', 'mesure'],
+                fillGraph: true,
                 legend: 'onmouseover',
                 strokeWidth: 2,
                 dateWindow: [beginDay.getTime(), endDay.getTime()]

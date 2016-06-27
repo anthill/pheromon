@@ -39,6 +39,7 @@ var Panel = React.createClass({
             if (props.placeMap.size > 0){
                 classes = 'open';
     
+                details.push(React.DOM.span({id: 'span-select'}, 'Vous pouvez zoomer en sélectionnant une période sur le graphique (clic enfoncé), puis dézoomer avec un doublic-clic.'));
                 props.placeMap.forEach(function (rc, index){
                     details.push(new Detail({
                         place: rc,
