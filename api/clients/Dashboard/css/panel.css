@@ -1,5 +1,5 @@
 #panel {
-	position: fixed; bottom: -47vh; right: 0; left: 0;
+	position: fixed; bottom: -45vh; right: 0; left: 0;
 
 	background-color: white; opacity: 0.8;
 	height: 50vh;
@@ -11,19 +11,17 @@
 #panel.open {
 	bottom: 0;
 	transition: bottom .5s ease-in-out;
-
 	overflow-x: scroll;
 }
 
 #close-button {
-	display: block; position: absolute; top: 5px; right: 5px; width: 14px; height: 14px;
-	border-radius: 50%;
-	background-color: green;
+	display: block; position: absolute; top: 5px; right: 5px; width: 18px; height: 18px;
 	cursor: pointer;
+	background-image: url(/Dashboard/images/display.svg);
 }	
 
-#panel.open #close-button{
-	background-color: red;
+#panel.open #close-button {
+	background-image: url(/Dashboard/images/hide.svg);
 }
 
 #panel h1 {
@@ -43,11 +41,15 @@
 	margin-right: 0px;
 }
 
+#span-select{
+	padding-top: 40px;
+	padding: 10px;
+	display: block;
+}
+
 div.chart {
-	background-color: white;
-	opacity: 1;
 	width: 100%; 
-	height: 230px;
+	height: 150px;
 }
 
 #place-name {

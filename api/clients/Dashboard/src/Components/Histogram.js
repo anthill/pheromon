@@ -2,8 +2,6 @@
 
 var React = require('react');
 
-var CHART_DIV_REF = 'tsNumber';
-
 module.exports = React.createClass({
     componentDidMount: function(){
         this.update();
@@ -15,7 +13,7 @@ module.exports = React.createClass({
        
         if(!this.props.measurements) return;
 
-        var chart =  React.findDOMNode(this.refs[CHART_DIV_REF]);
+        var chart =  React.findDOMNode(this.refs['chart_'+this.props.index.toString()]);
         var measurements = this.props.measurements;
 
         var beginDay;
@@ -64,41 +62,22 @@ module.exports = React.createClass({
             }
         }];
 
-// Plotly.newPlot( node, traces, // eslint-disable-line
-//     {
-//         xaxis:{
-//             type: 'date',
-//             tickformat:'%H:%M',
-//             tickvals: ticksX,
-//             range: [start.valueOf(), end.valueOf()],
-//             //showgrid: true
-//         },
-//         yaxis:{
-//             range: [minTick,0],
-//             tickvals: tickvals,
-//             ticktext: ticktext,
-//             showline: false,
-//             showgrid: false,
-//             zeroline: false
-//         },
-//         margin: { t: 0, b: 30, l: nbCaractMax*7, r: 20} 
-//     }, {showLink: false, displayModeBar: false} );
-
-
         Plotly.newPlot(chart, traceR, {
             xaxis:{
                 type: 'date',
                 range: [beginDay.valueOf(), endDay.valueOf()],
-                showgrid: true
+                showgrid: false
             },
             yaxis:{
-                max: 100
+                max: 100,
+                showgrid: false
             },
-            margin: { t: 0, b: 30, l: 30, r: 10} 
-
+            margin: { t: 0, b: 30, l: 30, r: 10} ,
+            paper_bgcolor: 'rgba(255, 255, 255, 0)',
+            plot_bgcolor: 'rgba(255, 255, 255, 0)',
         }, {displaylogo: false});
     },
     render: function(){
-        return React.DOM.div({ref: CHART_DIV_REF, className: 'chart'});
+        return React.DOM.div({ref: 'chart_'+this.props.index.toString(), className: 'chart'});
     }
 });

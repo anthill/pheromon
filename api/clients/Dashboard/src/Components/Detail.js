@@ -1,8 +1,8 @@
 'use strict';
 
 var React = require('react');
-// var LineChart = React.createFactory(require('./LineChart.js'));
-var Histogram = React.createFactory(require('./Histogram.js'));
+var LineChart = React.createFactory(require('./LineChart.js'));
+// var Histogram = React.createFactory(require('./Histogram.js'));
 
 /*
 interface DetailProps{
@@ -21,9 +21,9 @@ var Detail = React.createClass({
         //var self = this;
         var props = this.props;
 
-        return React.DOM.div({id: 'detail'}, 
+        return React.DOM.div({className: 'detail'}, 
             React.DOM.h2({}, props.place.name),
-            new Histogram({ measurements: props.place.measurements, day: props.day })
+            new LineChart({ measurements: props.place.measurements, index: props.index, day: props.day })
         );
     }
 
