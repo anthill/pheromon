@@ -12,8 +12,6 @@ interface LineChart State{
 }
 */
 
-var CHART_DIV_REF = 'tsNumber';
-
 // build empty values => enable empty chart
 var defaultLabels = [];
 var defaultObserved = [];
@@ -56,21 +54,22 @@ var LineChart = React.createClass({
 
         // this part is super awkward, not very React-y.
         var chart = new Dygraph(
-            React.findDOMNode(this.refs[CHART_DIV_REF]),
+            React.findDOMNode(this.refs['chart_'+this.props.index.toString()]),
             data,
             {
-                labels: [ 'time', 'measure'],
+                labels: [ 'heure', 'mesure'],
+                fillGraph: true,
                 legend: 'onmouseover',
                 strokeWidth: 2,
                 dateWindow: [beginDay.getTime(), endDay.getTime()]
             }
         );
-        console.log(chart);
+        //console.log(chart);
     },
 
 	render: function(){
         return React.DOM.div({className: 'line-chart'},
-            React.DOM.div({ref: CHART_DIV_REF, className: 'chart'})
+            React.DOM.div({ref: 'chart_'+this.props.index.toString(), className: 'chart'})
         );
 	}
 

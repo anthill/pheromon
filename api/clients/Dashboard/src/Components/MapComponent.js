@@ -85,7 +85,6 @@ module.exports = React.createClass({
 
         // add click event on marker
         marker.on('click', function(){
-            console.log('click', place.name);
             props.onPlaceSelected(place);
         });
 
