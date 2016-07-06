@@ -53,7 +53,7 @@ var LineChart = React.createClass({
         }
 
         // this part is super awkward, not very React-y.
-        var chart = new Dygraph(
+        new Dygraph(
             React.findDOMNode(this.refs['chart_'+this.props.index.toString()]),
             data,
             {
@@ -64,7 +64,6 @@ var LineChart = React.createClass({
                 dateWindow: [beginDay.getTime(), endDay.getTime()]
             }
         );
-        //console.log(chart);
     },
 
 	render: function(){
