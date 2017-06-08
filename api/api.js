@@ -24,7 +24,7 @@ io.set('origins', '*:*');
 // Creating API-side MQTT client: maestro !
 require('./maestro')(PRIVATE.mqtt_token, io);
 
-var PORT = process.env.VIRTUAL_PORT ? process.env.VIRTUAL_PORT : 9000;
+var PORT = PRIVATE.pheromon_port;
 
 //CORS for GET
 app.use(function(req, res, next) {

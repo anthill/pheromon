@@ -74,7 +74,7 @@ function PheromonUpdater (mqttToken, RANGE_START, RANGE_SIZE) {
 
     EventEmitter.call(self);
 
-    var mqttClient = mqtt.connect('mqtt://'+ BROKER_ADDRESS + ':' + process.env.BROKER_PORT, {
+    var mqttClient = mqtt.connect('mqtt://'+ BROKER_ADDRESS + ':' + PRIVATE.broker_port, {
         username: PRIVATE.mqtt_user,
         password: mqttToken,
         clientId: 'updater'

@@ -4,22 +4,15 @@
 
 ## Overview
 
-**Pheromon is a open innovation project to deploy, administrate and harvest data from a swarm of sensors**. It has been developed in the scope of project 6element dedicated to waste optimisation.
+**Pheromon is a open innovation project to deploy, administrate and harvest data from a swarm of sensors**. It has been developed in the scope of project 6element dedicated to waste optimisation, and is now in production on the projet vamos.
 
-**Learn more about 6element in our [dedicated page](http://ants.builders/pages/6element.html) or in [this Medium article](https://medium.com/ants-blog/6element-534ffbe2a60f)**.
-
-**Use our open API, you can consult the [dedicated wiki](https://github.com/anthill/pheromon/wiki/API-documentation)**.
+**Use our open API, you can have a look at the [dedicated wiki](https://github.com/anthill/pheromon/wiki/API-documentation)**.
 
 ![Image Alt](https://docs.google.com/drawings/d/1a-9oJr7eGid59iTj12dici8-Qb83j9Y7QbTz34jCo_M/pub?w=960&h=720)
 
 Pheromon communicates with sensors over TCP using MQTT protocol. The MQTT broker dispatches the messages depending on the publish/subscribe status of various clients on various subjects. For example, a meteorological sensor will publish on the topics `rain` and `temperature` while a sensor measuring peoples fluxes will publish on `wifidevices` and `bluetoothdevices`. Meanwhile, the admin interface can publish to all sensors on the `all` topic, or to one particular sensor on `mySensorId` topic.
-More on the topics later on.
 
 All the messages are persisted in a database that can be queried by a API able to answer queries like "give me all mesaurements of sensor X since Y".
-
-## 6brain
-
-**[6brain](https://github.com/anthill/6brain)** is the sensor counterpart of Pheromon. It is the code you need to have on your sensors so that they can communicate with Pheromon.
 
 ## Clients
 
@@ -34,10 +27,6 @@ You can also administrate your sensors with the **Admin**.
 More on those clients later.
 
 ## Quick start :
-
-* Install [docker](https://docs.docker.com/) and [docker-compose](http://docs.docker.com/compose/install/) and check docker daemon (or boot2docker) is running.
-
-* Make sure to have the port 5100 opened on your server.
 
 * clone the repository :
 
@@ -55,7 +44,6 @@ This will also set up the git precommit hook for eslint.
 npm install
 ````
 
-You need to have VIRTUAL_PORT and BROKER_PORT set as environment variables.
 
 ### In dev
 Use this for development.
@@ -66,15 +54,6 @@ npm run dev
 
 Use `npm run stop-dev` to stop.
 
-### In alpha
-Use this for preproduction.
-
-```
-npm run alpha // launch the service
-```
-
-Use `npm run stop-alpha` to stop.
-
 ### In prod
 Use this for production.
 
@@ -82,9 +61,6 @@ Use this for production.
 npm run prod // launch the service
 ```
 
-
-Use `npm run stop-prod` to stop.
-This will also create a `latest.sql` backup file of the db in the `backup` folder.
 
 ### Database
 
@@ -132,7 +108,7 @@ The communication protocol is composed of 3 elements:
 
 ### Initialization sequence 
 
-We don't want sensors to have a manually hard-coded id (for deployment's simplicity) so we use SIM id (queried with AT command):
+We don't want sensors to have a manually hard-coded id (for deployment's simplicity) so we use mac addresses of devices:
 
 **Sequence**
 
@@ -225,7 +201,7 @@ GatewayPorts yes
 sudo usermod -s /usr/sbin/nologin sensorSSH;
 ```
 
-add `"ip": "kerrigan"` in pheromon `PRIVATE.json` where kerrigan is the name of the host in `.ssh/config` 
+add `"ip": ...` in pheromon `secret.json` where kerrigan is the name of the host in `.ssh/config` 
 
 ## PRIVATE files
 

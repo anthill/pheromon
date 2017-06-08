@@ -1,4 +1,5 @@
 {
     "token": "none",
-    "map_id": "none"
+    "map_id": "none",
+    "center": [44.829146, -0.8469717]
 }

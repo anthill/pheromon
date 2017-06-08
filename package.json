@@ -1,11 +1,12 @@
 {
   "name": "pheromon",
-  "version": "1.0.0",
-  "description": "Reducing waste with sensors and an app",
+  "version": "2.0.0",
+  "description": "IoT plateform",
+  "engines": {
+    "node": "6.11.0"
+  },
   "main": "index.js",
   "scripts": {
-    "postinstall": "if [ -d .git ]; then cp ./git-hooks/pre-commit ./.git/hooks/pre-commit; chmod a+x ./.git/hooks/pre-commit; fi",
-    "lint": "eslint .",
     "prebuild": "npm install",
     "build:dashboard": "browserify api/clients/Dashboard/src/main.js -o api/clients/Dashboard-browserify-bundle.js -v",
     "build:admin": "browserify api/clients/Admin/src/main.js -o api/clients/Admin-browserify-bundle.js -v",
@@ -15,24 +16,16 @@
     "watch": "npm-run-all --parallel 'watch:*'",
     "prod:api": "node api/api.js",
     "dev:api": "nodemon -L --watch api --watch database api/api.js",
-    "preprod": "npm run build",
-    "prealpha": "npm run build",
-    "test": "docker-compose -p pheromontest -f compose-test.yml up --force-recreate",
     "dev": "npm-run-all --parallel 'dev:*'",
-    "prod": "npm-run-all --parallel 'prod:*'",
-    "postdev": "npm run watch",
-    "validate": "npm ls"
+    "prod": "npm-run-all --parallel 'prod:*'"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/anthill/pheromon.git"
   },
   "keywords": [
-    "app",
-    "mobile",
-    "citizen",
-    "sustainable",
-    "development",
+    "IoT",
+    "raspberry pi",
     "sensor management"
   ],
   "author": "Ants",
