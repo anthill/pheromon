@@ -38,7 +38,6 @@ cd pheromon
 * Copy / Create the files `PRIVATE/*.json`
 
 * Install dependencies
-This will also set up the git precommit hook for eslint.
 
 ````
 npm install
