@@ -76,6 +76,7 @@ module.exports = React.createClass({
                         self.setState({
                             selectedPlaceMap: state.selectedPlaceMap
                         });
+                        
                     } else {
                         state.selectedPlaceMap.set(place.id, place);
 

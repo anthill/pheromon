@@ -32,19 +32,27 @@ var Panel = React.createClass({
             id: 'close-button',
             onClick: function(){
                 document.getElementById('panel').classList.toggle('open');
-            }
-        });
+            }}
+        );
 
         if (props.placeMap){
-            if (props.placeMap.size > 0)
+            if (props.placeMap.size > 0){
                 classes = 'open';
+    
+                details.push(React.DOM.span({id: 'span-select'}, 'Vous pouvez zoomer en sélectionnant une période sur le graphique (clic enfoncé), puis dézoomer avec un doublic-clic.'));
+                props.placeMap.forEach(function (rc, index){
+                    details.push(new Detail({
+                        place: rc,
+                        index: index,
+                        day : props.day
+                    }));
+                });
+            }
+            else
+            {
+                details.push(React.DOM.span({id: 'span-select'}, 'Pour afficher les affluences en temps réel, vous pouvez sélectionner les sites sur la carte.'));
+            }
 
-            props.placeMap.forEach(function (rc){
-                details.push(new Detail({
-                    place: rc,
-                    day : props.day
-                }));
-            });
         }
         
         return React.DOM.div({
@@ -52,7 +60,7 @@ var Panel = React.createClass({
                 className: classes
             },
             [
-                React.DOM.h1({}, 'Realtime measurements'),
+                React.DOM.h1({}, 'Affluence en temps réel'),
                 closeButton,
                 details
             ]
