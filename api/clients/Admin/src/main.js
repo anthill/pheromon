@@ -50,7 +50,7 @@ while ((match = search.exec(query)))
 var api = prepareAPI(sendReq, '', urlParams.s);
 
 function render(){
-    React.render(new Application(topLevelStore), document.body);
+    React.render(new Application(topLevelStore), document.getElementById("reacthere"));
 }
 
 function updatePlaceInDb(datas) {
@@ -387,4 +387,10 @@ socket.on('data', function (msg) {
     console.log('RECEIVING DATA', msg);
     
     refreshData();
+});
+
+socket.on('image', function (msg) {
+
+    console.log('RECEIVING image');
+    document.getElementById("webcam").src = "data:image/jpg;base64," + msg;
 });

@@ -1,7 +1,5 @@
 # Pheromon
 
-[![Build Status](https://travis-ci.org/anthill/pheromon.svg)](https://travis-ci.org/anthill/pheromon)
-
 ## Overview
 
 **Pheromon is a open innovation project to deploy, administrate and harvest data from a swarm of sensors**. It has been developed in the scope of project 6element dedicated to waste optimisation, and is now in production on the projet vamos.

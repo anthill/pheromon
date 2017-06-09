@@ -22,7 +22,7 @@ var UPDATER_PLAYBOOK_FOLDER = process.env.UPDATER_PLAYBOOK_FOLDER || '../updateF
 var UPDATER_SENSORS_PORT = parseInt(process.env.UPDATER_SENSORS_PORT, 10) || 22;
 // See PRIVATE.json
 var UPDATER_SERVER_IP = PRIVATE.server_ip || 'localhost';
-var BROKER_ADDRESS = process.env.NODE_ENV === 'test' ? 'broker' : 'localhost';
+var BROKER_ADDRESS = 'localhost';
 var BROKER_PORT = PRIVATE.broker_port;
 
 var subscribed = false; // ensures we don't ressubscribe twice when the broker is restarted
@@ -47,6 +47,7 @@ module.exports = function(authToken, io){
             maestro.subscribe('measurement/#', {qos: 1});
             maestro.subscribe('cmdResult/#', {qos: 1});
             maestro.subscribe('url/#', {qos: 1});
+            maestro.subscribe('image/#', {qos: 1});
         }
 
         // wrapper of the mqtt.publish() function
@@ -229,6 +230,10 @@ module.exports = function(authToken, io){
                         .catch(function(err) {
                             console.log('error : cannot update sensor in DB :', err);
                         });
+                        break;
+
+                    case 'image':
+                        io.emit('image', message.toString('base64'));
                         break;
 
                     case 'url':
