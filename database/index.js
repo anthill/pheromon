@@ -32,7 +32,7 @@ var toExport = {
                 */
 
                 var latestPlaceMeasurementDate = place
-                    .subQuery("latest_recycling_center_measurement_date")
+                    .subQuery("latest_measurement_date")
                     .select(
                         place.id,
                         measurement.date.max().as("last_date")
@@ -46,12 +46,12 @@ var toExport = {
                 */
                 
                 var latestPlaceMeasurementValue = place
-                    .subQuery("latest_recycling_center_measurement_value")
+                    .subQuery("latest_measurement_value")
                     .select(
                         place.id,
                         output.type,
                         measurement
-                            .literal("measurements.value::json->>'x'")
+                            .literal("measurements.value")
                             .as("latest"),
                         measurement.date.as("last_date")
                     )
@@ -66,10 +66,10 @@ var toExport = {
                     TODO restrict maximum to the last few months
                 */
                 var maxMeasurementPerPlace = place
-                    .subQuery("max_measurement_per_recycling_center")
+                    .subQuery("max_measurement_per_place")
                     .select(
                         place.id, place.name, place.lat, place.lon,
-                        "max(GREATEST(cast(measurements.value::json->>'x' as float),01))"
+                        "max(GREATEST(measurements.value,01))"
                     )
                     .from(fullJoin)
                     .where(place.id.equals(placeId))
@@ -116,7 +116,7 @@ var toExport = {
                     For each place, get the last measurement date
                 */
                 var latestPlaceMeasurementDate = place
-                    .subQuery("latest_recycling_center_measurement_date")
+                    .subQuery("latest_measurement_date")
                     .select(
                         place.id,
                         measurement.date.max().as("last_date")
@@ -129,12 +129,12 @@ var toExport = {
                 */
                 
                 var latestPlaceMeasurementValue = place
-                    .subQuery("latest_recycling_center_measurement_value")
+                    .subQuery("latest_measurement_value")
                     .select(
                         place.id,
                         output.type,
                         measurement
-                            .literal("measurements.value::json->>'x'")
+                            .literal("measurements.value")
                             .as("latest"),
                         measurement.date.as("last_date")
                     )
@@ -148,10 +148,10 @@ var toExport = {
                     For each place, get the maximum measurement (and place infos)
                 */
                 var maxMeasurementPerPlace = place
-                    .subQuery("max_measurement_per_recycling_center")
+                    .subQuery("max_measurement_per_place")
                     .select(
                         place.id, place.name, place.lat, place.lon,
-                        "max(GREATEST(cast(measurements.value::json->>'x' as float),0))"
+                        "max(GREATEST(measurements.value,0))"
                     )
                     .from(fullJoin)
                     .group(place.id);
@@ -214,7 +214,7 @@ var toExport = {
                         sensor.id,
                         output.type,
                         measurement
-                            .literal("measurements.value::json->>'x'")
+                            .literal("measurements.value")
                             .as("latest"),
                         measurement.date.as("last_date")
                     )
@@ -229,10 +229,10 @@ var toExport = {
                     TODO restrict maximum to the last few months
                 */
                 var maxMeasurementPerSensor = sensor
-                    .subQuery("max_measurement_per_recycling_center")
+                    .subQuery("max_measurement_per_place")
                     .select(
                         sensor.id, sensor.name, sensor.project, sensor.sim, sensor.period,
-                        "max(GREATEST(cast(measurements.value::json->>'x' as float),0))"
+                        "max(GREATEST(measurements.value,0))"
                     )
                     .from(fullJoin)
                     .where(sensor.sim.in(sims))
@@ -312,7 +312,7 @@ var toExport = {
                         measurement.date,
                         output.type,
                         measurement
-                            .literal("measurements.value::json->>'x'")
+                            .literal("measurements.value")
                             .as("entry"),
                         measurement.value
                     )

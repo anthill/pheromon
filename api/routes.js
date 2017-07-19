@@ -214,7 +214,6 @@ module.exports = function(app, debug){
     // get latest measurement of one type for all places
     app.get('/placesLatestMeasurement/:type', function(req, res){
         var type = req.params.type;
-
         database.complexQueries.placesLatestMeasurement(type)
         .then(function(data){
             res.status(200).send(data);

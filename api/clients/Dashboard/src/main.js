@@ -66,7 +66,6 @@ render();
 // Render again when receiving places from API
 api.placesLatestMeasurement('measurement')
     .then(function(places){
-
         topLevelStore.placeMap = makeMap(places, 'id');
         render();
     })

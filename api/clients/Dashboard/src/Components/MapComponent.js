@@ -71,7 +71,9 @@ module.exports = React.createClass({
         ];
 
         var position = L.latLng(Number(place.lat), Number(place.lon));
-
+        var lastDate = new Date(place.last_date);
+        var now = new Date();
+        var isAlive = Math.ceil((now.getTime()-lastDate.getTime())/(1000*3600)) < 3;
         // create Leaflet markers
         var marker = L.circleMarker(
             position,
@@ -79,7 +81,7 @@ module.exports = React.createClass({
                 // icon: myIcon,
                 className: classes.join(' '),
                 radius: size,
-                fillColor: getColor(place.latest, place.max, 0)
+                fillColor: isAlive?getColor(place.latest, place.max, 0):'#A4A4A4'
             }
         );
 
