@@ -21,6 +21,7 @@ var colorScale = [
 ];
 
 module.exports = function getColor(v, max, min) {    
+	if(v===0) return '#A4A4A4';
     var nbColors = colorScale.length;
 
     if(v <= min)
